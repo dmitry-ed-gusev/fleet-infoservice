@@ -24,7 +24,7 @@ from pyutilities.pylog import setup_logging
 
 from .scraper_interface import ScraperInterface, SCRAPE_RESULT_OK
 from .utils.utilities import build_variations_list
-from .entities.ships import BaseShip
+from .entities.ships import BaseShipDto
 
 
 # todo: implement unit tests for this script/module and for separated functions!
@@ -105,7 +105,7 @@ def parse_data(html: str) -> dict:
 
                 # get base ship parameters
                 ship_dict = {}
-                ship = BaseShip(123)
+                ship = BaseShipDto(123)
                 # print(f"===> Ship: {ship}")
                 # log.debug(f"---> Ship: {ship}")
 
@@ -235,7 +235,7 @@ class RsClassOrgScraper(ScraperInterface):
         self.log = logging.getLogger(LOGGER_NAME)
 
     def scrap(self, cache_path: str, workers_count: int, dry_run: bool = False):
-        """Rs Class Org data scraper."""
+        """RS Class Org data scraper."""
         log.info("scrap(): processing rs-class.org")
 
         if dry_run:  # dry run mode - won't do anything!
