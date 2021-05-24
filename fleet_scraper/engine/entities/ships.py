@@ -9,9 +9,11 @@
 
 
 # todo: implement unit tests for this module / script
-class BaseShip(object):
 
-    def __init__(self, imo_number):
+class BaseShipDto(object):
+    """Base ship DTO object - ship with base attributes, used for all scrapers."""
+
+    def __init__(self, imo_number: str):
         self.imo_number = imo_number
         self.reg_number = ''
         self.flag = ''
@@ -28,3 +30,10 @@ class BaseShip(object):
     def __hash__(self) -> int:
         # todo: implement function!
         raise Exception("Not implemented yet!")
+
+
+class ExtendedShipDto(object):
+    """Extended ship DTO object - ship with extended attributes, used for all scrapers."""
+
+    def __init__(self, imo_number: str):
+        self.imo_number = imo_number
