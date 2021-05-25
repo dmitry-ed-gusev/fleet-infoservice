@@ -4,6 +4,9 @@
 [run]
 branch = True
 data_file = .coverage/.coverage
+omit =
+        *__init__*
+        *temp*
 
 [report]
 show_missing = True
