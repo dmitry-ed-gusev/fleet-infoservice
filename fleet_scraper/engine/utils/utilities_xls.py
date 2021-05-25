@@ -9,7 +9,7 @@
         - (pathlib -2)  https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified:
+    Modified: Dmitrii Gusev, 25.05.2021
 """
 
 import xlwt

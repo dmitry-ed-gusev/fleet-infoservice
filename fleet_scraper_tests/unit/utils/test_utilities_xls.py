@@ -5,7 +5,7 @@
     Test for excel-related utilities class.
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified:
+    Modified: Dmitrii Gusev, 25.05.2021
 """
 
 import unittest
@@ -65,7 +65,7 @@ class TestUtilitiesXls(unittest.TestCase):
     def test_save_base_ships_2_excel_empty_ships_list(self):
         save_base_ships_2_excel(list(), EMPTY_EXCEL_FILE_NAME)
         empty_file: Path = Path(EMPTY_EXCEL_FILE_NAME)
-        self.assertTrue(empty_file.exists())
+        self.assertTrue(empty_file.exists())  # todo: add more checks / content checks
 
     def test_save_base_ships_2_excel(self):
         ship1: BaseShipDto = BaseShipDto('123456')
