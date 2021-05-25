@@ -48,6 +48,8 @@ loggers:
         #propagate: yes
     scraper_utilities:         # scraper utilities module
         level: DEBUG
+    scraper_utilities_xls:     # scraper excel-related utilities module
+        level: DEBUG
     scraper_clarksonsnet:      # clarksons scraper module
         level: DEBUG
     scraper_marinetrafficcom:  # marinetraffic scraper module

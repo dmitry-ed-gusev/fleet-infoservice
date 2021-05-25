@@ -2,11 +2,13 @@
 # coding=utf-8
 
 """
-    Test for RS Class Register Book fleet_scraper.
+    Test for utilities class.
 
     Created:  Dmitrii Gusev, 21.03.2021
-    Modified: Dmitrii Gusev, 26.04.2021
+    Modified: Dmitrii Gusev, 24.05.2021
 """
+
+# todo: do we need logging in the test class? if yes - review and fix logging!
 
 import unittest
 import logging
@@ -18,25 +20,27 @@ from pyutilities.pylog import setup_logging
 LOGGER_NAME = 'scraper_rsclassorg_test'
 
 
-class TestScraperRsClassOrg(unittest.TestCase):
+class TestUtilities(unittest.TestCase):
 
     # static logger initializer
     setup_logging(default_path='../../test_logging.yml')
-    log = logging.getLogger(LOGGER_NAME)
+    # log = logging.getLogger(LOGGER_NAME)
 
     def setUp(self):
-        self.log.debug("TestScraperRsClassOrg.setUp()")
+        self.log = logging.getLogger(LOGGER_NAME)
+        self.log.debug("TestUtilities.setUp()")
 
     def tearDown(self):
-        self.log.debug("TestScraperRsClassOrg.tearDown()")
+        self.log.debug("TestUtilities.tearDown()")
 
     @classmethod
     def setUpClass(cls):
-        cls.log.debug("TestScraperRsClassOrg.setUpClass()")
+        cls.log = logging.getLogger(LOGGER_NAME)
+        cls.log.debug("TestUtilities.setUpClass()")
 
     @classmethod
     def tearDownClass(cls):
-        cls.log.debug("TestScraperRsClassOrg.tearDownClass()")
+        cls.log.debug("TestUtilities.tearDownClass()")
 
     def test_get_hash_bucket_number_empty_value(self):
         self.assertRaises(ValueError, lambda: get_hash_bucket_number(None, 2))

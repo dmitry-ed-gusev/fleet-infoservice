@@ -4,20 +4,20 @@
     Common utilities module for Fleet DB Scraper.
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 02.05.2021
+    Modified: Gusev Dmitrii, 25.05.2021
 """
 
-import xlwt
 import logging
 import hashlib
 from datetime import datetime
+
+# init module logger
+log = logging.getLogger('scraper_utilities')
 
 RUS_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 ENG_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUM_CHARS = "0123456789"
 SPEC_CHARS = "-"
-
-log = logging.getLogger('scraper_utilities')
 
 
 def get_hash_bucket_number(value: str, buckets: int) -> int:
@@ -114,65 +114,11 @@ def generate_timed_filename():
     print(current_datetime.strftime('%d'))
 
     # todo: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-    # todo: implementation! should be smthg like: dd-MM-yyyy-hh_mm_ss-rsclassorg
+    # todo: implementation! should be something like: dd-MM-yyyy-hh_mm_ss-rsclassorg
     # todo: check - is generated name unique for the givel catalog? - extract to different method?
     pass
 
 
-# todo: implement unit tests!
-# todo: finish implementation!
-def save_ships_to_excel(ships: dict, xls_file: str, xls_sheet_name: str = "ships", xls_override: bool = False):
-    """Save provided list of ships entities to xls file.
-    :param xls_file: excel file to save provided ships
-    :param xls_sheet_name: sheet name for ships save in excel workbook
-    :param xls_override: override existing excel file or not? if not and file exists - exception will be raised
-    :param ships: ships list to save
-    :return:
-    """
-    log.debug(f'save_ships(): save provided ships map into file: {xls_file}.')
-
-    if ships is None or not ships:  # fail-fast - check provided ships dictionary
-        log.warning("Provided empty ships map! Nothing to save!")
-        return
-
-    if xls_file is None or len(xls_file.strip()) == 0:  # fail-fast - check provided xls file name
-        raise ValueError('Provided empty excel file name - can\'t save!')
-
-    # todo: check xls sheet name - if is empty - back to default
-
-    # todo: check if excel file exists and override is False - exception!
-
-    book = xlwt.Workbook()              # create workbook
-    sheet = book.add_sheet("reg_book")  # create new sheet
-
-    # create header
-    row = sheet.row(0)
-    row.write(0, 'flag')
-    row.write(1, 'main_name')
-    row.write(2, 'secondary_name')
-    row.write(3, 'home_port')
-    row.write(4, 'call_sign')
-    row.write(5, 'reg_number')
-    row.write(6, 'imo_number')
-
-    row_counter = 1
-    for key in ships:  # iterate over ships map with keys / values
-        row = sheet.row(row_counter)  # create new row
-        ship = ships[key]         # get ship from map
-        # write cells values
-        row.write(0, ship['flag'])
-        row.write(1, ship['main_name'])
-        row.write(2, ship['secondary_name'])
-        row.write(3, ship['home_port'])
-        row.write(4, ship['call_sign'])
-        row.write(5, ship['reg_number'])
-        row.write(6, ship['imo_number'])
-        row_counter += 1
-
-    book.save(xls_file)  # save created workbook
-
-
 # todo: implement unit tests that module isn't runnable directly!
 if __name__ == '__main__':
-    # print('Don\'t run this utility script directly!')
-    generate_timed_filename()
+    print('Don\'t run this utility script directly!')
