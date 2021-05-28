@@ -2,9 +2,11 @@
 
 """
     Common utilities module for Fleet DB Scraper.
+    Useful materials:
+      - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 25.05.2021
+    Modified: Gusev Dmitrii, 28.05.2021
 """
 
 import logging
@@ -14,10 +16,12 @@ from datetime import datetime
 # init module logger
 log = logging.getLogger('scraper_utilities')
 
+# useful module constants
 RUS_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 ENG_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUM_CHARS = "0123456789"
 SPEC_CHARS = "-"
+TIMESTAMP_PATTERN = '%d-%b-%Y_%H-%M-%S.%f'
 
 
 def get_hash_bucket_number(value: str, buckets: int) -> int:
@@ -104,19 +108,18 @@ def build_variations_list() -> list:
     return result
 
 
-# todo: implement unit tests!
-def generate_timed_filename():
-    """"""
+def generate_timed_filename(postfix: str) -> str:
+    """Generates file name with timestamp and provided postfix, human-readable.
+    :param postfix:
+    :return:
+    """
+    log.debug(f'generate_timed_filename(): generating file name with postfix {postfix}.')
 
-    # get current datetime
-    current_datetime = datetime.now()
+    result = datetime.now().strftime(TIMESTAMP_PATTERN)
+    if postfix is not None and len(postfix.strip()) > 0:
+        result += '-' + postfix.strip()
 
-    print(current_datetime.strftime('%d'))
-
-    # todo: https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
-    # todo: implementation! should be something like: dd-MM-yyyy-hh_mm_ss-rsclassorg
-    # todo: check - is generated name unique for the givel catalog? - extract to different method?
-    pass
+    return result
 
 
 # todo: implement unit tests that module isn't runnable directly!
