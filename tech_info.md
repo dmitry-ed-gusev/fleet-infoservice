@@ -1,5 +1,10 @@
 ## Useful Technical Resources
 
+### Python In general
+  - [built-in methods](https://www.programiz.com/python-programming/methods/built-in)
+  - [python OOP vs java OOP](https://realpython.com/oop-in-python-vs-java/)
+
+
 ### Tech Resources
   - [ELK](https://medium.com/naukri-engineering/elasticsearch-tutorial-for-beginners-using-python-b9cb48edcedc)
   - [python+ELK](https://tryolabs.com/blog/2015/02/17/python-elasticsearch-first-steps/)
@@ -8,9 +13,12 @@
   - [python+json](https://yzhong-cs.medium.com/serialize-and-deserialize-complex-json-in-python-205ecc636caa)
   - [python+json](https://pynative.com/make-python-class-json-serializable/)
 
+
 #### Testing:
-  - [](https://realpython.com/pytest-python-testing/
-  - [](https://realpython.com/python-testing/
+  - [testing 1](https://realpython.com/pytest-python-testing/)
+  - [testing 2](https://realpython.com/python-testing/)
+
 
 #### Hashing:
-  - [](https://www.pythoncentral.io/hashing-strings-with-python/
+  - [hashing in python](https://www.pythoncentral.io/hashing-strings-with-python/)
+  - [built-in hash() method](https://www.programiz.com/python-programming/methods/built-in/hash)
