@@ -4,35 +4,42 @@
 """
     Scraper for Vessel Finder ships storage / site.
 
-    Site(s):
-        * https://www.vesselfinder.com/ - main url
+    Main data source: https://www.vesselfinder.com/
 
-    Created:  Gusev Dmitrii, 29.04.2021
-    Modified: Dmitrii Gusev, 04.05.2021
+    Useful materials and resources:
+      - ???
+
+    Created:  Dmitrii Gusev, 29.05.2021
+    Modified:
 """
 
 import logging
-from .scraper_interface import ScraperInterface, SCRAPE_RESULT_OK
 
-# useful constants / configuration
-LOGGER_NAME = 'scraper_vesselfinder'
+from .utils import constants as const
+from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from .entities.ships import BaseShipDto
 
-# setup logging for the module
-log = logging.getLogger(LOGGER_NAME)
+# todo: implement unit tests for this module!
 
-
-def scrap():
-    """"""
-    log.info("scrap(): processing vesselfinder.com")
+# module logging setup
+log = logging.getLogger(const.SYSTEM_VESSELFINDERCOM)
 
 
-class VesselFinderComScraper(ScraperInterface):
-    def __init__(self):
-        self.log = logging.getLogger(LOGGER_NAME)
+class VesselFinderComScraper(ScraperAbstractClass):
+    """Scraper for vesselfinder.com source system."""
 
-    def scrap(self, cache_path: str, workers_count: int, dry_run: bool = False):
-        """RS Class Org data scraper."""
-        log.info("scrap(): processing rs-class.org")
+    def __init__(self, source_name: str, cache_path: str):
+        super().__init__(source_name, cache_path)
+        self.log = logging.getLogger(const.SYSTEM_VESSELFINDERCOM)
+        self.log.info(f'VesselFinderComScraper: source name {self.source_name}, cache path: {self.cache_path}.')
+
+    def scrap(self, dry_run: bool = False):
+        """Vesselfinder data scraper."""
+        log.info("scrap(): processing vesselfinder.com")
+
+        if dry_run:  # dry run mode - won't do anything!
+            self.log.warning("DRY RUN MODE IS ON!")
+            return SCRAPE_RESULT_OK
 
 
 # main part of the script

@@ -4,44 +4,38 @@
 """
     Scraper for Russian Maritime Register of Shipping Register Book.
 
-    Site(s):
-        * https://rs-class.org/ - main url of RMRS
+    Main data source (source system address): https://rs-class.org/
+
+    Useful materials and resources:
+      - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 04.05.2021
+    Modified: Gusev Dmitrii, 29.05.2021
 """
 
 import logging
 import ssl
-import xlwt
 import concurrent.futures
 import requests
 import threading
 import time
 from urllib import request, parse
 from bs4 import BeautifulSoup
-from pyutilities.pylog import setup_logging
 
-from .scraper_interface import ScraperInterface, SCRAPE_RESULT_OK
 from .utils.utilities import build_variations_list
+from .utils import constants as const
+from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
 
-
-# todo: implement unit tests for this script/module and for separated functions!
+# todo: implement unit tests for this module!
 
 # useful constants / configuration
-LOGGER_NAME = 'scraper_rsclassorg'
 MAIN_URL = "https://lk.rs-class.org/regbook/regbookVessel?ln=ru"
 FORM_PARAM = "namer"
-ENCODING = "utf-8"
 ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 записей! Уточните параметры запроса"
-# OUTPUT_FILE = "regbook.xls"
-# WORKERS_COUNT = 20
 
-# setup logging for the whole script
-# setup_logging(default_path='logging.yml')
-# setup_logging()
-log = logging.getLogger(LOGGER_NAME)
+# module logging setup
+log = logging.getLogger(const.SYSTEM_RSCLASSORG)
 
 # setup for multithreading processing
 thread_local = threading.local()  # thread local storage
@@ -55,7 +49,7 @@ def get_session():
     return thread_local.session
 
 
-def perform_request(request_param):
+def perform_request(request_param: str) -> str:
     """Perform one HTTP POST request with one form parameter for search.
     :return: HTML output with found data
     """
@@ -65,12 +59,12 @@ def perform_request(request_param):
         raise ValueError('Provided empty value [{}]!'.format(request_param))
 
     my_dict = {FORM_PARAM: request_param}             # dictionary for POST request
-    data = parse.urlencode(my_dict).encode(ENCODING)  # perform encoding of request
+    data = parse.urlencode(my_dict).encode(const.DEFAULT_ENCODING)  # perform encoding of request
     req = request.Request(MAIN_URL, data=data)        # this will make the method "POST" request
     context = ssl.SSLContext()                        # new SSLContext -> to bypass security certificate check
     response = request.urlopen(req, context=context)  # perform request itself
 
-    return response.read().decode(ENCODING)           # read response and perform decode
+    return response.read().decode(const.DEFAULT_ENCODING)           # read response and perform decode
 
 
 def parse_data(html: str) -> dict:
@@ -84,7 +78,7 @@ def parse_data(html: str) -> dict:
         log.error("Got empty HTML response - returns empty dictionary!")
         return {}
 
-    if html and ERROR_OVER_1000_RECORDS in html:
+    if ERROR_OVER_1000_RECORDS in html:
         log.error("Found over 1000 records - returns empty dictionary!")
         return {}
 
@@ -187,54 +181,15 @@ def perform_ships_search_multiple_threads(symbols_variations: list, workers_coun
         return local_ships
 
 
-# def save_ships_to_excel(xls_file: str, ships_map):
-#     """Save provided search results into xls file.
-#     :param xls_file:
-#     :param ships_map:
-#     :return:
-#     """
-#     log.debug('save_ships(): save provided ships map into file: {}.'.format(xls_file))
-#
-#     if ships_map is None:
-#         log.warning("Provided empty ships map! Nothing to save!")
-#         return
-#
-#     book = xlwt.Workbook()              # create workbook
-#     sheet = book.add_sheet("reg_book")  # create new sheet
-#
-#     # create header
-#     row = sheet.row(0)
-#     row.write(0, 'flag')
-#     row.write(1, 'main_name')
-#     row.write(2, 'secondary_name')
-#     row.write(3, 'home_port')
-#     row.write(4, 'call_sign')
-#     row.write(5, 'reg_number')
-#     row.write(6, 'imo_number')
-#
-#     row_counter = 1
-#     for key in ships_map:  # iterate over ships map with keys / values
-#         row = sheet.row(row_counter)  # create new row
-#         ship = ships_map[key]         # get ship from map
-#         # write cells values
-#         row.write(0, ship['flag'])
-#         row.write(1, ship['main_name'])
-#         row.write(2, ship['secondary_name'])
-#         row.write(3, ship['home_port'])
-#         row.write(4, ship['call_sign'])
-#         row.write(5, ship['reg_number'])
-#         row.write(6, ship['imo_number'])
-#         row_counter += 1
-#
-#     book.save(xls_file)  # save created workbook
+class RsClassOrgScraper(ScraperAbstractClass):
+    """Scraper for rs-class.org source system."""
 
+    def __init__(self, source_name: str, cache_path: str):
+        super().__init__(source_name, cache_path)
+        self.log = logging.getLogger(const.SYSTEM_RSCLASSORG)
+        self.log.info(f'RsClassOrgScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-class RsClassOrgScraper(ScraperInterface):
-
-    def __init__(self):
-        self.log = logging.getLogger(LOGGER_NAME)
-
-    def scrap(self, cache_path: str, workers_count: int, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False):
         """RS Class Org data scraper."""
         log.info("scrap(): processing rs-class.org")
 

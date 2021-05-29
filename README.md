@@ -8,11 +8,14 @@ Fleet Info Service is a data aggregator for the world fleet. Info Service proces
 open data sources and provides analytics, based on aggregated data.  
 
 Service aggregates the following public data sources:
-  - [source 1]()
-  - [source 2]()
-  - [source 3]()
+  - [Russian Maritime Register of Shipping](https://rs-class.org/)
+  - [Russian River Register](https://www.rivreg.ru/)
+  - []()
+  - []()
+  - []()
+  - []()
 
-Here is the list of related systems:
+The list of related systems / sources of additional info:
   - [Центр СКО](https://www.c-sko.ru/)
   - [Vessels in Class - IACS](http://www.iacs.org.uk/ship-company-data/vessels-in-class/)
   - [World Shipping Register](https://world-ships.com/)

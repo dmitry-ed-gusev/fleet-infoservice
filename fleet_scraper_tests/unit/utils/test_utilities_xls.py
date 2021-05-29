@@ -5,7 +5,7 @@
     Test for excel-related utilities class.
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 25.05.2021
+    Modified: Dmitrii Gusev, 28.05.2021
 """
 
 import unittest
@@ -13,14 +13,17 @@ import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
 from fleet_scraper.engine.entities.ships import BaseShipDto, ExtendedShipDto
-from fleet_scraper.engine.utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel
-from fleet_scraper.engine.utils.utilities_xls import load_base_ships_from_excel, load_extended_ships_from_excel
+from fleet_scraper.engine.utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel, \
+    load_base_ships_from_excel, load_extended_ships_from_excel
 
 # some useful constants
 LOGGER_NAME = 'scraper_rsclassorg_test'
 LOGGER_CONFIG_FILE = '../../test_logging.yml'
-EMPTY_EXCEL_FILE_NAME = 'empty_excel_file_name.xls'
-EMPTY_DIRECTORY_NAME = 'empty_dir'
+
+DIRECTORY_NAME_EMPTY = 'empty_dir'
+EXCEL_FILE_NAME_EMPTY = 'empty_excel_file_name.xls'
+EXCEL_FILE_NAME_SAVE = 'excel_file_for_save.xls'
+EXCEL_FILE_NAME_LOAD = 'excel_file_for_load.xls'
 
 
 class TestUtilitiesXls(unittest.TestCase):
@@ -35,9 +38,6 @@ class TestUtilitiesXls(unittest.TestCase):
 
     def tearDown(self):
         self.log.debug("TestUtilitiesXls.tearDown()")
-        # remove empty excel file after all test in a class
-        empty_xls: Path = Path(EMPTY_EXCEL_FILE_NAME)
-        empty_xls.unlink(missing_ok=True)
 
     @classmethod
     def setUpClass(cls):
@@ -47,6 +47,15 @@ class TestUtilitiesXls(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.log.debug("TestUtilitiesXls.tearDownClass()")
+        # remove unnecessary excel files after all test in a class
+        xls: Path = Path(EXCEL_FILE_NAME_EMPTY)
+        xls.unlink(missing_ok=True)
+        xls: Path = Path(EXCEL_FILE_NAME_SAVE)
+        xls.unlink(missing_ok=True)
+
+    def test_verify_and_process_xls_file(self):
+        # todo: implementation!
+        pass
 
     def test_save_base_ships_2_excel_empty_xls_file_name(self):
         self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), None))
@@ -55,17 +64,18 @@ class TestUtilitiesXls(unittest.TestCase):
 
     def test_save_base_ships_2_excel_xls_file_is_a_directory(self):
         # create empty dir in the current folder
-        empty_dir: Path = Path(EMPTY_DIRECTORY_NAME)
+        empty_dir: Path = Path(DIRECTORY_NAME_EMPTY)
         empty_dir.mkdir()
         # test / assert
-        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), EMPTY_DIRECTORY_NAME))
+        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), DIRECTORY_NAME_EMPTY))
         # cleanup - remove created dir
         empty_dir.rmdir()
 
     def test_save_base_ships_2_excel_empty_ships_list(self):
-        save_base_ships_2_excel(list(), EMPTY_EXCEL_FILE_NAME)
-        empty_file: Path = Path(EMPTY_EXCEL_FILE_NAME)
+        save_base_ships_2_excel(list(), EXCEL_FILE_NAME_EMPTY)
+        empty_file: Path = Path(EXCEL_FILE_NAME_EMPTY)
         self.assertTrue(empty_file.exists())  # todo: add more checks / content checks
+        self.assertTrue(empty_file.is_file())
 
     def test_save_base_ships_2_excel(self):
         ship1: BaseShipDto = BaseShipDto('123456')
@@ -83,9 +93,14 @@ class TestUtilitiesXls(unittest.TestCase):
         ship2.secondary_name = 'secondary2'
         ship2.home_port = 'port2'
         ship2.call_sign = 'sign2'
-        # todo: create list with two members
-        # todo: save to excel
-        # todo: check created excel
+
+        ships: list = [ship1, ship2]
+        save_base_ships_2_excel(ships, EXCEL_FILE_NAME_SAVE)
+
+        xls_file: Path = Path(EXCEL_FILE_NAME_SAVE)
+        self.assertTrue(xls_file.exists())  # todo: add more checks / content checks
+        self.assertTrue(xls_file.is_file())
+
 
     # def test_save_extended_ships_2_excel_empty_ships(self):
     #     pass

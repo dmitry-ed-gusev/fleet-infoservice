@@ -1,9 +1,9 @@
 ###############################################################################
 #
-#   Logging configuration file for Fleet Scraper Component.
+#   Logging configuration file for Fleet Scraper System.
 #
-#   Created:  Dmitrii Gusev, 2020
-#   Modified: Dmitrii Gusev, 29.04.2021
+#   Created:  Dmitrii Gusev, 01.12.2020
+#   Modified: Dmitrii Gusev, 29.05.2021
 #
 ###############################################################################
 
@@ -50,15 +50,23 @@ loggers:
         level: DEBUG
     scraper_utilities_xls:     # scraper excel-related utilities module
         level: DEBUG
-    scraper_clarksonsnet:      # clarksons scraper module
+    fleet_scraper:             # main Fleet Scraper module
         level: DEBUG
-    scraper_marinetrafficcom:  # marinetraffic scraper module
+    fleet_scrape_archiver:     # Fleet Scraper Archiver module
         level: DEBUG
     scraper_rsclassorg:        # rs-class scraper module
         level: DEBUG
+    scraper_rivregru:          # rivreg.ru scraper module
+        level: DEBUG
+    scraper_morflotru:         # morflot.ru scraper module
+        level: DEBUG
+    scraper_gims:              # gims scraper module
+        level: DEBUG
     scraper_vesselfinder:      # vessel-finder scraper module
         level: DEBUG
-    fleet_scraper:             # main Fleet Scraper module
+    scraper_clarksonsnet:      # clarksons scraper module
+        level: DEBUG
+    scraper_marinetrafficcom:  # marinetraffic scraper module
         level: DEBUG
     sqlitedb:
         level: DEBUG

@@ -9,30 +9,34 @@
         - (pathlib -2)  https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 25.05.2021
+    Modified: Dmitrii Gusev, 28.05.2021
 """
 
 import xlwt
 import logging
 from pathlib import Path
 
-# some useful constants
-DEFAULT_EXCEL_SHEET_NAME = 'ships'
-
-# todo: implement unit tests for module functions!
-
 # init module logger
 log = logging.getLogger('scraper_utilities_xls')
 
+# some useful constants
+DEFAULT_EXCEL_SHEET_NAME = 'ships'
 
-def verify_and_process_file(file_name: str) -> None:
+
+def verify_and_process_xls_file(xls_file: str) -> None:
     """Verification of the provided file name and creating all necessary parent dirs in
         the provided file path (if needed).
-    :param file_name:
+    :param xls_file:
     :return None: ???
     """
-    # todo: externalize here excel file checks, perhaps - move it to utilities class?
-    pass
+    if xls_file is None or len(xls_file.strip()) == 0:  # fail-fast -> check provided xls file name
+        raise ValueError('Provided empty excel file name!')
+
+    xls_file_path: Path = Path(xls_file)
+    if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
+        raise ValueError(f'Provided file path {xls_file} is an existing directory!')
+
+    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
 
 
 def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
@@ -48,14 +52,7 @@ def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
         raise ValueError('Not a list provided (ships)!')
 
-    if xls_file is None or len(xls_file.strip()) == 0:  # fail-fast -> check provided xls file name
-        raise ValueError('Provided empty excel file name - can\'t save!')
-
-    xls_file_path: Path = Path(xls_file)
-    if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
-        raise ValueError(f'Provided file path {xls_file} is an existing directory!')
-
-    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
+    verify_and_process_xls_file(xls_file)  # verify and process xls file
 
     book = xlwt.Workbook()                            # create workbook
     sheet = book.add_sheet(DEFAULT_EXCEL_SHEET_NAME)  # create new sheet
@@ -86,17 +83,26 @@ def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
     book.save(xls_file)  # save created workbook
 
 
+def load_base_ships_from_excel(xls_file: str) -> list:
+    """Load ships (BaseShipDto's) form provided excel file.
+    :param xls_file:
+    :return:
+    """
+    log.debug(f'load_base_ships_from_excel(): save provided ships map to file: {xls_file}.')
+
+    verify_and_process_xls_file(xls_file)  # verify and process xls file
+
+    # todo: implementation!
+
+    return list()
+
+
 def save_extended_ships_2_excel(ships: list, xls_file: str) -> None:
     """???
     :param ships:
     :param xls_file:
     :return None ???
     """
-    pass
-
-
-def load_base_ships_from_excel():
-    """"""
     pass
 
 

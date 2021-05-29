@@ -2,15 +2,15 @@
 # coding=utf-8
 
 """
-    Scraper for River Register Book.
+    Scraper for Morflot Ships Book.
 
-    Main data source (source system address): https://www.rivreg.ru/
+    Main data source (source system address): http://morflot.gov.ru/
 
     Useful materials and resources:
-      - https://www.rivreg.ru/activities/class/regbook/ - register book url (actual data)
+      - (excel) http://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
 
-    Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 29.05.2021
+    Created:  Dmitrii Gusev, 29.05.2021
+    Modified:
 """
 
 import logging
@@ -22,19 +22,19 @@ from .entities.ships import BaseShipDto
 # todo: implement unit tests for this module!
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_RIVREGRU)
+log = logging.getLogger(const.SYSTEM_MORFLOTRU)
 
 
-class RivRegRuScraper(ScraperAbstractClass):
-    """Scraper for rivreg.ru source system."""
+class MorflotRuScraper(ScraperAbstractClass):
+    """Scraper for morflot.ru source system."""
 
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
-        self.log = logging.getLogger(const.SYSTEM_RIVREGRU)
-        self.log.info(f'RivRegRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
+        self.log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+        self.log.info(f'MorflotRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
     def scrap(self, dry_run: bool = False):
-        """River Register data scraper."""
+        """Morflot data scraper."""
         log.info("scrap(): processing rivreg.ru")
 
         if dry_run:  # dry run mode - won't do anything!
