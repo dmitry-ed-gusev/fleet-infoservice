@@ -1,25 +1,37 @@
-# World Fleet Scraper
-Dmitrii Gusev (C), 2021
+# Fleet Info Service
+Dmitrii Gusev, Sergei Lukin (C), 2020 - 2021  
 
-### Useful Resources
+
+## Service Description
+
+Fleet Info Service is a data aggregator for the world fleet. Info Service process and merge data from the 
+open data sources and provides analytics, based on aggregated data.  
+
+Service aggregates the following public data sources:
+  - [Russian Maritime Register of Shipping](https://rs-class.org/)
+  - [Russian River Register](https://www.rivreg.ru/)
+  - []()
+  - []()
+  - []()
+  - []()
+
+The list of related systems / sources of additional info:
   - [Центр СКО](https://www.c-sko.ru/)
   - [Vessels in Class - IACS](http://www.iacs.org.uk/ship-company-data/vessels-in-class/)
   - [World Shipping Register](https://world-ships.com/)
 
 
-https://medium.com/naukri-engineering/elasticsearch-tutorial-for-beginners-using-python-b9cb48edcedc
-https://tryolabs.com/blog/2015/02/17/python-elasticsearch-first-steps/
-https://towardsdatascience.com/getting-started-with-elasticsearch-in-python-c3598e718380
-https://pythontic.com/serialization/json/introduction
-https://yzhong-cs.medium.com/serialize-and-deserialize-complex-json-in-python-205ecc636caa
-https://pynative.com/make-python-class-json-serializable/
+## Project Architecture
 
-Testing:
-https://realpython.com/pytest-python-testing/
-https://realpython.com/python-testing/
+For creating the project architecture the service [draw.io/diagrams.net](https://www.diagrams.net/) was used.
+  - RAW architecture file in the **draw.io** format: [architecture raw](docs/fleet_info_service.drawio)
+  - architecture in the JPEG format: [architecture jpeg](docs/fleet_info_service.jpeg) 
 
-Hashing:
-https://www.pythoncentral.io/hashing-strings-with-python/
 
-## Tech Details
+## Building Project
+
 TBD
+
+
+## Tech Info
+Related technical/technological info may be found here: [Tech Info](tech_info.md)
