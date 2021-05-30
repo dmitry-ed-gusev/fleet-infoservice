@@ -10,12 +10,13 @@
       - https://www.rivreg.ru/activities/class/regbook/ - register book url (actual data)
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 29.05.2021
+    Modified: Dmitrii Gusev, 30.05.2021
 """
 
 import logging
 
 from .utils import constants as const
+from .utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
 
@@ -38,7 +39,7 @@ class RivRegRuScraper(ScraperAbstractClass):
         log.info("scrap(): processing rivreg.ru")
 
         if dry_run:  # dry run mode - won't do anything!
-            self.log.warning("DRY RUN MODE IS ON!")
+            process_scraper_dry_run(const.SYSTEM_RIVREGRU)
             return SCRAPE_RESULT_OK
 
 

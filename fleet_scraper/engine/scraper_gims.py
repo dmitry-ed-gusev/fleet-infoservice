@@ -11,12 +11,13 @@
       - http://www.gims.ru/ - looks like unofficial web site
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified:
+    Modified: Dmitrii Gusev, 30.05.2021
 """
 
 import logging
 
 from .utils import constants as const
+from .utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
 
@@ -39,7 +40,7 @@ class GimsRuScraper(ScraperAbstractClass):
         log.info("scrap(): processing GIMS")
 
         if dry_run:  # dry run mode - won't do anything!
-            self.log.warning("DRY RUN MODE IS ON!")
+            process_scraper_dry_run(const.SYSTEM_GIMS)
             return SCRAPE_RESULT_OK
 
 

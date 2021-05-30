@@ -9,18 +9,19 @@
         - (pathlib -2)  https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 28.05.2021
+    Modified: Dmitrii Gusev, 30.05.2021
 """
 
 import xlwt
 import logging
 from pathlib import Path
 
-# init module logger
-log = logging.getLogger('scraper_utilities_xls')
+from . import constants as const
+from .utilities import generate_timed_filename
+from ..entities.ships import BaseShipDto, ExtendedShipDto
 
-# some useful constants
-DEFAULT_EXCEL_SHEET_NAME = 'ships'
+# init module logger
+log = logging.getLogger(const.LOGGING_UTILITIES_XLS_LOGGER)
 
 
 def verify_and_process_xls_file(xls_file: str) -> None:
@@ -47,7 +48,7 @@ def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
             non-existent directories - all necessary directories will be created.
     :return: None ???
     """
-    log.debug(f'save_base_ships_2_excel(): save provided ships map to file: {xls_file}.')
+    log.debug(f'save_base_ships_2_excel(): save provided ships list to xls file: {xls_file}.')
 
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
         raise ValueError('Not a list provided (ships)!')
@@ -55,29 +56,40 @@ def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
     verify_and_process_xls_file(xls_file)  # verify and process xls file
 
     book = xlwt.Workbook()                            # create workbook
-    sheet = book.add_sheet(DEFAULT_EXCEL_SHEET_NAME)  # create new sheet
+    sheet = book.add_sheet(const.EXCEL_DEFAULT_SHEET_NAME)  # create new sheet
 
     # create header row
     row = sheet.row(0)
-    row.write(0, 'flag')
-    row.write(1, 'main_name')
-    row.write(2, 'secondary_name')
-    row.write(3, 'home_port')
-    row.write(4, 'call_sign')
-    row.write(5, 'reg_number')
-    row.write(6, 'imo_number')
+    # ship identity
+    row.write(0, 'imo_number')
+    row.write(1, 'proprietary_number')
+    row.write(2, 'source_system')
+    # ship main value (base data)
+    row.write(3, 'flag')
+    row.write(4, 'main_name')
+    row.write(5, 'secondary_name')
+    row.write(6, 'home_port')
+    row.write(7, 'call_sign')
+    row.write(8, 'extended_url')
+    row.write(9, 'datetime')
 
     row_counter = 1
     for ship in ships:  # iterate over ships map with keys / values
         row = sheet.row(row_counter)  # create new row
+        # ship identity
+        row.write(0, ship.imo_number)
+        row.write(1, ship.proprietary_number)
+        row.write(2, ship.source_system)
+        # ship main value (base data)
+        row.write(3, ship.flag)
+        row.write(4, ship.main_name)
+        row.write(5, ship.secondary_name)
+        row.write(6, ship.home_port)
+        row.write(7, ship.call_sign)
+        row.write(8, ship.extended_info_url)
+        # convert datetime to human-readable format
+        row.write(9, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
 
-        row.write(0, ship.flag)
-        row.write(1, ship.main_name)
-        row.write(2, ship.secondary_name)
-        row.write(3, ship.home_port)
-        row.write(4, ship.call_sign)
-        row.write(5, ship.reg_number)
-        row.write(6, ship.imo_number)
         row_counter += 1
 
     book.save(xls_file)  # save created workbook
@@ -88,27 +100,58 @@ def load_base_ships_from_excel(xls_file: str) -> list:
     :param xls_file:
     :return:
     """
-    log.debug(f'load_base_ships_from_excel(): save provided ships map to file: {xls_file}.')
-
+    log.debug(f'load_base_ships_from_excel(): load extended ships from xls file: {xls_file}.')
     verify_and_process_xls_file(xls_file)  # verify and process xls file
-
     # todo: implementation!
-
     return list()
 
 
 def save_extended_ships_2_excel(ships: list, xls_file: str) -> None:
-    """???
-    :param ships:
-    :param xls_file:
+    """Save provided list of extended ships dto's to xls file. For sheet name default value is used.
+    :param ships: hips list to save, if list empty/None - empty excel file will be created
+    :param xls_file: excel file to save provided ships, mustn't be empty. Overrides existing file
+            by default. If provided path is existing directory - error. If provided long path with
+            non-existent directories - all necessary directories will be created.
     :return None ???
     """
-    pass
+    log.debug(f'save_extended_ships_2_excel(): save provided ships list to xls file: {xls_file}.')
+
+    if not isinstance(ships, list):  # fail-fast -> provided list of ships
+        raise ValueError('Not a list provided (ships)!')
+
+    verify_and_process_xls_file(xls_file)  # verify and process xls file
+
+    book = xlwt.Workbook()  # create workbook
+    sheet = book.add_sheet(const.EXCEL_DEFAULT_SHEET_NAME)  # create new sheet
+
+    # create header row
+    row_counter = 1
+    for ship in ships:  # iterate over ships map with keys / values
+        row = sheet.row(row_counter)  # create new row
+        # row.write(0, ship.flag) - etc for further values
+        row_counter += 1
+    # todo: implementation!
+    book.save(xls_file)  # save created workbook
 
 
-def load_extended_ships_from_excel():
-    """"""
-    pass
+def load_extended_ships_from_excel(xls_file: str) -> list:
+    """Load ships (ExtendedShipDto's) form provided excel file.
+    :param xls_file:
+    :return:
+    """
+    log.debug(f'load_extended_ships_from_excel(): load extended ships from xls file: {xls_file}.')
+    verify_and_process_xls_file(xls_file)  # verify and process xls file
+    # todo: implementation!
+    return list()
+
+
+def process_scraper_dry_run(system_name: str) -> None:
+    log.warning("DRY RUN MODE IS ON!")
+    # save empty files to cache with specific postfix
+    cache_dir = const.SCRAPER_CACHE_PATH + '/' + generate_timed_filename(system_name +
+                                                                         const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX)
+    save_base_ships_2_excel(list(), cache_dir + '/' + const.EXCEL_BASE_SHIPS_DATA)
+    save_extended_ships_2_excel(list(), cache_dir + '/' + const.EXCEL_EXTENDED_SHIPS_DATA)
 
 
 # todo: implement unit tests that module isn't runnable directly!

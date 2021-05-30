@@ -6,22 +6,23 @@
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 28.05.2021
+    Modified: Gusev Dmitrii, 30.05.2021
 """
 
 import logging
 import hashlib
+
+from . import constants as const
 from datetime import datetime
 
 # init module logger
-log = logging.getLogger('scraper_utilities')
+log = logging.getLogger(const.LOGGING_UTILITIES_LOGGER)
 
 # useful module constants
 RUS_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 ENG_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUM_CHARS = "0123456789"
 SPEC_CHARS = "-"
-TIMESTAMP_PATTERN = '%d-%b-%Y_%H-%M-%S.%f'
 
 
 def get_hash_bucket_number(value: str, buckets: int) -> int:
@@ -115,7 +116,7 @@ def generate_timed_filename(postfix: str) -> str:
     """
     log.debug(f'generate_timed_filename(): generating file name with postfix {postfix}.')
 
-    result = datetime.now().strftime(TIMESTAMP_PATTERN)
+    result: str = datetime.now().strftime(const.SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN)
     if postfix is not None and len(postfix.strip()) > 0:
         result += '-' + postfix.strip()
 

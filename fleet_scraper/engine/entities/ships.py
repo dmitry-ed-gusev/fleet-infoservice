@@ -1,51 +1,58 @@
 # coding=utf-8
 
 """
-    Ships related entities for scraping.
+    Ships related DTOs for data scraping.
+    Currently supports:
+      - BaseShipDto - class contains basic ship info alongside with some necessary tech info
+      - ExtendedShipDto - class contains extended ship info
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 28.05.2021
+    Modified: Dmitrii Gusev, 30.05.2021
 """
 
+from datetime import datetime
 
 # todo: implement unit tests for this module / script
+
 
 class BaseShipDto:
     """Base ship DTO object - ship with base attributes, used for all scrapers."""
 
-    # def __new__(cls, *args, **kwargs):  # creates new instance, called before __init()__
-    #     pass
-
-    def __init__(self, imo_number: str):  # inits newly created (by __new()__) object instance
-        self.imo_number = imo_number
-        self.proprietary_number = ''
-        self.source_code = ''
-        self.flag = ''
-        self.main_name = ''
-        self.secondary_name = ''
-        self.home_port = ''
-        self.call_sign = ''
+    def __init__(self, imo_number: str, proprietary_number: str, source_system: str):
+        """
+        :param imo_number:
+        :param proprietary_number:
+        :param source_system:
+        """
+        # ship identity data
+        self.imo_number: str = imo_number                  # (IDENTITY) imo number of the ship
+        self.proprietary_number: str = proprietary_number  # (IDENTITY) proprietary ship number (reg/riv reg/etc number)
+        self.source_system: str = source_system            # (IDENTITY) source system where ship data was retrieved
+        # main ship value
+        self.flag: str = ''                                # ship's flag
+        self.main_name: str = ''                           # ship's main name
+        self.secondary_name: str = ''                      # ship's secondary name
+        self.home_port: str = ''                           # ship's home port
+        self.call_sign: str = ''                           # ship's call sign
+        # additional tech info
+        self.extended_info_url: str = ''                   # URL for ship extended info (usually - separated page)
+        self.init_datetime: datetime = datetime.now()      # timestamp of creating ship instance
 
     def __str__(self) -> str:  # magic method for object string representation - str(object)
-        return f"IMO #: {self.imo_number}, proprietary #: {self.reg_number}, flag: {self.flag}, " \
-               f"name: {self.main_name}, secondary name: {self.secondary_name}, " \
-               f"port: {self.home_port}, call: {self.call_sign}"
+        """
+        :return:
+        """
+        return f"IMO #: {self.imo_number}, proprietary #: {self.proprietary_number}, " \
+               f"source system: {self.source_system}, flag: {self.flag}, " \
+               f"main name: {self.main_name}, secondary name: {self.secondary_name}, " \
+               f"home port: {self.home_port}, call sign: {self.call_sign}, " \
+               f"timestamp: {self.init_datetime}, extended URL: {self.extended_info_url}"
 
-    # def __repr__(self):
-    #     # todo: implement function!
-    #     raise NotImplemented("Not implemented yet!")
-    #
-    # # def __eq__(self, other):  # equals magic method (==)
-    #     # todo: implement function!
-    #     raise NotImplemented("Not implemented yet!")
-    #
-    # def __ne__(self, other):  # not equals magic method (!=)
-    #     # todo: implement function!
-    #     raise NotImplemented("Not implemented yet!")
-    #
-    # def __hash__(self) -> int:  # hash magic method hash()
-    #     # todo: implement function!
-    #     raise NotImplemented("Not implemented yet!")
+    def hash_of_ship_value(self) -> int:
+        """
+        :return:
+        """
+        pass
 
 
 class ExtendedShipDto(object):

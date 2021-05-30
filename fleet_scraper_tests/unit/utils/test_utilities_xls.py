@@ -5,7 +5,7 @@
     Test for excel-related utilities class.
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 28.05.2021
+    Modified: Dmitrii Gusev, 30.05.2021
 """
 
 import unittest
@@ -78,21 +78,21 @@ class TestUtilitiesXls(unittest.TestCase):
         self.assertTrue(empty_file.is_file())
 
     def test_save_base_ships_2_excel(self):
-        ship1: BaseShipDto = BaseShipDto('123456')
-        ship1.reg_number = '123456'
+        ship1: BaseShipDto = BaseShipDto('123456', '987654', 'system1')
         ship1.flag = 'flag1'
         ship1.main_name = 'name1'
         ship1.secondary_name = 'secondary1'
         ship1.home_port = 'port1'
         ship1.call_sign = 'sign1'
+        ship1.extended_info_url = 'URL1'
 
-        ship2: BaseShipDto = BaseShipDto('1234567')
-        ship2.reg_number = '1234567'
+        ship2: BaseShipDto = BaseShipDto('1234567', '9876543', 'system2')
         ship2.flag = 'flag2'
         ship2.main_name = 'name2'
         ship2.secondary_name = 'secondary2'
         ship2.home_port = 'port2'
         ship2.call_sign = 'sign2'
+        ship2.extended_info_url = 'URL2'
 
         ships: list = [ship1, ship2]
         save_base_ships_2_excel(ships, EXCEL_FILE_NAME_SAVE)
