@@ -10,7 +10,7 @@
       - (excel) http://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -34,7 +34,7 @@ class MorflotRuScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_MORFLOTRU)
         self.log.info(f'MorflotRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Morflot data scraper."""
         log.info("scrap(): processing rivreg.ru")
 

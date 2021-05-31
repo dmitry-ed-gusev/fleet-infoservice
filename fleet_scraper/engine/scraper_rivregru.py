@@ -10,7 +10,7 @@
       - https://www.rivreg.ru/activities/class/regbook/ - register book url (actual data)
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -34,7 +34,7 @@ class RivRegRuScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_RIVREGRU)
         self.log.info(f'RivRegRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """River Register data scraper."""
         log.info("scrap(): processing rivreg.ru")
 

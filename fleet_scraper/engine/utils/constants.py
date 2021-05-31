@@ -4,7 +4,7 @@
     Useful scraper constants, shared between multiple modules / scripts.
 
     Created:  Gusev Dmitrii, 28.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 # general configuration
@@ -12,6 +12,7 @@ DEFAULT_ENCODING = 'utf-8'
 SCRAPER_CACHE_PATH = './engine/cache'
 SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN = '%d-%b-%Y_%H-%M-%S'  # timestamp without fractions
 SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX = '-dryrun'
+SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX = '-requests-limited'
 
 # systems names + logging configuration (system name is used as a logger name as well)
 LOGGING_CONFIG_FILE = 'logging.yml'

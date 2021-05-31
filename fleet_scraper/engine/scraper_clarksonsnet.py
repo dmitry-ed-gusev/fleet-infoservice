@@ -11,7 +11,7 @@
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -35,7 +35,7 @@ class ClarksonsNetScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_CLARKSONSNET)
         self.log.info(f'ClarksonsNetScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Clarksons Net data scraper."""
         log.info("scrap(): processing clarksons.net")
 

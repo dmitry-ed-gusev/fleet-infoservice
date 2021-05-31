@@ -10,7 +10,7 @@
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -34,7 +34,7 @@ class VesselFinderComScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_VESSELFINDERCOM)
         self.log.info(f'VesselFinderComScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Vesselfinder data scraper."""
         log.info("scrap(): processing vesselfinder.com")
 

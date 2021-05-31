@@ -7,17 +7,18 @@
     Important notes:
       - scraper can be run in 'DRY RUN' mode - nothing will happen, only empty excel files
         will be created in cache (dry run directory will be marked with '-dryrun' postfix.
-      - ???
+      - scraper can be run in 'requests number limited mode' - # todo: add description!
 
     Useful resources:
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
-# todo: finish implementation
-# todo: implement cmd line arguments - dry run, maybe others...
+# todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
+# todo: create unit tests for dry run mode
+# todo: create unit tests for request limited run
 
 import os
 import shutil
@@ -37,16 +38,17 @@ from engine.scraper_marinetrafficcom import MarineTrafficComScraper
 log = logging.getLogger(const.LOGGING_SCRAPER_PROCESSOR_LOGGER)
 
 
-def scrap_all_data(dry_run: bool = False):
+def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     """
     :param dry_run:
+    :param requests_limit:
     :return:
     """
     log.debug("scrap_all_data(): processing all data sources.")
 
     # scraper class for rs-class.org
     rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
-    rs_scraper.scrap(dry_run=dry_run)
+    rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
 
     # scraper class for rivreg.ru
     riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
@@ -115,9 +117,10 @@ def cache_cleanup(dry_run: bool = False) -> list:
 # main part of the script
 if __name__ == '__main__':
     setup_logging(default_path=const.LOGGING_CONFIG_FILE)
-    log.info("Starting Scraper Processor for all sources...")
+    log.info("Starting Scraper Processor for all source systems...")
 
     # start all scrapers and get the data
-    scrap_all_data(dry_run=False)
+    scrap_all_data(dry_run=False, requests_limit=10)
+
     # do cleanup for dry run immediately
     log.info(f'Cleaned up: {cache_cleanup(False)}')

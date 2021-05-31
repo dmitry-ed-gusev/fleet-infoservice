@@ -11,7 +11,7 @@
       - http://www.gims.ru/ - looks like unofficial web site
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -35,7 +35,7 @@ class GimsRuScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_GIMS)
         self.log.info(f'GimsRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """GIMS data scraper."""
         log.info("scrap(): processing GIMS")
 
