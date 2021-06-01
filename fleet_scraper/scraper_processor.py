@@ -13,12 +13,14 @@
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 31.05.2021
+    Modified: Dmitrii Gusev, 01.06.2021
 """
 
 # todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
 # todo: create unit tests for dry run mode
 # todo: create unit tests for request limited run
+
+# todo: implement multithreading for calling scrapers, some of scrapers will spawn more threads (???)
 
 import os
 import shutil
@@ -46,34 +48,30 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     """
     log.debug("scrap_all_data(): processing all data sources.")
 
-    # scraper class for rs-class.org
+    # --- scraper for rivreg.ru
+    riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
+    riv_scraper.scrap(dry_run=dry_run)
+    # --- scraper class for morflot.ru
+    morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
+    morflot_scraper.scrap(dry_run=dry_run)
+    # --- scraper for rs-class.org
     rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
     rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
 
-    # scraper class for rivreg.ru
-    riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
-    riv_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for morflot.ru
-    morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
-    morflot_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for gims.ru
-    gims_scraper: GimsRuScraper = GimsRuScraper(const.SYSTEM_GIMS, const.SCRAPER_CACHE_PATH)
-    gims_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for vesselfinder.com
-    vf_scraper: VesselFinderComScraper = VesselFinderComScraper(const.SYSTEM_VESSELFINDERCOM, const.SCRAPER_CACHE_PATH)
-    vf_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for clarksons.net
-    clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET, const.SCRAPER_CACHE_PATH)
-    clarksons_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for marinetraffic.com
-    mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
-                                                                        const.SCRAPER_CACHE_PATH)
-    mtraffic_scraper.scrap(dry_run=dry_run)
+    # todo: implement the below scrapers properly!
+    # # scraper class for gims.ru
+    # gims_scraper: GimsRuScraper = GimsRuScraper(const.SYSTEM_GIMS, const.SCRAPER_CACHE_PATH)
+    # gims_scraper.scrap(dry_run=dry_run)
+    # # scraper class for vesselfinder.com
+    # vf_scraper: VesselFinderComScraper = VesselFinderComScraper(const.SYSTEM_VESSELFINDERCOM, const.SCRAPER_CACHE_PATH)
+    # vf_scraper.scrap(dry_run=dry_run)
+    # # scraper class for clarksons.net
+    # clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET, const.SCRAPER_CACHE_PATH)
+    # clarksons_scraper.scrap(dry_run=dry_run)
+    # # scraper class for marinetraffic.com
+    # mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
+    #                                                                     const.SCRAPER_CACHE_PATH)
+    # mtraffic_scraper.scrap(dry_run=dry_run)
 
 
 def archive_scraped_data(dry_run: bool = False) -> list:
@@ -120,7 +118,7 @@ if __name__ == '__main__':
     log.info("Starting Scraper Processor for all source systems...")
 
     # start all scrapers and get the data
-    scrap_all_data(dry_run=False, requests_limit=10)
+    scrap_all_data(dry_run=False, requests_limit=0)
 
     # do cleanup for dry run immediately
     log.info(f'Cleaned up: {cache_cleanup(False)}')

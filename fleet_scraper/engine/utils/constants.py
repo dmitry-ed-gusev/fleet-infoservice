@@ -4,7 +4,7 @@
     Useful scraper constants, shared between multiple modules / scripts.
 
     Created:  Gusev Dmitrii, 28.05.2021
-    Modified: Dmitrii Gusev, 31.05.2021
+    Modified: Dmitrii Gusev, 01.06.2021
 """
 
 # general configuration
@@ -21,6 +21,7 @@ LOGGING_SCRAPER_PROCESSOR_LOGGER = 'fleet_scraper'
 LOGGING_SCRAPER_ARCHIVER_LOGGER = 'fleet_scrape_archiver'
 LOGGING_UTILITIES_LOGGER = 'scraper_utilities'
 LOGGING_UTILITIES_XLS_LOGGER = 'scraper_utilities_xls'
+LOGGING_UTILITIES_HTTP_LOGGER = 'scraper_utilities_http'
 
 SYSTEM_RSCLASSORG = 'scraper_rsclassorg'
 SYSTEM_RIVREGRU = 'scraper_rivregru'

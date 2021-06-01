@@ -3,7 +3,7 @@
 #   Logging configuration file for Fleet Scraper System.
 #
 #   Created:  Dmitrii Gusev, 01.12.2020
-#   Modified: Dmitrii Gusev, 29.05.2021
+#   Modified: Dmitrii Gusev, 01.06.2021
 #
 ###############################################################################
 
@@ -49,6 +49,8 @@ loggers:
     scraper_utilities:         # scraper utilities module
         level: DEBUG
     scraper_utilities_xls:     # scraper excel-related utilities module
+        level: DEBUG
+    scraper_utilities_http:    # scraper http-related utilities module
         level: DEBUG
     fleet_scraper:             # main Fleet Scraper module
         level: DEBUG

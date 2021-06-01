@@ -10,22 +10,21 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 31.05.2021
+    Modified: Gusev Dmitrii, 01.06.2021
 """
 
-import ssl
 import sys
 import time
 import logging
 import requests
 import threading
 import concurrent.futures
-from urllib import request, parse
 from bs4 import BeautifulSoup
 
+from .utils import constants as const
 from .utils.utilities import build_variations_list, generate_timed_filename
 from .utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel, process_scraper_dry_run
-from .utils import constants as const
+from .utils.utilities_http import perform_http_post_request
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
 
@@ -33,14 +32,13 @@ from .entities.ships import BaseShipDto
 
 # useful constants / configuration
 MAIN_URL = "https://lk.rs-class.org/regbook/regbookVessel?ln=ru"
-FORM_PARAM = "namer"
 ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 записей! Уточните параметры запроса"
 
 # 10 workers -> 650 sec on my Mac
 # 20 workers -> 409 sec on my Mac
 # 40 workers -> 323 sec on my Mac
 # 100 workers -> 304 sec on my Mac
-WORKERS_COUNT = 20  # workers (threads) count for multi-threaded scraping
+WORKERS_COUNT = 40  # workers (threads) count for multi-threaded scraping
 
 # module logging setup
 log = logging.getLogger(const.SYSTEM_RSCLASSORG)
@@ -55,29 +53,6 @@ def get_session():  # todo: refactor -> move to utility class
     if not hasattr(thread_local, "session"):
         thread_local.session = requests.Session()
     return thread_local.session
-
-
-# todo: add perform_http_get_request() method + appropriately rename the method below
-def perform_http_get_request(url: str) -> str:  # todo: refactor - generalize, move to utility class
-    pass
-
-
-def perform_request(request_param: str) -> str:
-    """Perform one HTTP POST request with one form parameter for search.
-    :return: HTML output with found data
-    """
-    # log.debug('perform_request(): request param [{}].'.format(request_param))  # <- too much output
-
-    if request_param is None or len(request_param.strip()) == 0:  # fail-fast - empty value
-        raise ValueError('Provided empty value [{}]!'.format(request_param))
-
-    my_dict = {FORM_PARAM: request_param}  # dictionary for POST request
-    data = parse.urlencode(my_dict).encode(const.DEFAULT_ENCODING)  # perform encoding of request
-    req = request.Request(MAIN_URL, data=data)  # this will make the method "POST" request (with data load)
-    context = ssl.SSLContext()  # new SSLContext -> to bypass security certificate check
-    response = request.urlopen(req, context=context)  # perform request itself
-
-    return response.read().decode(const.DEFAULT_ENCODING)  # read response and perform decode
 
 
 def parse_data(html: str) -> dict:
@@ -133,7 +108,7 @@ def parse_data(html: str) -> dict:
 
 def perform_one_request(search_string: str) -> dict:  # todo: this method is needed for multi-threading - refactor
     """Perform one request to RSCLASS.ORG and parse the output."""
-    ships = parse_data(perform_request(search_string))
+    ships = parse_data(perform_http_post_request(MAIN_URL, {"namer": search_string}))
     log.info("Found ship(s): {}, search string: {}".format(len(ships), search_string))
     return ships
 
@@ -158,7 +133,7 @@ def perform_ships_base_search_single_thread(symbols_variations: list, requests_l
 
     for search_string in symbols_variations:
         log.debug(f"Currently processing: {search_string} ({counter} out of {variations_length})")
-        ships = parse_data(perform_request(search_string))  # request HTML and parse base ship data
+        ships = parse_data(perform_http_post_request(MAIN_URL, {"namer": search_string}))  # HTTP request for base data
         local_ships.update(ships)  # update main dictionary with found data
         log.info(f"Found ship(s): {len(ships)}, total: {len(local_ships)}, search string: {search_string}")
 
