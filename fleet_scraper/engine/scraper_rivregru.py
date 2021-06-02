@@ -11,7 +11,7 @@
       - (excel direct link) https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 01.06.2021
+    Modified: Dmitrii Gusev, 02.06.2021
 """
 
 import logging
@@ -21,6 +21,7 @@ from urllib import request
 
 from .utils import constants as const
 from .utils.utilities import generate_timed_filename
+from .utils.utilities_http import perform_file_download_over_http
 from .utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
@@ -49,22 +50,12 @@ class RivRegRuScraper(ScraperAbstractClass):
             process_scraper_dry_run(const.SYSTEM_RIVREGRU)
             return SCRAPE_RESULT_OK
 
-        # todo: extract the following file download into separated method
-        # generate scraper cache directory path + create necessary dir(s)
-        scraper_cache_dir: str = self.cache_path + '/' + generate_timed_filename(self.source_name) + '/'
-        Path(scraper_cache_dir).mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
-        self.log.debug(f'Created scraper cache dir: {scraper_cache_dir}.')
+        # generate scraper cache directory path
+        scraper_cache_dir: str = self.cache_path + '/' + generate_timed_filename(self.source_name)
 
-        # get raw data in excel format from River Register site and save to cache dir
-        raw_file_name: str = scraper_cache_dir + Path(RIVER_REG_BOOK_URL).name
-        self.log.debug(f'Generated raw file name: {raw_file_name}.')
-        # download the file from the provided `url` and save it locally under certain `file_name`:
-        with request.urlopen(RIVER_REG_BOOK_URL) as response, open(raw_file_name, 'wb') as out_file:
-            shutil.copyfileobj(response, out_file)
-        self.log.info(f'Downloaded raw data file: {RIVER_REG_BOOK_URL}.')
-
-        # parse data into target format (base + extended excel files)
-        # todo: implementation
+        # download raw data file
+        downloaded_file: str = perform_file_download_over_http(RIVER_REG_BOOK_URL, scraper_cache_dir)
+        self.log.info(f'Downloaded raw data file: {downloaded_file}')
 
         return SCRAPE_RESULT_OK
 
