@@ -18,13 +18,14 @@ import logging
 import shutil
 from pathlib import Path
 from urllib import request
+from openpyxl import load_workbook,Workbook
 
-from .utils import constants as const
-from .utils.utilities import generate_timed_filename
-from .utils.utilities_http import perform_file_download_over_http
-from .utils.utilities_xls import process_scraper_dry_run
-from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import BaseShipDto
+from fleet_scraper.engine.utils import constants as const
+from fleet_scraper.engine.utils.utilities import generate_timed_filename
+from fleet_scraper.engine.utils.utilities_http import perform_file_download_over_http
+from fleet_scraper.engine.utils.utilities_xls import process_scraper_dry_run
+from fleet_scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from fleet_scraper.engine.entities.ships import BaseShipDto
 
 # todo: implement unit tests for this module!
 
@@ -32,6 +33,31 @@ RIVER_REG_BOOK_URL = 'https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.x
 
 # module logging setup
 log = logging.getLogger(const.SYSTEM_RIVREGRU)
+
+
+def parse_raw_data(raw_data_file: str) -> list[tuple[list, list]]:
+    """
+    :param raw_data_file:
+    :return:
+    """
+    log.debug(f'Parsing RAW Morflot data: {raw_data_file}')
+
+    if raw_data_file is None or len(raw_data_file.strip()) == 0:
+        raise ValueError('Provided empty path to raw data!')
+
+    wb = load_workbook(filename=raw_data_file)
+    sheet = wb.active
+
+    for i in range(2, sheet.max_row):  # index rows/cols starts with 1, skip the first row (header)
+        reg_number = sheet.cell(row=i, column=1).value
+        ship: BaseShipDto = BaseShipDto('', reg_number, 'rivreg')
+
+        ship.flag = ''
+        ship.main_name = sheet.cell(row=i, column=2).value
+        ship.secondary_name = ''
+        ship.home_port = ''
+        ship.call_sign = ''
+        ship.extended_info_url = '-'
 
 
 class RivRegRuScraper(ScraperAbstractClass):
@@ -62,4 +88,5 @@ class RivRegRuScraper(ScraperAbstractClass):
 
 # main part of the script
 if __name__ == '__main__':
-    print('Don\'t run this script directly! Use wrapper script!')
+    # print('Don\'t run this script directly! Use wrapper script!')
+    parse_raw_data('./engine/cache/02-Jun-2021_17-02-54-scraper_rivregru/Registrovaya-kniga3.xlsx')

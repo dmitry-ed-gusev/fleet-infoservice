@@ -1,6 +1,6 @@
 ## Useful Technical Resources
 
-### Python In general
+### Python In General
   - [built-in methods](https://www.programiz.com/python-programming/methods/built-in)
   - [python OOP vs java OOP](https://realpython.com/oop-in-python-vs-java/)
 
@@ -22,3 +22,8 @@
 #### Hashing:
   - [hashing in python](https://www.pythoncentral.io/hashing-strings-with-python/)
   - [built-in hash() method](https://www.programiz.com/python-programming/methods/built-in/hash)
+
+
+#### Python Work With Excel
+  - [Python with Excel (collection of the resources)](https://www.python-excel.org/)
+  - []()
