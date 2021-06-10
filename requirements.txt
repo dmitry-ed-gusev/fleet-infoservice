@@ -10,6 +10,8 @@ PyYAML>=5.4.1
 
 # -- frameworks / ORM / DBMS
 Django>=3.2.4
+# in order to install sqlite3 on python on linux you need to install the following:
+#   sudo apt install sqlite3 sqlitebrowser libsqlite3-dev
 pysqlite3>=0.4.6
 
 # -- nice text tables (reporting to console)
