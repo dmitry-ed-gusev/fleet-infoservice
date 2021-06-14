@@ -13,7 +13,7 @@
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 01.06.2021
+    Modified: Dmitrii Gusev, 14.06.2021
 """
 
 # todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???

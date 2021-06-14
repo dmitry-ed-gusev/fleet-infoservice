@@ -4,7 +4,7 @@
     Useful scraper constants, shared between multiple modules / scripts.
 
     Created:  Gusev Dmitrii, 28.05.2021
-    Modified: Dmitrii Gusev, 01.06.2021
+    Modified: Dmitrii Gusev, 13.06.2021
 """
 
 # general configuration
@@ -13,6 +13,7 @@ SCRAPER_CACHE_PATH = './engine/cache'
 SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN = '%d-%b-%Y_%H-%M-%S'  # timestamp without fractions
 SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX = '-dryrun'
 SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX = '-requests-limited'
+TIMEOUT_URLLIB_URLOPEN: int = 12*60*60  # timeout is set in seconds (?) - 12h (currently)
 
 # systems names + logging configuration (system name is used as a logger name as well)
 LOGGING_CONFIG_FILE = 'logging.yml'

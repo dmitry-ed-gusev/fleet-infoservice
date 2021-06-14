@@ -10,7 +10,7 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 01.06.2021
+    Modified: Gusev Dmitrii, 13.06.2021
 """
 
 import sys
@@ -18,7 +18,7 @@ import time
 import logging
 import requests
 import threading
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
 from .utils import constants as const
@@ -38,7 +38,7 @@ ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 з�
 # 20 workers -> 409 sec on my Mac
 # 40 workers -> 323 sec on my Mac
 # 100 workers -> 304 sec on my Mac
-WORKERS_COUNT = 40  # workers (threads) count for multi-threaded scraping
+WORKERS_COUNT = 30  # workers (threads) count for multi-threaded scraping
 
 # module logging setup
 log = logging.getLogger(const.SYSTEM_RSCLASSORG)
@@ -90,7 +90,7 @@ def parse_data(html: str) -> dict:
                 proprietary_number = cells[4].text  # get tag content (text value)
 
                 # create base ship class instance
-                ship: BaseShipDto = BaseShipDto(imo_number, proprietary_number, const.SYSTEM_RSCLASSORG)
+                ship: BaseShipDto = BaseShipDto(imo_number, proprietary_number, '', const.SYSTEM_RSCLASSORG)
 
                 # fill in the main value for base ship
                 ship.flag = cells[0].img['title']  # get attribute 'title' of tag <img>
@@ -107,8 +107,11 @@ def parse_data(html: str) -> dict:
 
 
 def perform_one_request(search_string: str) -> dict:  # todo: this method is needed for multi-threading - refactor
-    """Perform one request to RSCLASS.ORG and parse the output."""
-    ships = parse_data(perform_http_post_request(MAIN_URL, {"namer": search_string}))
+    """Perform one request to RSCLASS.ORG and parse the output.
+    :param search_string:
+    :return:
+    """
+    ships = parse_data(perform_http_post_request(MAIN_URL, {"namer": search_string}, retry_count=5))
     log.info("Found ship(s): {}, search string: {}".format(len(ships), search_string))
     return ships
 
@@ -165,7 +168,7 @@ def perform_ships_base_search_multiple_threads(symbols_variations: list, workers
     local_ships = {}  # result of the ships search
 
     # run processing in multiple threads
-    with concurrent.futures.ThreadPoolExecutor(max_workers=workers_count) as executor:
+    with ThreadPoolExecutor(max_workers=workers_count) as executor:
         counter = 1
         for symbol in symbols_variations:
             future = executor.submit(perform_one_request, symbol)
@@ -176,9 +179,14 @@ def perform_ships_base_search_multiple_threads(symbols_variations: list, workers
 
             counter += 1
 
-        # directly loop over futures to wait for them in the order they were submitted
-        for future in futures:
-            result = future.result()
+        # option #1: directly loop over futures to wait for them in the order they were submitted
+        # for future in futures:
+        #     result = future.result()
+        #     local_ships.update(result)
+
+        # option #2: iterate over completed threads and get results
+        for task in as_completed(futures):
+            result = task.result()
             local_ships.update(result)
 
         log.info(f"Found total ships: {len(local_ships)}.")

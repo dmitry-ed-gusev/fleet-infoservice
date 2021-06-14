@@ -9,12 +9,14 @@
         - (pathlib -2)  https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 13.06.2021
 """
 
 import xlwt
 import logging
 from pathlib import Path
+
+from typing import List
 
 from . import constants as const
 from .utilities import generate_timed_filename
@@ -40,7 +42,7 @@ def verify_and_process_xls_file(xls_file: str) -> None:
     xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
 
 
-def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
+def save_base_ships_2_excel(ships: List[BaseShipDto], xls_file: str) -> None:
     """Save provided list of base ships dto's to xls file. For sheet name default value is used.
     :param ships: ships list to save, if list empty/None - empty excel file will be created
     :param xls_file: excel file to save provided ships, mustn't be empty. Overrides existing file
@@ -62,33 +64,35 @@ def save_base_ships_2_excel(ships: list, xls_file: str) -> None:
     row = sheet.row(0)
     # ship identity
     row.write(0, 'imo_number')
-    row.write(1, 'proprietary_number')
-    row.write(2, 'source_system')
+    row.write(1, 'proprietary_number1')
+    row.write(2, 'proprietary_number2')
+    row.write(3, 'source_system')
     # ship main value (base data)
-    row.write(3, 'flag')
-    row.write(4, 'main_name')
-    row.write(5, 'secondary_name')
-    row.write(6, 'home_port')
-    row.write(7, 'call_sign')
-    row.write(8, 'extended_url')
-    row.write(9, 'datetime')
+    row.write(4, 'flag')
+    row.write(5, 'main_name')
+    row.write(6, 'secondary_name')
+    row.write(7, 'home_port')
+    row.write(8, 'call_sign')
+    row.write(9, 'extended_url')
+    row.write(10, 'datetime')
 
     row_counter = 1
     for ship in ships:  # iterate over ships map with keys / values
         row = sheet.row(row_counter)  # create new row
         # ship identity
         row.write(0, ship.imo_number)
-        row.write(1, ship.proprietary_number)
-        row.write(2, ship.source_system)
+        row.write(1, ship.proprietary_number1)
+        row.write(2, ship.proprietary_number2)
+        row.write(3, ship.source_system)
         # ship main value (base data)
-        row.write(3, ship.flag)
-        row.write(4, ship.main_name)
-        row.write(5, ship.secondary_name)
-        row.write(6, ship.home_port)
-        row.write(7, ship.call_sign)
-        row.write(8, ship.extended_info_url)
+        row.write(4, ship.flag)
+        row.write(5, ship.main_name)
+        row.write(6, ship.secondary_name)
+        row.write(7, ship.home_port)
+        row.write(8, ship.call_sign)
+        row.write(9, ship.extended_info_url)
         # convert datetime to human-readable format
-        row.write(9, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
+        row.write(10, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
 
         row_counter += 1
 

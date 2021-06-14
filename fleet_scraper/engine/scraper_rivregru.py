@@ -11,14 +11,14 @@
       - (excel direct link) https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 02.06.2021
+    Modified: Dmitrii Gusev, 11.06.2021
 """
 
 import logging
 import shutil
 from pathlib import Path
 from urllib import request
-from openpyxl import load_workbook,Workbook
+from openpyxl import load_workbook, Workbook
 
 from fleet_scraper.engine.utils import constants as const
 from fleet_scraper.engine.utils.utilities import generate_timed_filename
@@ -35,12 +35,12 @@ RIVER_REG_BOOK_URL = 'https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.x
 log = logging.getLogger(const.SYSTEM_RIVREGRU)
 
 
-def parse_raw_data(raw_data_file: str) -> list[tuple[list, list]]:
+def parse_raw_data(raw_data_file: str) -> dict:
     """
     :param raw_data_file:
     :return:
     """
-    log.debug(f'Parsing RAW Morflot data: {raw_data_file}')
+    log.debug(f'Parsing RAW River Register data: {raw_data_file}')
 
     if raw_data_file is None or len(raw_data_file.strip()) == 0:
         raise ValueError('Provided empty path to raw data!')
@@ -58,6 +58,8 @@ def parse_raw_data(raw_data_file: str) -> list[tuple[list, list]]:
         ship.home_port = ''
         ship.call_sign = ''
         ship.extended_info_url = '-'
+
+    return dict()
 
 
 class RivRegRuScraper(ScraperAbstractClass):

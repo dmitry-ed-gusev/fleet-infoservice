@@ -7,13 +7,13 @@
         - (download file) https://stackoverflow.com/questions/7243750/download-file-from-web-in-python-3
 
     Created:  Dmitrii Gusev, 01.06.2021
-    Modified: Dmitrii Gusev, 02.06.2021
+    Modified: Dmitrii Gusev, 13.06.2021
 """
 
 import ssl
 import logging
 import shutil
-from urllib import request, parse
+from urllib import request, response, parse, error
 from pathlib import Path
 
 from . import constants as const
@@ -33,8 +33,12 @@ def perform_http_get_request(url: str) -> str:  # todo: refactor - generalize
     return ''
 
 
-def perform_http_post_request(url: str, request_params: dict) -> str:
+def perform_http_post_request(url: str, request_params: dict, retry_count: int = 0) -> str:
     """Perform one HTTP POST request with one form parameter for search.
+    :param url:
+    :param request_params:
+    :param retry_count: number of retries. 0 -> no retries (one request), less than 0 -> no requests at all,
+                        greater than 0 -> (retry_count + 1) - such number of requests
     :return: HTML output with found data
     """
     # log.debug('perform_request(): request param [{}].'.format(request_param))  # <- too much output
@@ -42,12 +46,28 @@ def perform_http_post_request(url: str, request_params: dict) -> str:
     if url is None or len(url.strip()) == 0:  # fail-fast - empty URL
         raise ValueError('Provided empty URL, can\'t perform the request!')
 
-    data = parse.urlencode(request_params).encode(const.DEFAULT_ENCODING)  # perform encoding of request
+    data = parse.urlencode(request_params).encode(const.DEFAULT_ENCODING)  # perform encoding of request params
     req = request.Request(url, data=data)  # this will make the method "POST" request (with data load)
     context = ssl.SSLContext()  # new SSLContext -> to bypass security certificate check
-    response = request.urlopen(req, context=context)  # perform request itself
 
-    return response.read().decode(const.DEFAULT_ENCODING)  # read response and perform decode
+    tries_counter: int = 0
+    response_ok: bool = False
+    my_response = None
+    while tries_counter <= retry_count and not response_ok:  # perform specified number of requests
+        try:
+            my_response = request.urlopen(req, context=context, timeout=const.TIMEOUT_URLLIB_URLOPEN)
+            response_ok = True  # after successfully done request we should stop requests
+        except (TimeoutError, error.URLError) as e:
+            log.error(f'While request {url}, try #{tries_counter}/{retry_count}, we got error {e}.')
+
+        tries_counter += 1
+
+    if my_response is not None:
+        result = my_response.read().decode(const.DEFAULT_ENCODING)  # read response and perform decode
+    else:
+        result = None
+
+    return result
 
 
 def perform_file_download_over_http(url: str, target_dir: str, target_file: str = None) -> str:
@@ -82,8 +102,8 @@ def perform_file_download_over_http(url: str, target_dir: str, target_file: str 
     log.debug(f'Generated local full path: {local_path}')
 
     # download the file from the provided `url` and save it locally under certain `file_name`:
-    with request.urlopen(url) as response, open(local_path, 'wb') as out_file:
-        shutil.copyfileobj(response, out_file)
+    with request.urlopen(url) as my_response, open(local_path, 'wb') as out_file:
+        shutil.copyfileobj(my_response, out_file)
     log.info(f'Downloaded file: {url} and put here: {local_path}')
 
     return local_path

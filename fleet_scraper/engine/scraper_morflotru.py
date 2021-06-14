@@ -7,17 +7,19 @@
     Main data source (source system address): http://morflot.gov.ru/
 
     Useful materials and resources:
-      - (excel) http://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
-      - (direct link to excel) http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx
+      - *(excel) http://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
+      - (direct link to excel - 02.06.2021) http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx
+      - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 02.06.2021
+    Modified: Dmitrii Gusev, 11.06.2021
 """
 
 import logging
 import shutil
 from pathlib import Path
 from urllib import request
+from openpyxl import load_workbook, Workbook
 
 from .utils import constants as const
 from .utils.utilities import generate_timed_filename
@@ -27,11 +29,41 @@ from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from .entities.ships import BaseShipDto
 
 # todo: implement unit tests for this module!
+# todo: implement search for new excel file on the page above (marker as *)
 
-MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx'
+# direct URL to excel file
+# MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx'
+MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx'
 
 # module logging setup
 log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+
+
+def parse_raw_data(raw_data_file: str) -> dict:
+    """
+    :param raw_data_file:
+    :return:
+    """
+    log.debug(f'Parsing RAW Morflot data: {raw_data_file}')
+
+    if raw_data_file is None or len(raw_data_file.strip()) == 0:
+        raise ValueError('Provided empty path to raw data!')
+
+    wb = load_workbook(filename=raw_data_file)
+    sheet = wb.active
+
+    for i in range(2, sheet.max_row):  # index rows/cols starts with 1, skip the first row (header)
+        reg_number = sheet.cell(row=i, column=1).value
+        ship: BaseShipDto = BaseShipDto('', reg_number, 'rivreg')
+
+        ship.flag = ''
+        ship.main_name = sheet.cell(row=i, column=2).value
+        ship.secondary_name = ''
+        ship.home_port = ''
+        ship.call_sign = ''
+        ship.extended_info_url = '-'
+
+    return dict()
 
 
 class MorflotRuScraper(ScraperAbstractClass):
