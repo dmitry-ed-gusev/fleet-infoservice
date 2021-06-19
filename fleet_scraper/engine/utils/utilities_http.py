@@ -7,7 +7,7 @@
         - (download file) https://stackoverflow.com/questions/7243750/download-file-from-web-in-python-3
 
     Created:  Dmitrii Gusev, 01.06.2021
-    Modified: Dmitrii Gusev, 13.06.2021
+    Modified: Dmitrii Gusev, 16.06.2021
 """
 
 import ssl
@@ -41,7 +41,6 @@ def perform_http_post_request(url: str, request_params: dict, retry_count: int =
                         greater than 0 -> (retry_count + 1) - such number of requests
     :return: HTML output with found data
     """
-    # log.debug('perform_request(): request param [{}].'.format(request_param))  # <- too much output
 
     if url is None or len(url.strip()) == 0:  # fail-fast - empty URL
         raise ValueError('Provided empty URL, can\'t perform the request!')
@@ -54,11 +53,13 @@ def perform_http_post_request(url: str, request_params: dict, retry_count: int =
     response_ok: bool = False
     my_response = None
     while tries_counter <= retry_count and not response_ok:  # perform specified number of requests
+        log.debug(f'HTTP POST: URL: {url}, data: {request_params}, try #{tries_counter}/{retry_count}.')
         try:
             my_response = request.urlopen(req, context=context, timeout=const.TIMEOUT_URLLIB_URLOPEN)
             response_ok = True  # after successfully done request we should stop requests
         except (TimeoutError, error.URLError) as e:
-            log.error(f'While request {url}, try #{tries_counter}/{retry_count}, we got error {e}.')
+            log.error(f'We got error -> URL: {url}, data: {request_params}, try: #{tries_counter}/{retry_count}, '
+                      f'error: {e}.')
 
         tries_counter += 1
 
