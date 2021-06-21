@@ -10,7 +10,7 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 13.06.2021
+    Modified: Gusev Dmitrii, 21.06.2021
 """
 
 import sys
@@ -23,10 +23,10 @@ from bs4 import BeautifulSoup
 
 from .utils import constants as const
 from .utils.utilities import build_variations_list, generate_timed_filename
-from .utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel, process_scraper_dry_run
+from .utils.utilities_xls import save_ships_2_excel, process_scraper_dry_run
 from .utils.utilities_http import perform_http_post_request
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import BaseShipDto
+from .entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 
@@ -90,7 +90,7 @@ def parse_data(html: str) -> dict:
                 proprietary_number = cells[4].text  # get tag content (text value)
 
                 # create base ship class instance
-                ship: BaseShipDto = BaseShipDto(imo_number, proprietary_number, '', const.SYSTEM_RSCLASSORG)
+                ship: ShipDto = ShipDto(imo_number, proprietary_number, '', const.SYSTEM_RSCLASSORG)
 
                 # fill in the main value for base ship
                 ship.flag = cells[0].img['title']  # get attribute 'title' of tag <img>
@@ -243,14 +243,9 @@ class RsClassOrgScraper(ScraperAbstractClass):
         xls_path: str = self.cache_path + '/' + generate_timed_filename(suffix) + '/'
 
         # save base ships info
-        xls_base_file = xls_path + const.EXCEL_BASE_SHIPS_DATA
-        save_base_ships_2_excel(list(main_ships.values()), xls_base_file)
-        log.info(f"Saved base ships info to file {xls_base_file}")
-
-        # save extended ships info
-        xls_extended_file = xls_path + const.EXCEL_EXTENDED_SHIPS_DATA
-        save_extended_ships_2_excel(list({}.values()), xls_extended_file)
-        log.info(f"Saved extended ships info to file {xls_extended_file}")
+        xls_base_file = xls_path + const.EXCEL_SHIPS_DATA
+        save_ships_2_excel(list(main_ships.values()), xls_base_file)
+        log.info(f"Saved ships info to file {xls_base_file}")
 
         return SCRAPE_RESULT_OK
 

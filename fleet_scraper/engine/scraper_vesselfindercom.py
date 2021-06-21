@@ -18,7 +18,7 @@ import logging
 from .utils import constants as const
 from .utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import BaseShipDto
+from .entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 

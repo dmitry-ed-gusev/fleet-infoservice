@@ -25,7 +25,7 @@ from fleet_scraper.engine.utils.utilities import generate_timed_filename
 from fleet_scraper.engine.utils.utilities_http import perform_file_download_over_http
 from fleet_scraper.engine.utils.utilities_xls import process_scraper_dry_run
 from fleet_scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from fleet_scraper.engine.entities.ships import BaseShipDto
+from fleet_scraper.engine.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 
@@ -50,7 +50,7 @@ def parse_raw_data(raw_data_file: str) -> dict:
 
     for i in range(2, sheet.max_row):  # index rows/cols starts with 1, skip the first row (header)
         reg_number = sheet.cell(row=i, column=1).value
-        ship: BaseShipDto = BaseShipDto('', reg_number, 'rivreg')
+        ship: ShipDto = ShipDto('', reg_number, 'rivreg')
 
         ship.flag = ''
         ship.main_name = sheet.cell(row=i, column=2).value

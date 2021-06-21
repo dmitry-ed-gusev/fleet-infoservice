@@ -13,7 +13,7 @@
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 14.06.2021
+    Modified: Dmitrii Gusev, 21.06.2021
 """
 
 # todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
@@ -28,9 +28,16 @@ import logging
 from pyutilities.pylog import setup_logging
 
 import engine.utils.constants as const
+
+import engine.scraper_rsclassorg as rsclass
 from engine.scraper_rsclassorg import RsClassOrgScraper
+
+import engine.scraper_rivregru as rivreg
 from engine.scraper_rivregru import RivRegRuScraper
+
+import engine.scraper_morflotru as morflot
 from engine.scraper_morflotru import MorflotRuScraper
+
 from engine.scraper_gims import GimsRuScraper
 from engine.scraper_vesselfindercom import VesselFinderComScraper
 from engine.scraper_clarksonsnet import ClarksonsNetScraper
@@ -119,6 +126,8 @@ if __name__ == '__main__':
 
     # start all scrapers and get the data
     scrap_all_data(dry_run=False, requests_limit=0)
-
     # do cleanup for dry run immediately
     log.info(f'Cleaned up: {cache_cleanup(False)}')
+
+    # morflot.parse_raw_data('engine/cache/'
+    #                        '19-Jun-2021_15-27-34-scraper_morflotru/3926-5792-ts_razdel_3+.xlsx')

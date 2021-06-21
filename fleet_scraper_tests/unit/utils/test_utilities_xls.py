@@ -12,7 +12,7 @@ import unittest
 import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
-from fleet_scraper.engine.entities.ships import BaseShipDto, ExtendedShipDto
+from fleet_scraper.engine.entities.ships import ShipDto, ExtendedShipDto
 from fleet_scraper.engine.utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel, \
     load_base_ships_from_excel, load_extended_ships_from_excel
 
@@ -78,7 +78,7 @@ class TestUtilitiesXls(unittest.TestCase):
         self.assertTrue(empty_file.is_file())
 
     def test_save_base_ships_2_excel(self):
-        ship1: BaseShipDto = BaseShipDto('123456', '987654', 'system1')
+        ship1: ShipDto = ShipDto('123456', '987654', 'system1')
         ship1.flag = 'flag1'
         ship1.main_name = 'name1'
         ship1.secondary_name = 'secondary1'
@@ -86,7 +86,7 @@ class TestUtilitiesXls(unittest.TestCase):
         ship1.call_sign = 'sign1'
         ship1.extended_info_url = 'URL1'
 
-        ship2: BaseShipDto = BaseShipDto('1234567', '9876543', 'system2')
+        ship2: ShipDto = ShipDto('1234567', '9876543', 'system2')
         ship2.flag = 'flag2'
         ship2.main_name = 'name2'
         ship2.secondary_name = 'secondary2'

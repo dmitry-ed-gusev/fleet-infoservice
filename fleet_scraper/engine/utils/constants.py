@@ -4,7 +4,7 @@
     Useful scraper constants, shared between multiple modules / scripts.
 
     Created:  Gusev Dmitrii, 28.05.2021
-    Modified: Dmitrii Gusev, 13.06.2021
+    Modified: Dmitrii Gusev, 20.06.2021
 """
 
 # general configuration
@@ -33,8 +33,8 @@ SYSTEM_MARINETRAFFICCOM = 'scraper_marinetrafficcom'
 SYSTEM_CLARKSONSNET = 'scraper_clarksonsnet'
 
 # scrap resulting excel files
-EXCEL_BASE_SHIPS_DATA = 'base_ships_data.xls'
-EXCEL_EXTENDED_SHIPS_DATA = 'extended_ships_data.xls'
+EXCEL_SHIPS_DATA = 'ships_data.xls'
+# EXCEL_EXTENDED_SHIPS_DATA = 'extended_ships_data.xls'  # todo: do we need it?
 EXCEL_DEFAULT_SHEET_NAME = 'ships'
 EXCEL_DEFAULT_TIMESTAMP_PATTERN = '%d-%b-%Y %H:%M:%S'
 
