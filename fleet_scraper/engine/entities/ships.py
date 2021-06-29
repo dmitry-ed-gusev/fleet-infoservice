@@ -26,13 +26,13 @@ class ShipDto:
         :param proprietary_number2:
         :param source_system:
         """
-        # ship identity data
+        # ship's identity data
         self.imo_number: str = imo_number  # (ID) imo number of the ship
         self.proprietary_number1: str = proprietary_number1  # (ID) proprietary number #1 (reg/riv-reg/etc number)
         self.proprietary_number2: str = proprietary_number2  # (ID) proprietary number #2 (reg/riv-reg/etc number)
         self.source_system: str = source_system  # (ID) source system where ship data was retrieved
 
-        # main ship data
+        # main ship's data
         self.flag: str = ''             # ship's flag
         self.main_name: str = ''        # ship's main name
         self.secondary_name: str = ''   # ship's secondary name
@@ -44,7 +44,13 @@ class ShipDto:
         self.owner_ogrn: str = ''       # ship owner's ОГРН number
         self.owner_ogrn_date: str = ''  # ship owner's ОГРН date
 
-        # additional tech info
+        # additional ship's data
+        self.build_number: str = ''  # ship's build number
+        self.ship_type: str = ''     # ship's type
+        self.build_date: str = ''    # ship's build date
+        self.build_place: str = ''   # ship's build place
+
+        # some tech info
         self.extended_info_url: str = ''  # URL for ship extended info (usually - separated page)
         self.init_datetime: datetime = datetime.now()  # timestamp of creating ship instance
 

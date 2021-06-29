@@ -81,9 +81,15 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
     row.write(12, 'owner_ogrn')
     row.write(13, 'owner_ogrn_date')
 
+    # ship's additional data
+    row.write(14, 'build_number')
+    row.write(15, 'ship_type')
+    row.write(16, 'build_date')
+    row.write(17, 'build_place')
+
     # ship's system info
     # row.write(14, 'extended_url')  # todo: do we need to save it?
-    row.write(14, 'datetime')
+    row.write(18, 'datetime')
 
     row_counter = 1
     for ship in ships:  # iterate over ships map with keys / values
@@ -107,10 +113,16 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
         row.write(12, ship.owner_ogrn)
         row.write(13, ship.owner_ogrn_date)
 
+        # ship's additional data
+        row.write(14, ship.build_number)
+        row.write(15, ship.ship_type)
+        row.write(16, ship.build_date)
+        row.write(17, ship.build_place)
+
         # ship's system info
         # row.write(9, ship.extended_info_url)  # todo: do we need to save it?
         # convert datetime to human-readable format
-        row.write(14, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
+        row.write(18, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
 
         row_counter += 1
 
