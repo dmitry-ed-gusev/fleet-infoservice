@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+urllib3 = "*"
+requests = "*"
+beautifulsoup4 = "*"
+pyyaml = "*"
+pysqlite3 = "*"
+sqlalchemy = "*"
+xlrd = "*"
+xlwt = "*"
+openpyxl = "*"
+prettytable = "*"
+pyutilities = "*"
+
+[dev-packages]
+ipykernel = "*"
+responses = "*"
+mock = "*"
+nose2 = "*"
+pytest = "*"
+twine = "*"
+
+[requires]
+python_version = "3.9"
