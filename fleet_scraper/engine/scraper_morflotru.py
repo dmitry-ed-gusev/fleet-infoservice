@@ -12,7 +12,7 @@
       - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 21.06.2021
+    Modified: Dmitrii Gusev, 14.08.2021
 """
 
 import logging
@@ -31,10 +31,12 @@ from .entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 # todo: implement search for new excel file on the page above (see above marker -> *)
+# todo: implement processing 'not found' situation (HTTP 404)
 
 # direct URL to excel file
 # MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx'
-MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx'
+# MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx'
+MORFLOT_DATA_URL = 'http://morflot.gov.ru/files/docslist/3926-4267-ts_razdel_3+.xlsx'
 
 # module logging setup
 log = logging.getLogger(const.SYSTEM_MORFLOTRU)
@@ -65,6 +67,7 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
 
         # skip empty row (won't create empty ship)
         if imo_number is None and proprietary_number1 is None and proprietary_number2 is None:
+            # todo: implement counter for empty rows and report it - too much output!
             log.debug(f'Skipping empty row...')
             continue
 
