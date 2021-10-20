@@ -7,17 +7,20 @@
     Important notes:
       - scraper can be run in 'DRY RUN' mode - nothing will happen, only empty excel files
         will be created in cache (dry run directory will be marked with '-dryrun' postfix.
-      - ???
+      - scraper can be run in 'requests number limited mode' - # todo: add description!
 
     Useful resources:
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 21.06.2021
 """
 
-# todo: finish implementation
-# todo: implement cmd line arguments - dry run, maybe others...
+# todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
+# todo: create unit tests for dry run mode
+# todo: create unit tests for request limited run
+
+# todo: implement multithreading for calling scrapers, some of scrapers will spawn more threads (???)
 
 import os
 import shutil
@@ -25,9 +28,16 @@ import logging
 from pyutilities.pylog import setup_logging
 
 import engine.utils.constants as const
+
+import engine.scraper_rsclassorg as rsclass
 from engine.scraper_rsclassorg import RsClassOrgScraper
+
+import engine.scraper_rivregru as rivreg
 from engine.scraper_rivregru import RivRegRuScraper
+
+import engine.scraper_morflotru as morflot
 from engine.scraper_morflotru import MorflotRuScraper
+
 from engine.scraper_gims import GimsRuScraper
 from engine.scraper_vesselfindercom import VesselFinderComScraper
 from engine.scraper_clarksonsnet import ClarksonsNetScraper
@@ -37,41 +47,38 @@ from engine.scraper_marinetrafficcom import MarineTrafficComScraper
 log = logging.getLogger(const.LOGGING_SCRAPER_PROCESSOR_LOGGER)
 
 
-def scrap_all_data(dry_run: bool = False):
+def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     """
     :param dry_run:
+    :param requests_limit:
     :return:
     """
     log.debug("scrap_all_data(): processing all data sources.")
 
-    # scraper class for rs-class.org
-    rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
-    rs_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for rivreg.ru
+    # --- scraper for rivreg.ru
     riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
     riv_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for morflot.ru
+    # --- scraper class for morflot.ru
     morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
     morflot_scraper.scrap(dry_run=dry_run)
+    # --- scraper for rs-class.org
+    rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
+    rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
 
-    # scraper class for gims.ru
-    gims_scraper: GimsRuScraper = GimsRuScraper(const.SYSTEM_GIMS, const.SCRAPER_CACHE_PATH)
-    gims_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for vesselfinder.com
-    vf_scraper: VesselFinderComScraper = VesselFinderComScraper(const.SYSTEM_VESSELFINDERCOM, const.SCRAPER_CACHE_PATH)
-    vf_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for clarksons.net
-    clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET, const.SCRAPER_CACHE_PATH)
-    clarksons_scraper.scrap(dry_run=dry_run)
-
-    # scraper class for marinetraffic.com
-    mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
-                                                                        const.SCRAPER_CACHE_PATH)
-    mtraffic_scraper.scrap(dry_run=dry_run)
+    # todo: implement the below scrapers properly!
+    # # scraper class for gims.ru
+    # gims_scraper: GimsRuScraper = GimsRuScraper(const.SYSTEM_GIMS, const.SCRAPER_CACHE_PATH)
+    # gims_scraper.scrap(dry_run=dry_run)
+    # # scraper class for vesselfinder.com
+    # vf_scraper: VesselFinderComScraper = VesselFinderComScraper(const.SYSTEM_VESSELFINDERCOM, const.SCRAPER_CACHE_PATH)
+    # vf_scraper.scrap(dry_run=dry_run)
+    # # scraper class for clarksons.net
+    # clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET, const.SCRAPER_CACHE_PATH)
+    # clarksons_scraper.scrap(dry_run=dry_run)
+    # # scraper class for marinetraffic.com
+    # mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
+    #                                                                     const.SCRAPER_CACHE_PATH)
+    # mtraffic_scraper.scrap(dry_run=dry_run)
 
 
 def archive_scraped_data(dry_run: bool = False) -> list:
@@ -115,9 +122,12 @@ def cache_cleanup(dry_run: bool = False) -> list:
 # main part of the script
 if __name__ == '__main__':
     setup_logging(default_path=const.LOGGING_CONFIG_FILE)
-    log.info("Starting Scraper Processor for all sources...")
+    log.info("Starting Scraper Processor for all source systems...")
 
     # start all scrapers and get the data
-    scrap_all_data(dry_run=False)
+    scrap_all_data(dry_run=False, requests_limit=0)
     # do cleanup for dry run immediately
     log.info(f'Cleaned up: {cache_cleanup(False)}')
+
+    # morflot.parse_raw_data('engine/cache/'
+    #                        '19-Jun-2021_15-27-34-scraper_morflotru/3926-5792-ts_razdel_3+.xlsx')

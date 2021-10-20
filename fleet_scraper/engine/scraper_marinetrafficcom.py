@@ -10,7 +10,7 @@
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 30.05.2021
+    Modified: Dmitrii Gusev, 31.05.2021
 """
 
 import logging
@@ -18,7 +18,7 @@ import logging
 from .utils import constants as const
 from .utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import BaseShipDto
+from .entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 
@@ -34,7 +34,7 @@ class MarineTrafficComScraper(ScraperAbstractClass):
         self.log = logging.getLogger(const.SYSTEM_MARINETRAFFICCOM)
         self.log.info(f'MarineTrafficComScraper: source name {self.source_name}, cache path: {self.cache_path}.')
 
-    def scrap(self, dry_run: bool = False):
+    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Marine Traffic data scraper."""
         log.info("scrap(): processing marinetraffic.com")
 

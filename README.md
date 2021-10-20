@@ -10,8 +10,8 @@ open data sources and provides analytics, based on aggregated data.
 Service aggregates the following public data sources:
   - [Russian Maritime Register of Shipping](https://rs-class.org/)
   - [Russian River Register](https://www.rivreg.ru/)
-  - []()
-  - []()
+  - [Rosmorrechflot](http://morflot.gov.ru/)
+  - [Rosmorrechflot - Open Data](http://opendata.morflot.ru/)
   - []()
   - []()
 
