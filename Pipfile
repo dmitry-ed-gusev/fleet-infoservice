@@ -23,6 +23,12 @@ nose2 = "*"
 pytest = "*"
 twine = "*"
 responses = "*"
+mypy = "*"
+flake8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
