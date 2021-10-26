@@ -18,11 +18,11 @@ pyutilities = "*"
 
 [dev-packages]
 ipykernel = "*"
-responses = "*"
 mock = "*"
 nose2 = "*"
 pytest = "*"
 twine = "*"
+responses = "*"
 
 [requires]
 python_version = "3.9"

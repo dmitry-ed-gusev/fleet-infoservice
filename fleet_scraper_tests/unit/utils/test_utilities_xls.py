@@ -12,9 +12,9 @@ import unittest
 import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
-from fleet_scraper.engine.entities.ships import ShipDto, ExtendedShipDto
-from fleet_scraper.engine.utils.utilities_xls import save_base_ships_2_excel, save_extended_ships_2_excel, \
-    load_base_ships_from_excel, load_extended_ships_from_excel
+from fleet_scraper.engine.entities.ships import ShipDto #, ExtendedShipDto
+from fleet_scraper.engine.utils.utilities_xls import save_ships_2_excel, save_extended_ships_2_excel, \
+     load_ships_from_excel, load_extended_ships_from_excel
 
 # some useful constants
 LOGGER_NAME = 'scraper_rsclassorg_test'
@@ -58,27 +58,27 @@ class TestUtilitiesXls(unittest.TestCase):
         pass
 
     def test_save_base_ships_2_excel_empty_xls_file_name(self):
-        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), None))
-        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), ''))
-        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), '     '))
+        self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), None))
+        self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), ''))
+        self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), '     '))
 
     def test_save_base_ships_2_excel_xls_file_is_a_directory(self):
         # create empty dir in the current folder
         empty_dir: Path = Path(DIRECTORY_NAME_EMPTY)
         empty_dir.mkdir()
         # test / assert
-        self.assertRaises(ValueError, lambda: save_base_ships_2_excel(list(), DIRECTORY_NAME_EMPTY))
+        self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), DIRECTORY_NAME_EMPTY))
         # cleanup - remove created dir
         empty_dir.rmdir()
 
     def test_save_base_ships_2_excel_empty_ships_list(self):
-        save_base_ships_2_excel(list(), EXCEL_FILE_NAME_EMPTY)
+        save_ships_2_excel(list(), EXCEL_FILE_NAME_EMPTY)
         empty_file: Path = Path(EXCEL_FILE_NAME_EMPTY)
         self.assertTrue(empty_file.exists())  # todo: add more checks / content checks
         self.assertTrue(empty_file.is_file())
 
     def test_save_base_ships_2_excel(self):
-        ship1: ShipDto = ShipDto('123456', '987654', 'system1')
+        ship1: ShipDto = ShipDto('123456', '987654', "", 'system1')
         ship1.flag = 'flag1'
         ship1.main_name = 'name1'
         ship1.secondary_name = 'secondary1'
@@ -86,7 +86,7 @@ class TestUtilitiesXls(unittest.TestCase):
         ship1.call_sign = 'sign1'
         ship1.extended_info_url = 'URL1'
 
-        ship2: ShipDto = ShipDto('1234567', '9876543', 'system2')
+        ship2: ShipDto = ShipDto('1234567', '9876543', "", 'system2')
         ship2.flag = 'flag2'
         ship2.main_name = 'name2'
         ship2.secondary_name = 'secondary2'
@@ -95,7 +95,7 @@ class TestUtilitiesXls(unittest.TestCase):
         ship2.extended_info_url = 'URL2'
 
         ships: list = [ship1, ship2]
-        save_base_ships_2_excel(ships, EXCEL_FILE_NAME_SAVE)
+        save_ships_2_excel(ships, EXCEL_FILE_NAME_SAVE)
 
         xls_file: Path = Path(EXCEL_FILE_NAME_SAVE)
         self.assertTrue(xls_file.exists())  # todo: add more checks / content checks
