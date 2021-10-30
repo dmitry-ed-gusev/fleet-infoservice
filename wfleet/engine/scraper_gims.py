@@ -33,7 +33,9 @@ class GimsRuScraper(ScraperAbstractClass):
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
         self.log = logging.getLogger(const.SYSTEM_GIMS)
-        self.log.info(f'GimsRuScraper: source name {self.source_name}, cache path: {self.cache_path}.')
+        self.log.info(
+            f"GimsRuScraper: source name {self.source_name}, cache path: {self.cache_path}."
+        )
 
     def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """GIMS data scraper."""
@@ -45,5 +47,5 @@ class GimsRuScraper(ScraperAbstractClass):
 
 
 # main part of the script
-if __name__ == '__main__':
-    print('Don\'t run this script directly! Use wrapper script!')
+if __name__ == "__main__":
+    print("Don't run this script directly! Use wrapper script!")

@@ -18,13 +18,13 @@ from wfleet.engine.utils.utilities_http import perform_file_download_over_http
 from pyutilities.pylog import setup_logging
 
 # some useful constants
-LOGGER_NAME = 'scraper_rsclassorg_test'
+LOGGER_NAME = "scraper_rsclassorg_test"
 
 
 class TestUtilitiesHttp(unittest.TestCase):
 
     # static logger initializer
-    setup_logging(default_path='../../test_logging.yml')
+    setup_logging(default_path="../../test_logging.yml")
 
     def setUp(self):
         self.log = logging.getLogger(LOGGER_NAME)
@@ -43,9 +43,15 @@ class TestUtilitiesHttp(unittest.TestCase):
         cls.log.debug("TestUtilitiesHttp.tearDownClass()")
 
     def test_perform_file_download_over_http_empty_url(self):
-        self.assertRaises(ValueError, lambda: perform_file_download_over_http(None, 'dir'))
-        self.assertRaises(ValueError, lambda: perform_file_download_over_http('', 'dir'))
-        self.assertRaises(ValueError, lambda: perform_file_download_over_http('    ', 'dir'))
+        self.assertRaises(
+            ValueError, lambda: perform_file_download_over_http(None, "dir")
+        )
+        self.assertRaises(
+            ValueError, lambda: perform_file_download_over_http("", "dir")
+        )
+        self.assertRaises(
+            ValueError, lambda: perform_file_download_over_http("    ", "dir")
+        )
 
     # todo: fix the test
     # @responses.activate
@@ -60,5 +66,5 @@ class TestUtilitiesHttp(unittest.TestCase):
     #         # assert things here.
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -32,14 +32,18 @@ def verify_and_process_xls_file(xls_file: str) -> None:
     :param xls_file:
     :return None: ???
     """
-    if xls_file is None or len(xls_file.strip()) == 0:  # fail-fast -> check provided xls file name
-        raise ValueError('Provided empty excel file name!')
+    if (
+        xls_file is None or len(xls_file.strip()) == 0
+    ):  # fail-fast -> check provided xls file name
+        raise ValueError("Provided empty excel file name!")
 
     xls_file_path: Path = Path(xls_file)
     if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
-        raise ValueError(f'Provided file path {xls_file} is an existing directory!')
+        raise ValueError(f"Provided file path {xls_file} is an existing directory!")
 
-    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
+    xls_file_path.parent.mkdir(
+        parents=True, exist_ok=True
+    )  # create necessary parent dirs in path
 
 
 def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
@@ -50,46 +54,48 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
             non-existent directories - all necessary directories will be created.
     :return: None ???
     """
-    log.debug(f'save_ships_2_excel(): save provided ships list to xls file: {xls_file}.')
+    log.debug(
+        f"save_ships_2_excel(): save provided ships list to xls file: {xls_file}."
+    )
 
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
-        raise ValueError('Not a list provided (ships)!')
+        raise ValueError("Not a list provided (ships)!")
 
     verify_and_process_xls_file(xls_file)  # verify and process xls file
 
-    book = xlwt.Workbook()                            # create workbook
+    book = xlwt.Workbook()  # create workbook
     sheet = book.add_sheet(const.EXCEL_DEFAULT_SHEET_NAME)  # create new sheet
 
     # create header row
     row = sheet.row(0)
 
     # ship's identity
-    row.write(0, 'imo_number')
-    row.write(1, 'proprietary_number1')
-    row.write(2, 'proprietary_number2')
-    row.write(3, 'source_system')
+    row.write(0, "imo_number")
+    row.write(1, "proprietary_number1")
+    row.write(2, "proprietary_number2")
+    row.write(3, "source_system")
 
     # ship's main value
-    row.write(4,  'flag')
-    row.write(5,  'main_name')
-    row.write(6,  'secondary_name')
-    row.write(7,  'home_port')
-    row.write(8,  'call_sign')
-    row.write(9,  'project')
-    row.write(10, 'owner')
-    row.write(11, 'owner_address')
-    row.write(12, 'owner_ogrn')
-    row.write(13, 'owner_ogrn_date')
+    row.write(4, "flag")
+    row.write(5, "main_name")
+    row.write(6, "secondary_name")
+    row.write(7, "home_port")
+    row.write(8, "call_sign")
+    row.write(9, "project")
+    row.write(10, "owner")
+    row.write(11, "owner_address")
+    row.write(12, "owner_ogrn")
+    row.write(13, "owner_ogrn_date")
 
     # ship's additional data
-    row.write(14, 'build_number')
-    row.write(15, 'ship_type')
-    row.write(16, 'build_date')
-    row.write(17, 'build_place')
+    row.write(14, "build_number")
+    row.write(15, "ship_type")
+    row.write(16, "build_date")
+    row.write(17, "build_place")
 
     # ship's system info
     # row.write(14, 'extended_url')  # todo: do we need to save it?
-    row.write(18, 'datetime')
+    row.write(18, "datetime")
 
     row_counter = 1
     for ship in ships:  # iterate over ships map with keys / values
@@ -102,12 +108,12 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
         row.write(3, ship.source_system)
 
         # ship's main value
-        row.write(4,  ship.flag)
-        row.write(5,  ship.main_name)
-        row.write(6,  ship.secondary_name)
-        row.write(7,  ship.home_port)
-        row.write(8,  ship.call_sign)
-        row.write(9,  ship.project)
+        row.write(4, ship.flag)
+        row.write(5, ship.main_name)
+        row.write(6, ship.secondary_name)
+        row.write(7, ship.home_port)
+        row.write(8, ship.call_sign)
+        row.write(9, ship.project)
         row.write(10, ship.owner)
         row.write(11, ship.owner_address)
         row.write(12, ship.owner_ogrn)
@@ -122,7 +128,9 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
         # ship's system info
         # row.write(9, ship.extended_info_url)  # todo: do we need to save it?
         # convert datetime to human-readable format
-        row.write(18, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
+        row.write(
+            18, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN)
+        )
 
         row_counter += 1
 
@@ -134,7 +142,9 @@ def load_ships_from_excel(xls_file: str) -> List[ShipDto]:
     :param xls_file:
     :return:
     """
-    log.debug(f'load_base_ships_from_excel(): load extended ships from xls file: {xls_file}.')
+    log.debug(
+        f"load_base_ships_from_excel(): load extended ships from xls file: {xls_file}."
+    )
     verify_and_process_xls_file(xls_file)  # verify and process xls file
     # todo: implementation!
     return list()
@@ -149,10 +159,12 @@ def save_extended_ships_2_excel(ships: list, xls_file: str) -> None:
             non-existent directories - all necessary directories will be created.
     :return None ???
     """
-    log.debug(f'save_extended_ships_2_excel(): save provided ships list to xls file: {xls_file}.')
+    log.debug(
+        f"save_extended_ships_2_excel(): save provided ships list to xls file: {xls_file}."
+    )
 
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
-        raise ValueError('Not a list provided (ships)!')
+        raise ValueError("Not a list provided (ships)!")
 
     verify_and_process_xls_file(xls_file)  # verify and process xls file
 
@@ -175,7 +187,9 @@ def load_extended_ships_from_excel(xls_file: str) -> list:
     :param xls_file:
     :return:
     """
-    log.debug(f'load_extended_ships_from_excel(): load extended ships from xls file: {xls_file}.')
+    log.debug(
+        f"load_extended_ships_from_excel(): load extended ships from xls file: {xls_file}."
+    )
     verify_and_process_xls_file(xls_file)  # verify and process xls file
     # todo: implementation!
     return list()
@@ -184,12 +198,15 @@ def load_extended_ships_from_excel(xls_file: str) -> list:
 def process_scraper_dry_run(system_name: str) -> None:
     log.warning("DRY RUN MODE IS ON!")
     # save empty files to cache with specific postfix
-    cache_dir = const.SCRAPER_CACHE_PATH + '/' + generate_timed_filename(system_name +
-                                                                         const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX)
-    save_ships_2_excel(list(), cache_dir + '/' + const.EXCEL_SHIPS_DATA)
+    cache_dir = (
+        const.SCRAPER_CACHE_PATH
+        + "/"
+        + generate_timed_filename(system_name + const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX)
+    )
+    save_ships_2_excel(list(), cache_dir + "/" + const.EXCEL_SHIPS_DATA)
     # save_extended_ships_2_excel(list(), cache_dir + '/' + const.EXCEL_EXTENDED_SHIPS_DATA)
 
 
 # todo: implement unit tests that module isn't runnable directly!
-if __name__ == '__main__':
-    print('Don\'t run this utility script directly!')
+if __name__ == "__main__":
+    print("Don't run this utility script directly!")

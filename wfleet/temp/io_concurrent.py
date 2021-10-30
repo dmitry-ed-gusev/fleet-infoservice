@@ -25,7 +25,9 @@ def download_site(url):
 
 def download_all_sites_1(sites):
     with concurrent.futures.ThreadPoolExecutor(max_workers=9) as executor:
-        executor.map(download_site, sites)  # directly execute provided functions with multiple threads
+        executor.map(
+            download_site, sites
+        )  # directly execute provided functions with multiple threads
 
 
 def download_all_sites_2(sites):

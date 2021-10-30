@@ -16,7 +16,7 @@ from django.db import models
 
 class DBShip(models.Model):
     class Meta:
-        db_table = 'ships'
+        db_table = "ships"
 
     imo_number = models.TextField(unique=True)
     reg_number = models.TextField()

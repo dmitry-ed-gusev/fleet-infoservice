@@ -32,7 +32,9 @@ class MarineTrafficComScraper(ScraperAbstractClass):
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
         self.log = logging.getLogger(const.SYSTEM_MARINETRAFFICCOM)
-        self.log.info(f'MarineTrafficComScraper: source name {self.source_name}, cache path: {self.cache_path}.')
+        self.log.info(
+            f"MarineTrafficComScraper: source name {self.source_name}, cache path: {self.cache_path}."
+        )
 
     def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Marine Traffic data scraper."""
@@ -44,5 +46,5 @@ class MarineTrafficComScraper(ScraperAbstractClass):
 
 
 # main part of the script
-if __name__ == '__main__':
-    print('Don\'t run this script directly! Use wrapper script!')
+if __name__ == "__main__":
+    print("Don't run this script directly! Use wrapper script!")
