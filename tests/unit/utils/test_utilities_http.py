@@ -5,7 +5,7 @@
     Unit tests for http-related utilities class.
 
     Created:  Dmitrii Gusev, 02.06.2021
-    Modified:
+    Modified: Dmitrii Gusev, 30.10.2021
 """
 
 # todo: do we need logging in the test class? if yes - review and fix logging!
@@ -14,7 +14,7 @@ import unittest
 import logging
 import responses
 
-from fleet_scraper.engine.utils.utilities_http import perform_file_download_over_http
+from wfleet.engine.utils.utilities_http import perform_file_download_over_http
 from pyutilities.pylog import setup_logging
 
 # some useful constants

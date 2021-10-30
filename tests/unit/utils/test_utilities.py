@@ -5,14 +5,14 @@
     Unit tests for utilities class.
 
     Created:  Dmitrii Gusev, 21.03.2021
-    Modified: Dmitrii Gusev, 28.05.2021
+    Modified: Dmitrii Gusev, 30.10.2021
 """
 
 # todo: do we need logging in the test class? if yes - review and fix logging!
 
 import unittest
 import logging
-from fleet_scraper.engine.utils.utilities import build_variations_hashmap, build_variations_list, \
+from wfleet.engine.utils.utilities import build_variations_hashmap, build_variations_list, \
     get_hash_bucket_number, add_value_to_hashmap, generate_timed_filename
 from pyutilities.pylog import setup_logging
 

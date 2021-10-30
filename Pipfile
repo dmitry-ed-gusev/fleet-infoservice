@@ -15,6 +15,7 @@ xlwt = "*"
 openpyxl = "*"
 prettytable = "*"
 pyutilities = "*"
+click = "*"
 
 [dev-packages]
 ipykernel = "*"
@@ -26,6 +27,7 @@ responses = "*"
 mypy = "*"
 flake8 = "*"
 black = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.9"

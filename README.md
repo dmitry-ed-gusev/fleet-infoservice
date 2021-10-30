@@ -35,3 +35,7 @@ TBD
 
 ## Tech Info
 Related technical/technological info may be found here: [Tech Info](tech_info.md)
+
+## pipenv dependencies
+If you can't install black with pipenv - use option --pre with pipenv install:  
+`pipenv install black --dev --pre`
