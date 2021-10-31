@@ -72,9 +72,7 @@ class TestUtilities(unittest.TestCase):
 
     def test_add_value_to_hashmap(self):
         self.assertEqual({0: ["aaa"]}, add_value_to_hashmap(dict(), "aaa", 0))
-        self.assertEqual(
-            {0: ["aaa", "bbb"]}, add_value_to_hashmap({0: ["aaa"]}, "bbb", 0)
-        )
+        self.assertEqual({0: ["aaa", "bbb"]}, add_value_to_hashmap({0: ["aaa"]}, "bbb", 0))
         self.assertEqual(
             {0: ["aaa", "bbb"], 4: ["ccc"]},
             add_value_to_hashmap({0: ["aaa", "bbb"]}, "ccc", 5),

@@ -12,7 +12,6 @@
 
 import unittest
 import logging
-import responses
 
 from wfleet.engine.utils.utilities_http import perform_file_download_over_http
 from pyutilities.pylog import setup_logging
@@ -43,15 +42,9 @@ class TestUtilitiesHttp(unittest.TestCase):
         cls.log.debug("TestUtilitiesHttp.tearDownClass()")
 
     def test_perform_file_download_over_http_empty_url(self):
-        self.assertRaises(
-            ValueError, lambda: perform_file_download_over_http(None, "dir")
-        )
-        self.assertRaises(
-            ValueError, lambda: perform_file_download_over_http("", "dir")
-        )
-        self.assertRaises(
-            ValueError, lambda: perform_file_download_over_http("    ", "dir")
-        )
+        self.assertRaises(ValueError, lambda: perform_file_download_over_http(None, "dir"))
+        self.assertRaises(ValueError, lambda: perform_file_download_over_http("", "dir"))
+        self.assertRaises(ValueError, lambda: perform_file_download_over_http("    ", "dir"))
 
     # todo: fix the test
     # @responses.activate

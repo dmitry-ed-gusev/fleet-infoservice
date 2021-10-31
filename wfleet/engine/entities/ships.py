@@ -40,9 +40,7 @@ class ShipDto:
         self.proprietary_number2: str = (
             proprietary_number2  # (ID) proprietary number #2 (reg/riv-reg/etc number)
         )
-        self.source_system: str = (
-            source_system  # (ID) source system where ship data was retrieved
-        )
+        self.source_system: str = source_system  # (ID) source system where ship data was retrieved
 
         # main ship's data
         self.flag: str = ""  # ship's flag
@@ -63,12 +61,8 @@ class ShipDto:
         self.build_place: str = ""  # ship's build place
 
         # some tech info
-        self.extended_info_url: str = (
-            ""  # URL for ship extended info (usually - separated page)
-        )
-        self.init_datetime: datetime = (
-            datetime.now()
-        )  # timestamp of creating ship instance
+        self.extended_info_url: str = ""  # URL for ship extended info (usually - separated page)
+        self.init_datetime: datetime = datetime.now()  # timestamp of creating ship instance
 
     def __str__(
         self,

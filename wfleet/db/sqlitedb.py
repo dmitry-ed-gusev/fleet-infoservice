@@ -62,10 +62,8 @@ class GeoDB(object):
                 geo_point_id, processed_status
             )
         )
-        update_sql = (
-            "UPDATE geo_points SET processed = {} WHERE geo_point_id = {}".format(
-                processed_status, geo_point_id
-            )
+        update_sql = "UPDATE geo_points SET processed = {} WHERE geo_point_id = {}".format(
+            processed_status, geo_point_id
         )
         # check connection
         if not self.__connection:
@@ -103,11 +101,7 @@ class GeoDB(object):
             parent_id = geo_point[5]
             processed = geo_point[6]
             # add values to query and add query to list
-            sql_list.append(
-                insert_sql.format(
-                    id, intid, cik_text, levelid, children, parent_id, processed
-                )
-            )
+            sql_list.append(insert_sql.format(id, intid, cik_text, levelid, children, parent_id, processed))
         # check connection
         if not self.__connection:
             self.__connection = sql.connect(dbname)
@@ -117,9 +111,7 @@ class GeoDB(object):
             self.__cursor.execute(query)
         # commit all added points
         self.__connection.commit()
-        self.log.debug(
-            "Geo points list [len = {}] has been added.".format(len(list_of_geo_points))
-        )
+        self.log.debug("Geo points list [len = {}] has been added.".format(len(list_of_geo_points)))
 
 
 # todo: add exceptions handling for db operations (in case of exception close connection etc.)
@@ -172,9 +164,7 @@ def db_add_commissions(dbname, commissions_list):
     raise StandardError("Not implemented!")
 
 
-def db_add_commission(
-    dbname, city, territory_commission, sector_commission, people_count
-):
+def db_add_commission(dbname, city, territory_commission, sector_commission, people_count):
     """
     Add one commission at a time, return inserted id.
     :param dbname:
@@ -191,9 +181,7 @@ def db_add_commission(
     )
     insert_sql = (
         "INSERT INTO commissions(city, territory_commission, sector_commission, people_count) "
-        "VALUES ('{}', '{}', '{}', {})".format(
-            city, territory_commission, sector_commission, people_count
-        )
+        "VALUES ('{}', '{}', '{}', {})".format(city, territory_commission, sector_commission, people_count)
     )
     connection = sql.connect(dbname)
     cursor = connection.cursor()
@@ -214,11 +202,7 @@ def db_add_address(dbname, street, buildings, commission_id):
     :param commission_id:
     :return:
     """
-    log.debug(
-        "db_add_address(): adding address [{}, {}, {}].".format(
-            street, buildings, commission_id
-        )
-    )
+    log.debug("db_add_address(): adding address [{}, {}, {}].".format(street, buildings, commission_id))
     insert_sql = "INSERT INTO addresses(street, buildings, commission_id) VALUES ('{}', '{}', '{}')".format(
         street, buildings, commission_id
     )
@@ -232,9 +216,7 @@ def db_add_address(dbname, street, buildings, commission_id):
     return last_id
 
 
-def db_add_single_geo_point(
-    dbname, id, intid, cik_text, levelid, children, parent_id, processed=0
-):
+def db_add_single_geo_point(dbname, id, intid, cik_text, levelid, children, parent_id, processed=0):
     """"""
     if not intid:
         intid = "NULL"
@@ -285,11 +267,7 @@ def db_add_multiple_geo_points(dbname, list_of_geo_points):
         parent_id = geo_point[5]
         processed = geo_point[6]
         # add values to query and add query to list
-        sql_list.append(
-            insert_sql.format(
-                id, intid, cik_text, levelid, children, parent_id, processed
-            )
-        )
+        sql_list.append(insert_sql.format(id, intid, cik_text, levelid, children, parent_id, processed))
 
     # execute multip[le sqls
     connection = sql.connect(dbname)
@@ -298,17 +276,13 @@ def db_add_multiple_geo_points(dbname, list_of_geo_points):
         cursor.execute(query)
     # commit all added points
     connection.commit()
-    log.debug(
-        "Geo points list [len = {}] has been added.".format(len(list_of_geo_points))
-    )
+    log.debug("Geo points list [len = {}] has been added.".format(len(list_of_geo_points)))
 
 
 def db_get_not_processed_geo_points_ids(dbname):
     """"""
     log.debug("db_get_not_processed_geo_points_ids(): processing.")
-    select_sql = (
-        "SELECT geo_point_id, id, intid, cik_text FROM geo_points WHERE processed = 0"
-    )
+    select_sql = "SELECT geo_point_id, id, intid, cik_text FROM geo_points WHERE processed = 0"
     connection = sql.connect(dbname)
     cursor = connection.cursor()
     cursor.execute(select_sql)

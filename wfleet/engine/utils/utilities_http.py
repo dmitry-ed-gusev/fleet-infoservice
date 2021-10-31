@@ -33,9 +33,7 @@ def perform_http_get_request(url: str) -> str:  # todo: refactor - generalize
     return ""
 
 
-def perform_http_post_request(
-    url: str, request_params: dict, retry_count: int = 0
-) -> str:
+def perform_http_post_request(url: str, request_params: dict, retry_count: int = 0) -> str:
     """Perform one HTTP POST request with one form parameter for search.
     :param url:
     :param request_params:
@@ -50,27 +48,17 @@ def perform_http_post_request(
     data = parse.urlencode(request_params).encode(
         const.DEFAULT_ENCODING
     )  # perform encoding of request params
-    req = request.Request(
-        url, data=data
-    )  # this will make the method "POST" request (with data load)
+    req = request.Request(url, data=data)  # this will make the method "POST" request (with data load)
     context = ssl.SSLContext()  # new SSLContext -> to bypass security certificate check
 
     tries_counter: int = 0
     response_ok: bool = False
     my_response = None
-    while (
-        tries_counter <= retry_count and not response_ok
-    ):  # perform specified number of requests
-        log.debug(
-            f"HTTP POST: URL: {url}, data: {request_params}, try #{tries_counter}/{retry_count}."
-        )
+    while tries_counter <= retry_count and not response_ok:  # perform specified number of requests
+        log.debug(f"HTTP POST: URL: {url}, data: {request_params}, try #{tries_counter}/{retry_count}.")
         try:
-            my_response = request.urlopen(
-                req, context=context, timeout=const.TIMEOUT_URLLIB_URLOPEN
-            )
-            response_ok = (
-                True  # after successfully done request we should stop requests
-            )
+            my_response = request.urlopen(req, context=context, timeout=const.TIMEOUT_URLLIB_URLOPEN)
+            response_ok = True  # after successfully done request we should stop requests
         except (TimeoutError, error.URLError) as e:
             log.error(
                 f"We got error -> URL: {url}, data: {request_params}, try: #{tries_counter}/{retry_count}, "
@@ -80,18 +68,14 @@ def perform_http_post_request(
         tries_counter += 1
 
     if my_response is not None:
-        result = my_response.read().decode(
-            const.DEFAULT_ENCODING
-        )  # read response and perform decode
+        result = my_response.read().decode(const.DEFAULT_ENCODING)  # read response and perform decode
     else:
         result = None
 
     return result
 
 
-def perform_file_download_over_http(
-    url: str, target_dir: str, target_file: str = None
-) -> str:
+def perform_file_download_over_http(url: str, target_dir: str, target_file: str = None) -> str:
     """Downloads file via HTTP protocol.
     :param url: URL for file download, shouldn't be empty.
     :param target_dir: local dir to save file, if empty - save to the current dir
@@ -108,14 +92,10 @@ def perform_file_download_over_http(
 
     # check target dir name - if not empty we will create all missing dirs in the path
     if target_dir is not None and len(target_dir.strip()) > 0:
-        Path(target_dir).mkdir(
-            parents=True, exist_ok=True
-        )  # create necessary parent dirs in path
+        Path(target_dir).mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
         log.debug(f"Created all missing dirs in path: {target_dir}")
     else:
-        log.debug(
-            f"Provided empty target dir - file will be saved in the current directory."
-        )
+        log.debug(f"Provided empty target dir - file will be saved in the current directory.")
 
     # pick a target file name
     if target_file is None or len(target_file.strip()) == 0:

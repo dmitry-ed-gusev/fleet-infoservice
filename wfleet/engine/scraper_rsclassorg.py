@@ -32,9 +32,7 @@ from .entities.ships import ShipDto
 
 # useful constants / configuration
 MAIN_URL = "https://lk.rs-class.org/regbook/regbookVessel?ln=ru"
-ERROR_OVER_1000_RECORDS = (
-    "Результат запроса более 1000 записей! Уточните параметры запроса"
-)
+ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 записей! Уточните параметры запроса"
 
 # 10 workers -> 650 sec on my Mac
 # 20 workers -> 409 sec on my Mac
@@ -92,18 +90,12 @@ def parse_data(html: str) -> dict:
                 proprietary_number = cells[4].text  # get tag content (text value)
 
                 # create base ship class instance
-                ship: ShipDto = ShipDto(
-                    imo_number, proprietary_number, "", const.SYSTEM_RSCLASSORG
-                )
+                ship: ShipDto = ShipDto(imo_number, proprietary_number, "", const.SYSTEM_RSCLASSORG)
 
                 # fill in the main value for base ship
                 ship.flag = cells[0].img["title"]  # get attribute 'title' of tag <img>
-                ship.main_name = cells[1].contents[
-                    0
-                ]  # get 0 element fro the cell content
-                ship.secondary_name = cells[
-                    1
-                ].div.text  # get value of the tag <div> inside the cell
+                ship.main_name = cells[1].contents[0]  # get 0 element fro the cell content
+                ship.secondary_name = cells[1].div.text  # get value of the tag <div> inside the cell
                 ship.home_port = cells[2].text  # get tag content (text value)
                 ship.call_sign = cells[3].text  # get tag content (text value)
                 ship.extended_info_url = "-"  # todo: implement parsing this value
@@ -121,17 +113,13 @@ def perform_one_request(
     :param search_string:
     :return:
     """
-    ships = parse_data(
-        perform_http_post_request(MAIN_URL, {"namer": search_string}, retry_count=5)
-    )
+    ships = parse_data(perform_http_post_request(MAIN_URL, {"namer": search_string}, retry_count=5))
     log.info("Found ship(s): {}, search string: {}".format(len(ships), search_string))
     return ships
 
 
 # todo: merge single-threaded with multi-threaded processing?
-def perform_ships_base_search_single_thread(
-    symbols_variations: list, requests_limit: int = 0
-) -> dict:
+def perform_ships_base_search_single_thread(symbols_variations: list, requests_limit: int = 0) -> dict:
     """Process list of strings for the search in single thread.
     :param symbols_variations: symbols variations for search
     :param requests_limit: limit for performed HTTP requests to the source system, default = 0 (no limit).
@@ -143,9 +131,7 @@ def perform_ships_base_search_single_thread(
     )
 
     if symbols_variations is None or not isinstance(symbols_variations, list):
-        raise ValueError(
-            f"Provided empty list [{symbols_variations}] or it isn't a list!"
-        )
+        raise ValueError(f"Provided empty list [{symbols_variations}] or it isn't a list!")
 
     local_ships = {}  # result of the ships search
     counter = 1
@@ -153,16 +139,12 @@ def perform_ships_base_search_single_thread(
     variations_length = len(symbols_variations)
 
     for search_string in symbols_variations:
-        log.debug(
-            f"Currently processing: {search_string} ({counter} out of {variations_length})"
-        )
+        log.debug(f"Currently processing: {search_string} ({counter} out of {variations_length})")
         ships = parse_data(
             perform_http_post_request(MAIN_URL, {"namer": search_string})
         )  # HTTP request for base data
         local_ships.update(ships)  # update main dictionary with found data
-        log.info(
-            f"Found ship(s): {len(ships)}, total: {len(local_ships)}, search string: {search_string}"
-        )
+        log.info(f"Found ship(s): {len(ships)}, total: {len(local_ships)}, search string: {search_string}")
 
         if 0 < requests_limit <= counter:  # in case limit is set - use it
             return local_ships
@@ -182,16 +164,12 @@ def perform_ships_base_search_multiple_threads(
             Any value <= 0 - no limit.
     :return: ships dictionary for the given list of symbols variations
     """
-    log.debug(
-        "perform_ships_base_search_multiple_threads(): perform multi-threaded search."
-    )
+    log.debug("perform_ships_base_search_multiple_threads(): perform multi-threaded search.")
 
     if symbols_variations is None or not isinstance(
         symbols_variations, list
     ):  # fail-fast - check input params
-        raise ValueError(
-            f"Provided empty list [{symbols_variations}] or it isn't a list!"
-        )
+        raise ValueError(f"Provided empty list [{symbols_variations}] or it isn't a list!")
 
     if workers_count < 2:  # fail-fast - check workers count
         raise ValueError("Provided workers count < 2, use single-threaded function!")
@@ -231,9 +209,7 @@ class RsClassOrgScraper(ScraperAbstractClass):
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
         self.log = logging.getLogger(const.SYSTEM_RSCLASSORG)
-        self.log.info(
-            f"RsClassOrgScraper: source name {self.source_name}, cache path: {self.cache_path}."
-        )
+        self.log.info(f"RsClassOrgScraper: source name {self.source_name}, cache path: {self.cache_path}.")
 
     def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """RS Class Org data scraper."""
@@ -248,9 +224,7 @@ class RsClassOrgScraper(ScraperAbstractClass):
         # build list of variations for search strings + measure time
         start_time = time.time()
         variations = build_variations_list()
-        self.log.debug(
-            f"Built variations [{len(variations)}] in {time.time() - start_time} second(s)."
-        )
+        self.log.debug(f"Built variations [{len(variations)}] in {time.time() - start_time} second(s).")
 
         try:
             # process all generated variations strings + measure time - multi-/single-threaded processing
@@ -258,9 +232,7 @@ class RsClassOrgScraper(ScraperAbstractClass):
             if WORKERS_COUNT <= 1:  # single-threaded processing
                 self.log.info("Processing mode: [SINGLE THREADED].")
                 main_ships.update(
-                    perform_ships_base_search_single_thread(
-                        variations, requests_limit=requests_limit
-                    )
+                    perform_ships_base_search_single_thread(variations, requests_limit=requests_limit)
                 )
             else:
                 self.log.info("Processing mode: [MULTI THREADED].")
@@ -272,9 +244,7 @@ class RsClassOrgScraper(ScraperAbstractClass):
                     )
                 )
             scrap_duration = time.time() - start_time
-            log.info(
-                f"Found total ship(s): {len(main_ships)} in {scrap_duration} seconds."
-            )
+            log.info(f"Found total ship(s): {len(main_ships)} in {scrap_duration} seconds.")
         except ValueError as err:  # value error
             return f"Value error: {err}"
         except Exception:  # default case - any unexpected error

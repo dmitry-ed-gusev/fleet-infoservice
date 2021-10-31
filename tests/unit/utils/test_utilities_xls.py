@@ -13,12 +13,7 @@ import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
 from wfleet.engine.entities.ships import ShipDto  # , ExtendedShipDto
-from wfleet.engine.utils.utilities_xls import (
-    save_ships_2_excel,
-    save_extended_ships_2_excel,
-    load_ships_from_excel,
-    load_extended_ships_from_excel,
-)
+from wfleet.engine.utils.utilities_xls import save_ships_2_excel
 
 # some useful constants
 LOGGER_NAME = "scraper_rsclassorg_test"
@@ -71,9 +66,7 @@ class TestUtilitiesXls(unittest.TestCase):
         empty_dir: Path = Path(DIRECTORY_NAME_EMPTY)
         empty_dir.mkdir()
         # test / assert
-        self.assertRaises(
-            ValueError, lambda: save_ships_2_excel(list(), DIRECTORY_NAME_EMPTY)
-        )
+        self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), DIRECTORY_NAME_EMPTY))
         # cleanup - remove created dir
         empty_dir.rmdir()
 

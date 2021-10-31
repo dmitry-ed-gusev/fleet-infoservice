@@ -32,18 +32,14 @@ def verify_and_process_xls_file(xls_file: str) -> None:
     :param xls_file:
     :return None: ???
     """
-    if (
-        xls_file is None or len(xls_file.strip()) == 0
-    ):  # fail-fast -> check provided xls file name
+    if xls_file is None or len(xls_file.strip()) == 0:  # fail-fast -> check provided xls file name
         raise ValueError("Provided empty excel file name!")
 
     xls_file_path: Path = Path(xls_file)
     if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
         raise ValueError(f"Provided file path {xls_file} is an existing directory!")
 
-    xls_file_path.parent.mkdir(
-        parents=True, exist_ok=True
-    )  # create necessary parent dirs in path
+    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
 
 
 def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
@@ -54,9 +50,7 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
             non-existent directories - all necessary directories will be created.
     :return: None ???
     """
-    log.debug(
-        f"save_ships_2_excel(): save provided ships list to xls file: {xls_file}."
-    )
+    log.debug(f"save_ships_2_excel(): save provided ships list to xls file: {xls_file}.")
 
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
         raise ValueError("Not a list provided (ships)!")
@@ -128,9 +122,7 @@ def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
         # ship's system info
         # row.write(9, ship.extended_info_url)  # todo: do we need to save it?
         # convert datetime to human-readable format
-        row.write(
-            18, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN)
-        )
+        row.write(18, ship.init_datetime.strftime(const.EXCEL_DEFAULT_TIMESTAMP_PATTERN))
 
         row_counter += 1
 
@@ -142,9 +134,7 @@ def load_ships_from_excel(xls_file: str) -> List[ShipDto]:
     :param xls_file:
     :return:
     """
-    log.debug(
-        f"load_base_ships_from_excel(): load extended ships from xls file: {xls_file}."
-    )
+    log.debug(f"load_base_ships_from_excel(): load extended ships from xls file: {xls_file}.")
     verify_and_process_xls_file(xls_file)  # verify and process xls file
     # todo: implementation!
     return list()
@@ -159,9 +149,7 @@ def save_extended_ships_2_excel(ships: list, xls_file: str) -> None:
             non-existent directories - all necessary directories will be created.
     :return None ???
     """
-    log.debug(
-        f"save_extended_ships_2_excel(): save provided ships list to xls file: {xls_file}."
-    )
+    log.debug(f"save_extended_ships_2_excel(): save provided ships list to xls file: {xls_file}.")
 
     if not isinstance(ships, list):  # fail-fast -> provided list of ships
         raise ValueError("Not a list provided (ships)!")
@@ -187,9 +175,7 @@ def load_extended_ships_from_excel(xls_file: str) -> list:
     :param xls_file:
     :return:
     """
-    log.debug(
-        f"load_extended_ships_from_excel(): load extended ships from xls file: {xls_file}."
-    )
+    log.debug(f"load_extended_ships_from_excel(): load extended ships from xls file: {xls_file}.")
     verify_and_process_xls_file(xls_file)  # verify and process xls file
     # todo: implementation!
     return list()

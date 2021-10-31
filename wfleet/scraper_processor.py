@@ -56,19 +56,13 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     log.debug("scrap_all_data(): processing all data sources.")
 
     # --- scraper for rivreg.ru
-    riv_scraper: RivRegRuScraper = RivRegRuScraper(
-        const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH
-    )
+    riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
     riv_scraper.scrap(dry_run=dry_run)
     # --- scraper class for morflot.ru
-    morflot_scraper: MorflotRuScraper = MorflotRuScraper(
-        const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH
-    )
+    morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
     morflot_scraper.scrap(dry_run=dry_run)
     # --- scraper for rs-class.org
-    rs_scraper: RsClassOrgScraper = RsClassOrgScraper(
-        const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH
-    )
+    rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
     rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
 
     # todo: implement the below scrapers properly!
@@ -92,9 +86,7 @@ def archive_scraped_data(dry_run: bool = False) -> list:
     :param dry_run: in case of value True - DRY RUN MODE is on and no archiving will be done.
     :return: list of archived directories
     """
-    log.debug(
-        "archive_scraped_data(): processing scraped data and archive processed (saved to db)."
-    )
+    log.debug("archive_scraped_data(): processing scraped data and archive processed (saved to db).")
     # todo: implementation!
     return list()
 
@@ -111,9 +103,7 @@ def cache_cleanup(dry_run: bool = False) -> list:
     for filename in os.listdir(const.SCRAPER_CACHE_PATH):
         file_path = os.path.join(const.SCRAPER_CACHE_PATH, filename)
         try:
-            if os.path.isdir(file_path) and file_path.endswith(
-                const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX
-            ):
+            if os.path.isdir(file_path) and file_path.endswith(const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX):
                 log.info(f"Found DRY RUN directory: {file_path} - to be deleted!")
                 if dry_run:
                     log.warning("DRY RUN mode is active! No cleanup will be performed!")

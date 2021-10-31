@@ -58,9 +58,7 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
     sheet = wb.active
 
     counter = 0
-    for i in range(
-        3, sheet.max_row
-    ):  # index rows/cols starts with 1, skip the first 2 rows (header)
+    for i in range(3, sheet.max_row):  # index rows/cols starts with 1, skip the first 2 rows (header)
 
         # get base key (identity) data for the ship
         imo_number: str = sheet.cell(row=i, column=6).value
@@ -68,19 +66,13 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
         proprietary_number2: str = sheet.cell(row=i, column=8).value
 
         # skip empty row (won't create empty ship)
-        if (
-            imo_number is None
-            and proprietary_number1 is None
-            and proprietary_number2 is None
-        ):
+        if imo_number is None and proprietary_number1 is None and proprietary_number2 is None:
             # todo: implement counter for empty rows and report it - too much output!
             log.debug(f"Skipping empty row...")
             continue
 
         # create new ship object
-        ship: ShipDto = ShipDto(
-            imo_number, proprietary_number1, proprietary_number2, const.SYSTEM_MORFLOTRU
-        )
+        ship: ShipDto = ShipDto(imo_number, proprietary_number1, proprietary_number2, const.SYSTEM_MORFLOTRU)
 
         # additional ship info
         ship.main_name = sheet.cell(row=i, column=4).value
@@ -106,9 +98,7 @@ class MorflotRuScraper(ScraperAbstractClass):
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
         self.log = logging.getLogger(const.SYSTEM_MORFLOTRU)
-        self.log.info(
-            f"MorflotRuScraper: source name {self.source_name}, cache path: {self.cache_path}."
-        )
+        self.log.info(f"MorflotRuScraper: source name {self.source_name}, cache path: {self.cache_path}.")
 
     def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Morflot data scraper."""
@@ -119,14 +109,10 @@ class MorflotRuScraper(ScraperAbstractClass):
             return SCRAPE_RESULT_OK
 
         # generate scraper cache directory path
-        scraper_cache_dir: str = (
-            self.cache_path + "/" + generate_timed_filename(self.source_name)
-        )
+        scraper_cache_dir: str = self.cache_path + "/" + generate_timed_filename(self.source_name)
 
         # download raw data file
-        downloaded_file: str = perform_file_download_over_http(
-            MORFLOT_DATA_URL, scraper_cache_dir
-        )
+        downloaded_file: str = perform_file_download_over_http(MORFLOT_DATA_URL, scraper_cache_dir)
         self.log.info(f"Downloaded raw data file: {downloaded_file}")
 
         # parse raw data into list of ShipDto objects

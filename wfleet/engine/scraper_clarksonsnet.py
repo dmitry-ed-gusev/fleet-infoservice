@@ -7,11 +7,10 @@
     Main data source (source system address): https://www.clarksons.net
 
     Useful materials and resources:
-      - https://www.rivreg.ru/activities/class/regbook/ - register book url (actual data)
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 31.05.2021
+    Modified: Dmitrii Gusev, 31.10.2021
 """
 
 import logging
@@ -33,9 +32,7 @@ class ClarksonsNetScraper(ScraperAbstractClass):
     def __init__(self, source_name: str, cache_path: str):
         super().__init__(source_name, cache_path)
         self.log = logging.getLogger(const.SYSTEM_CLARKSONSNET)
-        self.log.info(
-            f"ClarksonsNetScraper: source name {self.source_name}, cache path: {self.cache_path}."
-        )
+        self.log.info(f"ClarksonsNetScraper: source name {self.source_name}, cache path: {self.cache_path}.")
 
     def scrap(self, dry_run: bool = False, requests_limit: int = 0):
         """Clarksons Net data scraper."""
