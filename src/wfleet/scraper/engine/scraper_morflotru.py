@@ -16,18 +16,15 @@
 """
 
 import logging
-import shutil
-from pathlib import Path
-from urllib import request
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 from typing import List
 
-from .utils import constants as const
-from .utils.utilities import generate_timed_filename
-from .utils.utilities_http import perform_file_download_over_http
-from .utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
+from src.wfleet.scraper.utils import constants as const
+from src.wfleet.scraper.utils import generate_timed_filename
+from src.wfleet.scraper.utils import perform_file_download_over_http
+from src.wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import ShipDto
+from src.wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 # todo: implement search for new excel file on the page above (see above marker -> *)

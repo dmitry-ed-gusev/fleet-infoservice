@@ -13,7 +13,7 @@
 import unittest
 import logging
 
-from wfleet.engine.utils.utilities_http import perform_file_download_over_http
+from src.wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from pyutilities.pylog import setup_logging
 
 # some useful constants

@@ -27,21 +27,13 @@ import shutil
 import logging
 from pyutilities.pylog import setup_logging
 
-import engine.utils.constants as const
+import src.wfleet.scraper.utils.constants as const
 
-import engine.scraper_rsclassorg as rsclass
 from engine.scraper_rsclassorg import RsClassOrgScraper
 
-import engine.scraper_rivregru as rivreg
 from engine.scraper_rivregru import RivRegRuScraper
 
-import engine.scraper_morflotru as morflot
 from engine.scraper_morflotru import MorflotRuScraper
-
-from engine.scraper_gims import GimsRuScraper
-from engine.scraper_vesselfindercom import VesselFinderComScraper
-from engine.scraper_clarksonsnet import ClarksonsNetScraper
-from engine.scraper_marinetrafficcom import MarineTrafficComScraper
 
 # setup logging for the whole script
 log = logging.getLogger(const.LOGGING_SCRAPER_PROCESSOR_LOGGER)

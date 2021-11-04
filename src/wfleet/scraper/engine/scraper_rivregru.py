@@ -124,4 +124,4 @@ class RivRegRuScraper(ScraperAbstractClass):
 # main part of the script
 if __name__ == "__main__":
     # print('Don\'t run this script directly! Use wrapper script!')
-    parse_raw_data("./cache/02-Jun-2021_17-02-54-scraper_riveregru/Registrovaya-kniga3.xlsx")
+    parse_raw_data("../cache/02-Jun-2021_17-02-54-scraper_riveregru/Registrovaya-kniga3.xlsx")

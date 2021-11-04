@@ -12,8 +12,8 @@ import unittest
 import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
-from wfleet.engine.entities.ships import ShipDto  # , ExtendedShipDto
-from wfleet.engine.utils.utilities_xls import save_ships_2_excel
+from src.wfleet.scraper.entities import ShipDto  # , ExtendedShipDto
+from src.wfleet.scraper.utils import save_ships_2_excel
 
 # some useful constants
 LOGGER_NAME = "scraper_rsclassorg_test"

@@ -12,7 +12,7 @@
 
 import unittest
 import logging
-from wfleet.engine.utils.utilities import (
+from src.wfleet.scraper.utils.utilities import (
     build_variations_hashmap,
     build_variations_list,
     get_hash_bucket_number,

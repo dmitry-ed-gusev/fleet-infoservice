@@ -21,12 +21,12 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
-from .utils import constants as const
-from .utils.utilities import build_variations_list, generate_timed_filename
-from .utils.utilities_xls import save_ships_2_excel, process_scraper_dry_run
-from .utils.utilities_http import perform_http_post_request
+from src.wfleet.scraper.utils import constants as const
+from src.wfleet.scraper.utils import build_variations_list, generate_timed_filename
+from src.wfleet.scraper.utils.utilities_xls import save_ships_2_excel, process_scraper_dry_run
+from src.wfleet.scraper.utils import perform_http_post_request
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from .entities.ships import ShipDto
+from src.wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 
