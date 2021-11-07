@@ -10,13 +10,13 @@
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 31.10.2021
+    Modified: Dmitrii Gusev, 07.11.2021
 """
 
 import logging
 
-from src.wfleet.scraper.utils import constants as const
-from src.wfleet.scraper.utils.utilities_xls import process_scraper_dry_run
+from wfleet.scraper.utils import constants as const
+from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
 # todo: implement unit tests for this module!

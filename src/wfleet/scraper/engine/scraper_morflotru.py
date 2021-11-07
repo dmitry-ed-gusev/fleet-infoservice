@@ -12,17 +12,17 @@
       - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 14.08.2021
+    Modified: Dmitrii Gusev, 07.11.2021
 """
 
 import logging
 from openpyxl import load_workbook
 from typing import List
 
-from src.wfleet.scraper.utils import constants as const
-from src.wfleet.scraper.utils import generate_timed_filename
-from src.wfleet.scraper.utils import perform_file_download_over_http
-from src.wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
+from wfleet.scraper.utils import constants as const
+from wfleet.scraper.utils.utilities import generate_timed_filename
+from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
+from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from src.wfleet.scraper.entities.ships import ShipDto
 

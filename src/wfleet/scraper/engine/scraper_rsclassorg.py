@@ -10,7 +10,7 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 21.06.2021
+    Modified: Gusev Dmitrii, 07.11.2021
 """
 
 import sys
@@ -21,12 +21,15 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
-from src.wfleet.scraper.utils import constants as const
-from src.wfleet.scraper.utils import build_variations_list, generate_timed_filename
-from src.wfleet.scraper.utils.utilities_xls import save_ships_2_excel, process_scraper_dry_run
-from src.wfleet.scraper.utils import perform_http_post_request
+from wfleet.scraper.utils import constants as const
+from wfleet.scraper.utils.utilities import build_variations_list, generate_timed_filename
+from wfleet.scraper.utils.utilities_xls import (
+    save_ships_2_excel,
+    process_scraper_dry_run,
+)
+from wfleet.scraper.utils.utilities_http import perform_http_post_request
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from src.wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 

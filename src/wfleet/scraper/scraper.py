@@ -25,15 +25,12 @@
 import os
 import shutil
 import logging
+import wfleet.scraper.utils.constants as const
+
 from pyutilities.pylog import setup_logging
-
-import src.wfleet.scraper.utils.constants as const
-
-from engine.scraper_rsclassorg import RsClassOrgScraper
-
-from engine.scraper_rivregru import RivRegRuScraper
-
-from engine.scraper_morflotru import MorflotRuScraper
+from wfleet.scraper.engine.scraper_rsclassorg import RsClassOrgScraper
+from wfleet.scraper.engine.scraper_rivregru import RivRegRuScraper
+from wfleet.scraper.engine.scraper_morflotru import MorflotRuScraper
 
 # setup logging for the whole script
 log = logging.getLogger(const.LOGGING_SCRAPER_PROCESSOR_LOGGER)
@@ -109,6 +106,15 @@ def cache_cleanup(dry_run: bool = False) -> list:
             log.error(f"Failed to delete {file_path}. Reason: {e}")
 
     return deleted_dirs
+
+
+def temp_entry_point():
+    """Temporary entry point for console installation."""
+    print("Temporary entry point for World Fleet Scraper Utility is working...")
+
+
+def dummy_function() -> int:
+    return 102
 
 
 # main part of the script

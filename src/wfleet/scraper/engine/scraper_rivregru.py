@@ -11,7 +11,7 @@
       - (excel direct link) https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 28.06.2021
+    Modified: Dmitrii Gusev, 07.11.2021
 """
 
 import logging
@@ -21,15 +21,12 @@ from urllib import request
 from openpyxl import load_workbook, Workbook
 from typing import List
 
-from fleet_scraper.engine.utils import constants as const
-from fleet_scraper.engine.utils.utilities import generate_timed_filename
-from fleet_scraper.engine.utils.utilities_http import perform_file_download_over_http
-from fleet_scraper.engine.utils.utilities_xls import (
-    process_scraper_dry_run,
-    save_ships_2_excel,
-)
-from fleet_scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from fleet_scraper.engine.entities.ships import ShipDto
+from wfleet.scraper.utils import constants as const
+from wfleet.scraper.utils.utilities import generate_timed_filename
+from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
+from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
+from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 
