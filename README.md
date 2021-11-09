@@ -57,11 +57,18 @@ Project setup for developer is simple enough and consists of the following steps
     script [build.sh](build.sh) with the command:  
     `./build.sh` or `pipenv run ./build.sh`
   - more info see in the build info comments itself
-
-### Installing The Library in the local pipenv (for Developer)
+  
+### Installing The Library to the local pipenv environment (for Developer)
 Usually it is not necessary, because library itself is put as a dependency to [Pipfile](Pipfile), but just
 in case you need it, use the following command:  
 `pipenv install -e . `
+
+### Building library (source+binary distribution)
+Use command:  
+
+`pipenv run python -m build`
+
+Resulting disctributions will appear in the **dist/** directory. 
 
 ### Installing The Library (for User)
 TBD
