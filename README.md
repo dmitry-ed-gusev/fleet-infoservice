@@ -31,31 +31,42 @@ The list of related systems / sources of additional info:
   - [Vessels in Class - IACS](http://www.iacs.org.uk/ship-company-data/vessels-in-class/)
   - [World Shipping Register](https://world-ships.com/)
 
+### Aggregation Process + Results
+TBD
+
 
 ## Project Architecture and Tech Details
 For creating the project architecture the service [draw.io/diagrams.net](https://www.diagrams.net/) was used.
   - RAW architecture file in the **draw.io** format: [architecture raw](docs/fleet_info_service.drawio)
   - Architecture in the JPEG format: [architecture jpeg](docs/fleet_info_service.jpeg) 
 
-### Project Setup (for Developer)
+### Project Setup for Developer (Development Environment)
 Project setup for developer is simple enough and consists of the following steps:
-  - install **python v3.9+** (for MacOS it is recommended to use **Homebrew**)
-  - install **pip v21.3+** (the latest is better)
+  - install **python v.3.9+** (for MacOS it is recommended to use **Homebrew** for python installation, *don't use the 
+    system python!*)
+  - install **pip v.21.3+** (the latest is better)
+  - install **pipenv v.2021.11.9**
   - install common dependencies (for the current user or for the whole environment):
-    + **jupyter** [optional] (the latest is better) - used for some playground (there are some notebooks in the project)
-    + **pipenv v2021.5.29+** (the latest is better) - manage project environment
-    + **build v0.7.0+** (the latest is better) - just a simple build tool for distribution creation, used by setuptools
-      (usually setuptools - dependency of the pip itself)
+    + **jupyter** (optional, the latest is better) - used for some playground (there are some notebooks in the project)
+    + **pipenv v.2021.5.29+** (the latest is better) - manage project environment
+    + **build v.0.7.0+** (optional, the latest is better) - just a simple build tool for distribution creation, used by setuptools
+      (usually setuptools - dependency of the pip itself). This dependency stated as optional as you may install it for the
+      global environment or for your local pipenv environment (see it in the current [Pipenv](Pipfile) file)
   - clone the project repository from **github**, all following commands should be executed within the project root dir
   - install all pipenv dependencies (they are listed in files [Pipfile](Pipfile) and [Pipfile.lock](Pipfile.lock)) with 
     the command:  
     `pipenv install --dev`
+  - (optional) if you want to update old pipenv dependencies, use the following command:  
+    `pipenv update --outdated`
   - check pre-commit shook config in the file [.pre-commit-config.yaml](.pre-commit-config.yaml) and activate git 
     pre-commit hook with the command [optional]:  
     `pipenv run pre-commit install`
   - build project (usual steps with running unit tests and quality control tools) with the provided build 
     script [build.sh](build.sh) with the command:  
     `./build.sh` or `pipenv run ./build.sh`
+  - (optional) install local ipykernel (jupyter kernel) in order it to see pipenv dependencies, use commands:  
+    `pipenv install ipykernel --dev`  
+    `pipenv run ipython kernel install ––user ––name=<your_preferred_name>`
   - more info see in the build info comments itself
   
 ### Installing The Library to the local pipenv environment (for Developer)
@@ -63,17 +74,19 @@ Usually it is not necessary, because library itself is put as a dependency to [P
 in case you need it, use the following command:  
 `pipenv install -e . `
 
-### Building library (source+binary distribution)
-Use command:  
-
-`pipenv run python -m build`
-
-Resulting disctributions will appear in the **dist/** directory. 
-
+### Building library (source + binary distribution)
+In order to build the library use the following command:  
+`pipenv run python -m build`  
+Resulting distributions will appear in the **dist/** directory (in the root dir of the project). Build will create 
+two distributions:
+  - *.tar.gz - source distribution
+  - *.whl - wheel binary distribution
+  
 ### Installing The Library (for User)
-TBD
+Both can be installed using pip on the end-user environment:  
+`pip install <distribution_file>`
 
-### Quality Control
+### Project Quality Control
 We used the following tools for the quality management:
   - for testing we use **pytest** library
   - for static types check we use **mypy** library
@@ -83,9 +96,9 @@ For all the mentioned tools we use the latest available versions (see [Pipfile](
 
 #### Quality Control Defaults
   - max line length = 110 symbols
+  - following PEP8 recommendations
   - ???
-
-
-## pipenv dependencies FAQ
-  - If you can't install black with pipenv - use option --pre with pipenv install:  
+  
+### Tech Details FAQ
+  - if you can't install black with pipenv - use option --pre with pipenv install:  
     `pipenv install black --dev --pre`
