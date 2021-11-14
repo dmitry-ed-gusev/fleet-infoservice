@@ -12,4 +12,4 @@ import wfleet.scraper.scraper as scraper
 
 
 def test_dummy():
-    assert scraper.dummy_function() == 101
+    assert scraper.dummy_function() == 102
