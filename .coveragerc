@@ -1,5 +1,15 @@
-# .coveragerc config file to control coverage.py
-# See full doc here: https://coverage.readthedocs.io/en/latest/config.html
+###############################################################################
+#
+#   .coveragerc config file to control coverage.py / pytest-cov plugin.
+#   Currently (30.10.2021) - pytest + pytest-cov is used.
+#   See full doc here:
+#       - https://coverage.readthedocs.io/en/latest/config.html
+#       - https://pytest-cov.readthedocs.io/en/latest/index.html
+#
+#   Created:  Dmitrii Gusev, 2020
+#   Modified: Dmitrii Gusev, 30.10.2021
+#
+###############################################################################
 
 [run]
 branch = True
@@ -7,17 +17,21 @@ data_file = .coverage/.coverage
 omit =
         *__init__*
         *temp*
+        *tests/*
 
 [report]
 show_missing = True
+# -- show 2 decimal digits for coverage values
+precision = 2
 
 [html]
 directory = .coverage/htmlcoverage
-title = "Fleet DB Scraper Coverage Report"
+title = "World Fleet Infoservice: Tests Coverage Report"
 
 [xml]
 output = .coverage/coverage.xml
 
+# -- used by coverage.py, ignored by pytest-cov
 [json]
 output = .coverage/coverage.json
 pretty_print = True

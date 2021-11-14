@@ -1,0 +1,33 @@
+###############################################################################
+#
+#   Git pre-commit local hook.
+#   Installation for pipenv: 'pipenv install --dev pre-commit'
+#   Activation of pre-commit hook: 'pipenv run pre-commit install'
+#
+#   Created:  Dmitrii Gusev, 31.10.2021
+#   Modified:
+#
+###############################################################################
+
+repos:
+  - repo: local
+  hooks:
+    - id: black
+      name: black
+      entry: pipenv run black
+      args: [––quiet]
+      language: system
+      types: [python]
+
+    - id: mypy
+      name: mypy
+      entry: pipenv run mypy
+      args: ["––follow–imports=skip"]
+      language: system
+      types: [python]
+
+    - id: flake8
+      name: flake8
+      entry: pipenv run flake8
+      language: system
+      types: [python]

@@ -1,0 +1,1 @@
+Fleet Scraper database for storing of raw scrap data / run statistics etc.

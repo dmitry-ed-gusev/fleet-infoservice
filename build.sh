@@ -3,31 +3,45 @@
 ###############################################################################
 #
 #   Build and test script for [fleet-db-scraping] utility.
+#   Script can be run from outside of virtual (pipenv) environment (from the
+#   system shell) and from the pipenv environment as well (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 23.03.2021
-#   Modified: Dmitrii Gusev, 27.04.2021
+#   Modified: Dmitrii Gusev, 14.11.2021
 #
 ###############################################################################
 
-# - install virtualenv
-pip3 install virtualenv
+# todo: do put output of utilities - mypy/black/flake8 - to a separated file(s)?
 
-# - create virtual environment
-virtualenv --verbose .venv
+BUILD_DIR='build/'
+DIST_DIR='dist/'
 
-# - activate virtual environment
-source .venv/bin/activate
+# - clean build and distribution folders
+echo "Deleting ${BUILD_DIR}..."
+rm -r "${BUILD_DIR}"
+echo "Deleting ${DIST_DIR}..."
+rm -r "${DIST_DIR}"
 
-# - upgrade pip3 in virtual environment
-#python3 -m pip3 install --upgrade pip
+# -- clean caches and sync + lock pipenv dependencies (update from the file Pipfile.lock)
+pipenv clean
+pipenv update
+# -- update outdated dependencies (optional)
+#pipenv update --outdated
 
-# - install necessary dependencies in virtual environment (according to requirements)
-pip3 install -r requirements.txt
+# -- run pytest with pytest-cov (see pytest.ini/setup.cfg - additional parameters)
+pipenv run pytest tests/
 
-# - run unit tests with coverage and XML/HTML reports
-python3 -m nose2 --verbose --start-dir fleet_scraper_tests --plugin nose2.plugins.junitxml \
-    -X --with-coverage --coverage fleet_scraper \
-    --coverage-report xml --junit-xml-path .coverage/nose2-junit.xml --coverage-report html
+# -- run mypy - types checker
+pipenv run mypy src/
+pipenv run mypy tests/
 
-# - deactivate virtual environment (exit)
-deactivate
+# -- run black code formatter
+pipenv run black src/ --verbose --line-length 110
+pipenv run black tests/ --verbose --line-length 110
+
+# -- run flake8 for checking code formatting
+pipenv run flake8 src/
+pipenv run flake8 tests/
+
+# -- build two distributions: binary (whl) and source (tar.gz)
+pipenv run python -m build
