@@ -1,15 +1,15 @@
-CREATE TABLE DV.t_ship_hs (
-    ship_id         INTEGER NOT NULL,
-    valid_from      TIMESTAMP NOT NULL,
-    valid_to        TIMESTAMP,
-    flag            VARCHAR(100),
-    main_name       VARCHAR(255),
-    secondary_name  VARCHAR(255),
-    home_port       VARCHAR(255),
-    call_sign       VARCHAR(50),
-    row_hash        VARCHAR(50) NOT NULL,
-    load_dttm       TIMESTAMP NOT NULL
+create table dv.t_ship_hs (
+    ship_id         integer not null,
+    valid_from      timestamp not null,
+    valid_to        timestamp,
+    flag            varchar(100),
+    main_name       varchar(255),
+    secondary_name  varchar(255),
+    home_port       varchar(255),
+    call_sign       varchar(50),
+    row_hash        varchar(50) not null,
+    load_dttm       timestamp not null
 );
 
-ALTER TABLE DV.t_ship_hs ADD CONSTRAINT t_ship_hs_pk PRIMARY KEY ( ship_id,
+alter table dv.t_ship_hs add constraint t_ship_hs_pk primary key ( ship_id,
                                                                 valid_from );

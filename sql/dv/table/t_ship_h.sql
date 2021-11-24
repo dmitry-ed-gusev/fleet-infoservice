@@ -1,9 +1,9 @@
-CREATE TABLE DV.t_ship_h (
-    ship_id    INTEGER NOT NULL,
-    imo_num    VARCHAR(100),
-    reg_num    VARCHAR(100),
-    src_nm     VARCHAR(100) NOT NULL,
-    load_dttm  TIMESTAMP
+create table dv.t_ship_h (
+    ship_id    integer not null,
+    imo_num    varchar(100),
+    reg_num    varchar(100),
+    src_nm     varchar(100) not null,
+    load_dttm  timestamp
 );
 
-ALTER TABLE DV.t_ship_h ADD CONSTRAINT t_ship_h_pk PRIMARY KEY ( ship_id );
+alter table dv.t_ship_h add constraint t_ship_h_pk primary key ( ship_id );

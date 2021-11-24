@@ -1,20 +1,18 @@
-DELIMITER //
-CREATE PROCEDURE DV.LOAD_T_SHIP_H_BASE_SHIP_DATA ()
-BEGIN
-	DECLARE MAX_ID INTEGER;
+create procedure dv.load_t_ship_h_base_ship_data ()
+begin
+	declare max_id integer;
 
-	SELECT COALESCE(MAX(SHIP_ID),0)
-    INTO MAX_ID
-    FROM DV.T_SHIP_H;
+	select coalesce(max(ship_id),0)
+    into max_id
+    from dv.t_ship_h;
 
-	INSERT INTO DV.T_SHIP_H (SHIP_ID, IMO_NUM, REG_NUM, SRC_NM, LOAD_DTTM)
-		SELECT MAX_ID + ROW_NUMBER() OVER (), IMO_NUMBER, PROPRIETARY_NUMBER, SOURCE_SYSTEM, SYSDATE()
-		FROM STAGE.BASE_SHIP_DATA STG
-			LEFT JOIN DV.T_SHIP_H TGT
-				ON (STG.IMO_NUMBER = TGT.IMO_NUM OR (STG.IMO_NUMBER IS NULL AND TGT.IMO_NUM IS NULL))
-					AND (STG.PROPRIETARY_NUMBER = TGT.REG_NUM OR (STG.PROPRIETARY_NUMBER IS NULL AND TGT.REG_NUM IS NULL))
-                    AND STG.SOURCE_SYSTEM = TGT.SRC_NM 
-		WHERE TGT.SHIP_ID IS NULL
-		GROUP BY IMO_NUMBER, PROPRIETARY_NUMBER, SOURCE_SYSTEM;
-END;
-//
+	insert into dv.t_ship_h (ship_id, imo_num, reg_num, src_nm, load_dttm)
+		select max_id + row_number() over (), imo_number, proprietary_number, source_system, sysdate()
+		from stage.base_ship_data stg
+			left join dv.t_ship_h tgt
+				on (stg.imo_number = tgt.imo_num or (stg.imo_number is null and tgt.imo_num is null))
+					and (stg.proprietary_number = tgt.reg_num or (stg.proprietary_number is null and tgt.reg_num is null))
+                    and stg.source_system = tgt.src_nm 
+		where tgt.ship_id is null
+		group by imo_number, proprietary_number, source_system;
+end;

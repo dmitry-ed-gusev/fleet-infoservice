@@ -1,32 +1,30 @@
-DELIMITER //
-CREATE PROCEDURE DV.LOAD_T_SHIP_HS_BASE_SHIP_DATA ()
-BEGIN
+create procedure dv.load_t_ship_hs_base_ship_data ()
+begin
 	
-	INSERT INTO DV.T_SHIP_HS (SHIP_ID, VALID_FROM, FLAG, MAIN_NAME, SECONDARY_NAME, HOME_PORT, CALL_SIGN, ROW_HASH, LOAD_DTTM)
-	SELECT H.SHIP_ID, STR_TO_DATE(STG.DATETIME, '%d-%b-%Y %T') AS VALID_FROM, STG.FLAG, STG.MAIN_NAME, 
-		STG.SECONDARY_NAME, STG.HOME_PORT, STG.CALL_SIGN, MD5(CONCAT_WS('#', STG.FLAG, STG.MAIN_NAME, STG.SECONDARY_NAME, STG.HOME_PORT, STG.CALL_SIGN)) AS ROW_HASH, SYSDATE()
-	FROM STAGE.BASE_SHIP_DATA STG
-		JOIN DV.T_SHIP_H H
-			ON (STG.IMO_NUMBER = H.IMO_NUM OR (STG.IMO_NUMBER IS NULL AND H.IMO_NUM IS NULL))
-				AND (STG.PROPRIETARY_NUMBER = H.REG_NUM OR (STG.PROPRIETARY_NUMBER IS NULL AND H.REG_NUM IS NULL))
-                AND STG.SOURCE_SYSTEM = H.SRC_NM
-		LEFT JOIN DV.T_SHIP_HS TGT
-			ON H.SHIP_ID = TGT.SHIP_ID
-				AND TGT.VALID_TO IS NULL
-				AND TGT.ROW_HASH = MD5(CONCAT_WS('#', STG.FLAG, STG.MAIN_NAME, STG.SECONDARY_NAME, STG.HOME_PORT, STG.CALL_SIGN))
-	WHERE TGT.SHIP_ID IS NULL;
+	insert into dv.t_ship_hs (ship_id, valid_from, flag, main_name, secondary_name, home_port, call_sign, row_hash, load_dttm)
+	select h.ship_id, str_to_date(stg.datetime, '%d-%b-%Y %T') as valid_from, stg.flag, stg.main_name, 
+		stg.secondary_name, stg.home_port, stg.call_sign, md5(concat_ws('#', stg.flag, stg.main_name, stg.secondary_name, stg.home_port, stg.call_sign)) as row_hash, sysdate()
+	from stage.base_ship_data stg
+		join dv.t_ship_h h
+			on (stg.imo_number = h.imo_num or (stg.imo_number is null and h.imo_num is null))
+				and (stg.proprietary_number = h.reg_num or (stg.proprietary_number is null and h.reg_num is null))
+                and stg.source_system = h.src_nm
+		left join dv.t_ship_hs tgt
+			on h.ship_id = tgt.ship_id
+				and tgt.valid_to is null
+				and tgt.row_hash = md5(concat_ws('#', stg.flag, stg.main_name, stg.secondary_name, stg.home_port, stg.call_sign))
+	where tgt.ship_id is null;
         
-	UPDATE DV.T_SHIP_HS AS TGT,
+	update dv.t_ship_hs as tgt,
 		(
-			SELECT SHIP_ID, VALID_FROM, VALID_TO_NEW
-			FROM (
-				SELECT SHIP_ID, VALID_FROM, VALID_TO, MAX(VALID_FROM) OVER (PARTITION BY SHIP_ID ORDER BY VALID_FROM ASC ROWS BETWEEN 1 FOLLOWING AND 1 FOLLOWING) AS VALID_TO_NEW
-				FROM DV.T_SHIP_HS
-			) X
-			WHERE VALID_TO_NEW IS NOT NULL AND (VALID_TO <> VALID_TO_NEW OR VALID_TO IS NULL)
-		) AS SRC
-	SET TGT.VALID_TO = SRC.VALID_TO_NEW
-    WHERE TGT.SHIP_ID = SRC.SHIP_ID
-		AND TGT.VALID_FROM = SRC.VALID_FROM;
-END;
-//
+			select ship_id, valid_from, valid_to_new
+			from (
+				select ship_id, valid_from, valid_to, max(valid_from) over (partition by ship_id order by valid_from asc rows between 1 following and 1 following) as valid_to_new
+				from dv.t_ship_hs
+			) x
+			where valid_to_new is not null and (valid_to <> valid_to_new or valid_to is null)
+		) as src
+	set tgt.valid_to = src.valid_to_new
+    where tgt.ship_id = src.ship_id
+		and tgt.valid_from = src.valid_from;
+end;

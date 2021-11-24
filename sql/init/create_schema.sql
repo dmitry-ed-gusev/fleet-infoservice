@@ -1,3 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS dv CHARACTER SET UTF8;
+create schema if not exists dv character set utf8;
 
-CREATE SCHEMA IF NOT EXISTS stage CHARACTER SET UTF8;
+create schema if not exists stage character set utf8;
