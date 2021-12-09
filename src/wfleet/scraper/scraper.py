@@ -13,7 +13,7 @@
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 21.06.2021
+    Modified: Dmitrii Gusev, 09.12.2021
 """
 
 # todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
@@ -28,6 +28,7 @@ import logging
 import wfleet.scraper.utils.constants as const
 
 from pyutilities.pylog import setup_logging
+from pyutilities.config import Configuration
 from wfleet.scraper.engine.scraper_rsclassorg import RsClassOrgScraper
 from wfleet.scraper.engine.scraper_rivregru import RivRegRuScraper
 from wfleet.scraper.engine.scraper_morflotru import MorflotRuScraper
@@ -113,17 +114,36 @@ def temp_entry_point():
     print("Temporary entry point for World Fleet Scraper Utility is working...")
 
 
-def dummy_function() -> int:
-    return 102
+def init_scraper_cache():
+    """Initializer for the Scraper cache."""
+    print("Initializing World Fleet Scraper cache...")
 
+
+def init_scraper():
+    """Scraper init method."""
+    print("Initializing World Fleet Scraper...")
+
+
+# todo: managing config approach: https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
+# todo: https://docs.python.org/3/library/configparser.html
 
 # main part of the script
 if __name__ == "__main__":
+
+    print("Current working dir: ", os.getcwd())
+
+    config: Configuration = Configuration()
+    print(config.config_dict)
+
+    init_scraper_cache()  # init cache
+
+    init_scraper()  # init scraper
+
     setup_logging(default_path=const.LOGGING_CONFIG_FILE)
     log.info("Starting Scraper Processor for all source systems...")
 
     # start all scrapers and get the data
-    scrap_all_data(dry_run=False, requests_limit=0)
+    # scrap_all_data(dry_run=False, requests_limit=0)
     # do cleanup for dry run immediately
     log.info(f"Cleaned up: {cache_cleanup(False)}")
 
