@@ -25,7 +25,7 @@
 import os
 import shutil
 import logging
-import wfleet.scraper.utils.constants as const
+import wfleet.scraper.config.scraper_defaults as const
 
 from pyutilities.pylog import setup_logging
 from pyutilities.config import Configuration

@@ -7,8 +7,9 @@
     Modified: Dmitrii Gusev, 20.06.2021
 """
 
-# general configuration
-DEFAULT_ENCODING = "utf-8"
+DEFAULT_ENCODING = "utf-8"  # default application encoding
+WFLEET_CACHE_DIR = ".wfleet"
+
 SCRAPER_CACHE_PATH = "./engine/cache"
 SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN = "%d-%b-%Y_%H-%M-%S"  # timestamp without fractions
 SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX = "-dryrun"

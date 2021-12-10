@@ -13,10 +13,10 @@
 import ssl
 import logging
 import shutil
-from urllib import request, response, parse, error
+from urllib import request, parse, error
 from pathlib import Path
 
-from . import constants as const
+from ..config import scraper_defaults as const
 
 # init module logger
 log = logging.getLogger(const.LOGGING_UTILITIES_HTTP_LOGGER)

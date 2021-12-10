@@ -18,7 +18,7 @@ from pathlib import Path
 
 from typing import List
 
-from . import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from .utilities import generate_timed_filename
 from src.wfleet.scraper.entities.ships import ShipDto
 

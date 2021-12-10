@@ -15,7 +15,7 @@
 
 import logging
 
-from wfleet.scraper.utils import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 

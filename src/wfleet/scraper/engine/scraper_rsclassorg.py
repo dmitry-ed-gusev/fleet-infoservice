@@ -21,7 +21,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
-from wfleet.scraper.utils import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import build_variations_list, generate_timed_filename
 from wfleet.scraper.utils.utilities_xls import (
     save_ships_2_excel,

@@ -15,13 +15,10 @@
 """
 
 import logging
-import shutil
-from pathlib import Path
-from urllib import request
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 from typing import List
 
-from wfleet.scraper.utils import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import generate_timed_filename
 from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel

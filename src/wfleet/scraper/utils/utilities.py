@@ -12,7 +12,7 @@
 import logging
 import hashlib
 
-from . import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from datetime import datetime
 
 # init module logger
