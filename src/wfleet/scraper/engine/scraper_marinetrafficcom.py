@@ -10,7 +10,7 @@
       - ???
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 07.11.2021
+    Modified: Dmitrii Gusev, 12.12.2021
 """
 
 import logging
@@ -22,7 +22,9 @@ from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 # todo: implement unit tests for this module!
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_MARINETRAFFICCOM)
+# log = logging.getLogger(const.SYSTEM_MARINETRAFFICCOM)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 class MarineTrafficComScraper(ScraperAbstractClass):

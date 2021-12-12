@@ -12,7 +12,7 @@
       - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 07.11.2021
+    Modified: Dmitrii Gusev, 12.12.2021
 """
 
 import logging
@@ -36,7 +36,9 @@ from src.wfleet.scraper.entities.ships import ShipDto
 MORFLOT_DATA_URL = "http://morflot.gov.ru/files/docslist/3926-4267-ts_razdel_3+.xlsx"
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+# log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def parse_raw_data(raw_data_file: str) -> List[ShipDto]:

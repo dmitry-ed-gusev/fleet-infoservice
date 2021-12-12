@@ -25,16 +25,19 @@
 import os
 import shutil
 import logging
+import logging.config
 import wfleet.scraper.config.scraper_defaults as const
 
-from pyutilities.pylog import setup_logging
-from pyutilities.config import Configuration
+# from pyutilities.pylog import setup_logging
+# from pyutilities.config import Configuration
+from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.config.logging_config import LOGGING_CONFIG
+
 from wfleet.scraper.engine.scraper_rsclassorg import RsClassOrgScraper
 from wfleet.scraper.engine.scraper_rivregru import RivRegRuScraper
 from wfleet.scraper.engine.scraper_morflotru import MorflotRuScraper
 
-# setup logging for the whole script
-log = logging.getLogger(const.LOGGING_SCRAPER_PROCESSOR_LOGGER)
+MAIN_LOGGER: str = "wfleet.scraper"
 
 
 def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
@@ -130,22 +133,32 @@ def init_scraper():
 # main part of the script
 if __name__ == "__main__":
 
-    print("Current working dir: ", os.getcwd())
+    # get configuration maps (logging and general)
+    config = CONFIG
+    logger_config = LOGGING_CONFIG
 
-    config: Configuration = Configuration()
-    print(config.config_dict)
+    # makes sure logging directories exists
+    os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)
+
+    # init logger with config dictionary
+    logging.config.dictConfig(LOGGING_CONFIG)
+
+    # first log message
+    log = logging.getLogger(MAIN_LOGGER)
+    log.info("Starting World Fleet Scraper.")
+    log.debug(f"Logging for module {MAIN_LOGGER} is configured.")
+    log.debug(f"Current working dir: {os.getcwd()}")
 
     init_scraper_cache()  # init cache
-
     init_scraper()  # init scraper
 
-    setup_logging(default_path=const.LOGGING_CONFIG_FILE)
-    log.info("Starting Scraper Processor for all source systems...")
+    # setup_logging(default_path=const.LOGGING_CONFIG_FILE)
+    # log.info("Starting Scraper Processor for all source systems...")
 
     # start all scrapers and get the data
     # scrap_all_data(dry_run=False, requests_limit=0)
     # do cleanup for dry run immediately
-    log.info(f"Cleaned up: {cache_cleanup(False)}")
+    # log.info(f"Cleaned up: {cache_cleanup(False)}")
 
     # morflot.parse_raw_data('engine/cache/'
     #                        '19-Jun-2021_15-27-34-scraper_morflotru/3926-5792-ts_razdel_3+.xlsx')

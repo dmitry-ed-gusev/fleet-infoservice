@@ -11,7 +11,7 @@
       - (excel direct link) https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 07.11.2021
+    Modified: Dmitrii Gusev, 12.12.2021
 """
 
 import logging
@@ -30,7 +30,9 @@ from wfleet.scraper.entities.ships import ShipDto
 RIVER_REG_BOOK_URL = "https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx"
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_RIVREGRU)
+# log = logging.getLogger(const.SYSTEM_RIVREGRU)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def parse_raw_data(raw_data_file: str) -> List[ShipDto]:

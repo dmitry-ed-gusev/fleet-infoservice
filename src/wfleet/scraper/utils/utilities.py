@@ -6,7 +6,7 @@
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 30.05.2021
+    Modified: Gusev Dmitrii, 12.12.2021
 """
 
 import logging
@@ -16,7 +16,9 @@ from wfleet.scraper.config import scraper_defaults as const
 from datetime import datetime
 
 # init module logger
-log = logging.getLogger(const.LOGGING_UTILITIES_LOGGER)
+# log = logging.getLogger(const.LOGGING_UTILITIES_LOGGER)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 # useful module constants
 RUS_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"

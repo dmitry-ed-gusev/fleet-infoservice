@@ -10,7 +10,7 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 07.11.2021
+    Modified: Gusev Dmitrii, 12.12.2021
 """
 
 import sys
@@ -44,7 +44,10 @@ ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 з�
 WORKERS_COUNT = 30  # workers (threads) count for multi-threaded scraping
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_RSCLASSORG)
+# log = logging.getLogger(const.SYSTEM_RSCLASSORG)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
+
 
 # setup for multithreading processing
 thread_local = threading.local()  # thread local storage
