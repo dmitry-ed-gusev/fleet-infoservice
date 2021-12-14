@@ -9,44 +9,58 @@
 #            environment (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 13.11.2021
-#   Modified: Dmitrii Gusev, 09.12.2021
+#   Modified: Dmitrii Gusev, 12.12.2021
 #
 ###############################################################################
 
-# todo: add verbosity flag
-# todo: add installation of ipykernel + local kernel
-# todo: add pip upgrade command (?)
 
+# -- verbose output mode
+VERBOSE="--verbose"
+# -- set up encoding/language
 export LANG='en_US.UTF-8'
 BUILD_DIR='build/'
 DIST_DIR='dist/'
+# -- local ipykernel name
+IPYKERNEL_NAME='fleet-service-kernel'
 
-echo "Development Environment setup started..."
 echo
+echo "Development Virtual Environment setup is starting..."
 echo
 
-# - remove existing virtual environment, clear caches
+# -- upgrading pipenv (just for the case)
+echo "Upgrading pipenv."
+pip install --upgrade pipenv
+
+# -- remove existing virtual environment, clear caches
 echo "Deleting virtual environment and clearing caches."
-pipenv --rm
-pipenv --clear
+pipenv --rm ${VERBOSE}
+pipenv --clear ${VERBOSE}
 
-# - clean build and distribution folders
+# -- clean build and distribution folders
+echo "Clearing temporary directories."
 echo "Deleting ${BUILD_DIR}..."
 rm -r "${BUILD_DIR}"
 echo "Deleting ${DIST_DIR}..."
 rm -r "${DIST_DIR}"
 
-# - removing Pipfile.lock
+# -- removing Pipfile.lock (re-generate it)
 echo "Removing Pipfile.lock"
 rm Pipfile.lock
 
-# - install all dependencies, incl. development + update, incl. outdated
-echo "Installing dependencies, updating + updating outdated."
-#pipenv clean
-pipenv lock
-pipenv install --dev
-pipenv update
-pipenv update --outdated
+# -- install all dependencies, incl. development
+echo "Installing dependencies, updating all + outdated."
+pipenv lock ${VERBOSE}
+pipenv install --dev ${VERBOSE}
+
+# -- install local ipykernel
+echo "Installing local ipykernel + check"
+pipenv run ipython kernel install --user --name=${IPYKERNEL_NAME}
+# -- list installed ipykernels
+jupyter kernelspec list
+
+# -- update all + outdated
+pipenv update --clear ${VERBOSE}
+pipenv update --outdated --clear ${VERBOSE}
 
 # - check for vulnerabilities and show dependencies graph
 echo "Checking virtual environment for vulnerabilities."
@@ -54,4 +68,7 @@ pipenv check
 pipenv graph
 
 # - outdated packages report
+echo
+echo "Outdated packages list:"
 pipenv run pip list --outdated
+echo
