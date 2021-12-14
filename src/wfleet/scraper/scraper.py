@@ -11,33 +11,34 @@
 
     Useful resources:
       - (remove dirs) https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
+      - (click library) https://click.palletsprojects.com/en/8.0.x/
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 09.12.2021
+    Modified: Dmitrii Gusev, 14.12.2021
 """
 
-# todo: implement cmd line arguments - dry run, requests_limit, threads counter, ???
 # todo: create unit tests for dry run mode
 # todo: create unit tests for request limited run
-
 # todo: implement multithreading for calling scrapers, some of scrapers will spawn more threads (???)
 
 import os
 import shutil
 import logging
 import logging.config
+import click
 import wfleet.scraper.config.scraper_defaults as const
 
-# from pyutilities.pylog import setup_logging
-# from pyutilities.config import Configuration
 from wfleet.scraper.config.scraper_config import CONFIG
 from wfleet.scraper.config.logging_config import LOGGING_CONFIG
-
 from wfleet.scraper.engine.scraper_rsclassorg import RsClassOrgScraper
 from wfleet.scraper.engine.scraper_rivregru import RivRegRuScraper
 from wfleet.scraper.engine.scraper_morflotru import MorflotRuScraper
 
+# -- main scraper logger, application name
 MAIN_LOGGER: str = "wfleet.scraper"
+APP_NAME: str = "World Fleet Scraper"
+
+log = logging.getLogger(MAIN_LOGGER)  # main module logger
 
 
 def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
@@ -74,16 +75,6 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     # mtraffic_scraper.scrap(dry_run=dry_run)
 
 
-def archive_scraped_data(dry_run: bool = False) -> list:
-    """Perform scraper cache archive. returns list of archived directories.
-    :param dry_run: in case of value True - DRY RUN MODE is on and no archiving will be done.
-    :return: list of archived directories
-    """
-    log.debug("archive_scraped_data(): processing scraped data and archive processed (saved to db).")
-    # todo: implementation!
-    return list()
-
-
 def cache_cleanup(dry_run: bool = False) -> list:
     """Perform cleanup in the scraper cache directory. Returns list of deleted directories.
     :param dry_run: in case of value True - DRY RUN MODE is on and no cleanup will be done.
@@ -112,53 +103,36 @@ def cache_cleanup(dry_run: bool = False) -> list:
     return deleted_dirs
 
 
-def temp_entry_point():
-    """Temporary entry point for console installation."""
-    print("Temporary entry point for World Fleet Scraper Utility is working...")
-
-
-def init_scraper_cache():
-    """Initializer for the Scraper cache."""
-    print("Initializing World Fleet Scraper cache...")
-
-
-def init_scraper():
-    """Scraper init method."""
-    print("Initializing World Fleet Scraper...")
-
-
-# todo: managing config approach: https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
-# todo: https://docs.python.org/3/library/configparser.html
-
-# main part of the script
-if __name__ == "__main__":
-
-    # get configuration maps (logging and general)
-    config = CONFIG
-    logger_config = LOGGING_CONFIG
+@click.command()
+@click.option('--dry-run', default=False, is_flag=True, help='Dry run for scraper (if present).')
+def scraper_main(dry_run: bool):
+    """World Fleet Scraper application, (C) Dmitrii Gusev, 2021-2022."""
 
     # makes sure logging directories exists
     os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)
-
     # init logger with config dictionary
     logging.config.dictConfig(LOGGING_CONFIG)
 
-    # first log message
-    log = logging.getLogger(MAIN_LOGGER)
-    log.info("Starting World Fleet Scraper.")
+    # log some initial info
+    log.info(f"{APP_NAME} application init finished OK. Starting the application.")
     log.debug(f"Logging for module {MAIN_LOGGER} is configured.")
     log.debug(f"Current working dir: {os.getcwd()}")
 
-    init_scraper_cache()  # init cache
-    init_scraper()  # init scraper
+    if dry_run:  # dry run mode on - warning
+        log.warning(f"DRY RUN MODE IS ON!")
+
+    # run cache cleanup
+    # run scraper itself
+
+
+if __name__ == "__main__":
+    scraper_main()
 
     # setup_logging(default_path=const.LOGGING_CONFIG_FILE)
     # log.info("Starting Scraper Processor for all source systems...")
-
     # start all scrapers and get the data
     # scrap_all_data(dry_run=False, requests_limit=0)
     # do cleanup for dry run immediately
     # log.info(f"Cleaned up: {cache_cleanup(False)}")
-
     # morflot.parse_raw_data('engine/cache/'
     #                        '19-Jun-2021_15-27-34-scraper_morflotru/3926-5792-ts_razdel_3+.xlsx')

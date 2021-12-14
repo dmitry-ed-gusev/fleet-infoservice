@@ -3,9 +3,11 @@
 
 """
     World Fleet Scraper configuration for the application.
+    Useful materials:
+      - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified:
+    Modified: Dmitrii Gusev, 14.12.2021
 """
 
 from pathlib import Path
