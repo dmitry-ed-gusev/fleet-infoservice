@@ -14,7 +14,7 @@
       - (click library) https://click.palletsprojects.com/en/8.0.x/
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 14.12.2021
+    Modified: Dmitrii Gusev, 20.12.2021
 """
 
 # todo: create unit tests for dry run mode
@@ -76,7 +76,7 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
 
 
 def cache_cleanup(dry_run: bool = False) -> list:
-    """Perform cleanup in the scraper cache directory. Returns list of deleted directories.
+    """Perform cleanup in the scraper raw files cache directory. Returns list of deleted directories.
     :param dry_run: in case of value True - DRY RUN MODE is on and no cleanup will be done.
     :return: list of deleted directories
     """
@@ -103,10 +103,18 @@ def cache_cleanup(dry_run: bool = False) -> list:
     return deleted_dirs
 
 
+def cleanup():
+    print("cleanup")
+
+
+def scrap():
+    print("scrap")
+
+
 @click.command()
 @click.option('--dry-run', default=False, is_flag=True, help='Dry run for scraper (if present).')
 def scraper_main(dry_run: bool):
-    """World Fleet Scraper application, (C) Dmitrii Gusev, 2021-2022."""
+    """World Fleet Scraper. (C) Dmitrii Gusev, Sergei Lukin, 2020-2022."""
 
     # makes sure logging directories exists
     os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)

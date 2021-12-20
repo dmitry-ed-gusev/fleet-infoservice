@@ -7,7 +7,7 @@
       - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 14.12.2021
+    Modified: Dmitrii Gusev, 20.12.2021
 """
 
 from pathlib import Path
@@ -17,13 +17,17 @@ CACHE_DIR_NAME = ".wfleet"
 # define cache position - in the current dir or in the home dir
 cache_path: Path = Path(CACHE_DIR_NAME)
 prefix: str = ""
-if not cache_path.exists() or not cache_path.is_dir():
-    prefix = str(Path.home()) + "/"
+if not cache_path.exists() or not cache_path.is_dir():  # no cache in current dir - use home
+    prefix = str(Path.home())
 
 # configuration dictionary
 CONFIG = {
     "encoding": "utf-8",
-    "cache_dir": f"{prefix}{CACHE_DIR_NAME}",
+    "cache_dir": f"{prefix}/{CACHE_DIR_NAME}",  # absolute path to cache dir
+    "cache_raw_files_dir": f"{prefix}/{CACHE_DIR_NAME}/.scraper_raw_files",  # raw files dir in the cache
+    "cache_logs_dir": f"{prefix}/{CACHE_DIR_NAME}/logs",  # logs dir
+    "db_name": ".scraperdb",  # db name (sqlite?)
+    "aaa": "bbb"
 }
 
 
