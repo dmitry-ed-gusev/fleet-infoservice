@@ -41,7 +41,7 @@ APP_NAME: str = "World Fleet Scraper"
 log = logging.getLogger(MAIN_LOGGER)  # main module logger
 
 
-def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
+def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):  # todo: move out
     """
     :param dry_run:
     :param requests_limit:
@@ -75,47 +75,13 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     # mtraffic_scraper.scrap(dry_run=dry_run)
 
 
-def cache_cleanup(dry_run: bool = False) -> list:
-    """Perform cleanup in the scraper raw files cache directory. Returns list of deleted directories.
-    :param dry_run: in case of value True - DRY RUN MODE is on and no cleanup will be done.
-    :return: list of deleted directories
-    """
-    log.debug("cache_cleanup(): cleaning up scraper cache (delete dry runs results).")
-
-    deleted_dirs = []  # list of deleted directories
-
-    for filename in os.listdir(const.SCRAPER_CACHE_PATH):
-        file_path = os.path.join(const.SCRAPER_CACHE_PATH, filename)
-        try:
-            if os.path.isdir(file_path) and file_path.endswith(const.SCRAPER_CACHE_DRY_RUN_DIR_SUFFIX):
-                log.info(f"Found DRY RUN directory: {file_path} - to be deleted!")
-                if dry_run:
-                    log.warning("DRY RUN mode is active! No cleanup will be performed!")
-                else:
-                    shutil.rmtree(file_path)
-                deleted_dirs.append(file_path)
-            elif os.path.isfile(file_path) or os.path.islink(file_path):
-                log.debug(f"Found file/symlink: {file_path}. Skipped.")
-
-        except Exception as e:  # exception with cleanup (deletion of the dir/file/link)
-            log.error(f"Failed to delete {file_path}. Reason: {e}")
-
-    return deleted_dirs
-
-
-def cleanup():
-    print("cleanup")
-
-
-def scrap():
-    print("scrap")
-
-
-@click.command()
+@click.group()
 @click.option('--dry-run', default=False, is_flag=True, help='Dry run for scraper (if present).')
 def scraper_main(dry_run: bool):
     """World Fleet Scraper. (C) Dmitrii Gusev, Sergei Lukin, 2020-2022."""
 
+    # print(CONFIG)  # just a debug output
+    
     # makes sure logging directories exists
     os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)
     # init logger with config dictionary
@@ -124,7 +90,8 @@ def scraper_main(dry_run: bool):
     # log some initial info
     log.info(f"{APP_NAME} application init finished OK. Starting the application.")
     log.debug(f"Logging for module {MAIN_LOGGER} is configured.")
-    log.debug(f"Current working dir: {os.getcwd()}")
+    log.debug(f"Working dir: {os.getcwd()}")
+    log.debug(f"Scraper cache dir: {CONFIG['cache_dir']}")
 
     if dry_run:  # dry run mode on - warning
         log.warning(f"DRY RUN MODE IS ON!")
@@ -133,14 +100,15 @@ def scraper_main(dry_run: bool):
     # run scraper itself
 
 
-if __name__ == "__main__":
-    scraper_main()
+@scraper_main.command()
+def cleanup():
+    print("cleanup")
 
-    # setup_logging(default_path=const.LOGGING_CONFIG_FILE)
-    # log.info("Starting Scraper Processor for all source systems...")
-    # start all scrapers and get the data
-    # scrap_all_data(dry_run=False, requests_limit=0)
-    # do cleanup for dry run immediately
-    # log.info(f"Cleaned up: {cache_cleanup(False)}")
-    # morflot.parse_raw_data('engine/cache/'
-    #                        '19-Jun-2021_15-27-34-scraper_morflotru/3926-5792-ts_razdel_3+.xlsx')
+
+@scraper_main.command()
+def scrap():
+    print("scrap")
+    
+    
+if __name__ == '__main__':
+    scraper_main()

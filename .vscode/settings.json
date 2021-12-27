@@ -1,4 +1,37 @@
 {
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+
+    "editor.rulers": [ // general rules for all editors
+        {
+            "column": 100,    // spacing of 1st column from left
+            "color": "#688f9488"   // orange, Go Vols!
+        },
+        // 100,  // 2nd ruler with no color option
+        {
+            "column": 120,      // third ruler
+            //"color": "#a18aaf"  // purple, go Pirates! 
+        },
+    ],
+
+    "[ruby]": { // language-specific rules (sample)
+        "editor.rulers": [
+            {
+                "column": 100,
+                "color": "#00ff22"
+            }
+        ]
+    },
+
+    // use JetBrains Mono font in editor
+    //"editor.fontFamily": "JetBrains Mono",
+    "editor.fontSize": 14.5,
+    //"editor.fontLigatures": true,
+
+    "customizeUI.listRowHeight": 25,
+    "customizeUI.stylesheet": {
+        ".monaco-workbench .part > .content .folder-icon": "font-size: 16px !important; font-weight: bold;",
+        ".monaco-workbench .part > .content .file-icon": "font-size: 16px !important;"
+    },
+
 }

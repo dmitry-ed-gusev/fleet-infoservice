@@ -36,7 +36,7 @@ LOGGING_CONFIG = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "simple",
-            "filename": CONFIG["cache_dir"] + "/logs/log_info.log",  # todo: use CONFIG["....logs_dir"] - see there!
+            "filename": CONFIG["cache_logs_dir"] + "/log_info.log",
             "maxBytes": 10485760,  # 10MB
             "backupCount": 20,
             "encoding": CONFIG["encoding"],
@@ -45,7 +45,7 @@ LOGGING_CONFIG = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "simple",
-            "filename": CONFIG["cache_dir"] + "/logs/log_errors.log",
+            "filename": CONFIG["cache_logs_dir"] + "/log_errors.log",
             "maxBytes": 10485760,  # 10MB
             "backupCount": 20,
             "encoding": CONFIG["encoding"],
