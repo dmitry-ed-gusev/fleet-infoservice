@@ -1,16 +1,29 @@
-{
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
+// ----------------------------------------------------------------------------
+//      Project-specific (local) settings for IDE.
+//      
+//      Created:  Dmitrii Gusev, 15.12.2021
+//      Modified: Dmitrii Gusev, 28.12.2021
+// ----------------------------------------------------------------------------
 
+// todo: move this settings to global or user-specific?
+
+{   
+    // -- python settings
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true, // pytest should be installed
+    "python.linting.flake8Enabled": true, // flake8 should be installed
+    "python.linting.mypyEnabled": true, // mypy should be installed
+
+    // -- vertical rulers
     "editor.rulers": [ // general rules for all editors
         {
-            "column": 100,    // spacing of 1st column from left
-            "color": "#688f9488"   // orange, Go Vols!
+            "column": 110,    // spacing of 1st column from left
+            "color": "#77a4b6ce"   // orange, Go Vols!
         },
         // 100,  // 2nd ruler with no color option
         {
             "column": 120,      // third ruler
-            //"color": "#a18aaf"  // purple, go Pirates! 
+            "color": "#a18aaf"  // purple, go Pirates! 
         },
     ],
 
@@ -23,15 +36,9 @@
         ]
     },
 
-    // use JetBrains Mono font in editor
+    // -- font setup
     //"editor.fontFamily": "JetBrains Mono",
-    "editor.fontSize": 14.5,
+    "editor.fontSize": 14, // we may use 14.5 as well
     //"editor.fontLigatures": true,
-
-    "customizeUI.listRowHeight": 25,
-    "customizeUI.stylesheet": {
-        ".monaco-workbench .part > .content .folder-icon": "font-size: 16px !important; font-weight: bold;",
-        ".monaco-workbench .part > .content .file-icon": "font-size: 16px !important;"
-    },
 
 }
