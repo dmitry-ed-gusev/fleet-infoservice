@@ -13,11 +13,15 @@ import os
 import logging
 import shutil
 from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.engine.scraper_rsclassorg import RsClassOrgScraper
+from wfleet.scraper.engine.scraper_rivregru import RivRegRuScraper
+from wfleet.scraper.engine.scraper_morflotru import MorflotRuScraper
 
 
 # init module logging
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
+
 
 def cache_cleanup(dry_run: bool = False) -> list:  # todo: move out
     """Perform cleanup in the scraper raw files cache directory. Returns list of deleted directories.
@@ -45,3 +49,37 @@ def cache_cleanup(dry_run: bool = False) -> list:  # todo: move out
             log.error(f"Failed to delete {file_path}. Reason: {e}")
 
     return deleted_dirs
+
+
+def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):  # todo: move out
+    """
+    :param dry_run:
+    :param requests_limit:
+    :return:
+    """
+    log.debug("scrap_all_data(): processing all data sources.")
+
+    # --- scraper for rivreg.ru
+    riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
+    riv_scraper.scrap(dry_run=dry_run)
+    # --- scraper class for morflot.ru
+    morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
+    morflot_scraper.scrap(dry_run=dry_run)
+    # --- scraper for rs-class.org
+    rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
+    rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
+
+    # todo: implement the below scrapers properly!
+    # # scraper class for gims.ru
+    # gims_scraper: GimsRuScraper = GimsRuScraper(const.SYSTEM_GIMS, const.SCRAPER_CACHE_PATH)
+    # gims_scraper.scrap(dry_run=dry_run)
+    # # scraper class for vesselfinder.com
+    # vf_scraper: VesselFinderComScraper = VesselFinderComScraper(const.SYSTEM_VESSELFINDERCOM, const.SCRAPER_CACHE_PATH)
+    # vf_scraper.scrap(dry_run=dry_run)
+    # # scraper class for clarksons.net
+    # clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET, const.SCRAPER_CACHE_PATH)
+    # clarksons_scraper.scrap(dry_run=dry_run)
+    # # scraper class for marinetraffic.com
+    # mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
+    #                                                                     const.SCRAPER_CACHE_PATH)
+    # mtraffic_scraper.scrap(dry_run=dry_run)
