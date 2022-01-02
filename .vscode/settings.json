@@ -2,17 +2,24 @@
 //      Project-specific (local) settings for IDE.
 //      
 //      Created:  Dmitrii Gusev, 15.12.2021
-//      Modified: Dmitrii Gusev, 28.12.2021
+//      Modified: Dmitrii Gusev, 02.01.2022
 // ----------------------------------------------------------------------------
 
 // todo: move this settings to global or user-specific?
 
 {   
-    // -- python settings
+    // -- python settings: testing
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true, // pytest should be installed
+    
+    // -- python settings: style/types
     "python.linting.flake8Enabled": true, // flake8 should be installed
     "python.linting.mypyEnabled": true, // mypy should be installed
+    
+    // -- python setting: Sphinx (doc engine)
+    "autoDocstring.docstringFormat": "sphinx",
+    "autoDocstring.guessTypes": false,
+    "autoDocstring.includeExtendedSummary": false,
 
     // -- vertical rulers
     "editor.rulers": [ // general rules for all editors
@@ -27,7 +34,8 @@
         },
     ],
 
-    "[ruby]": { // language-specific rules (sample)
+    // -- language-specific vertical rulers
+    "[ruby]": { // language-specific rules
         "editor.rulers": [
             {
                 "column": 100,
@@ -36,9 +44,10 @@
         ]
     },
 
-    // -- font setup
+    // -- font etc. editor setup
     //"editor.fontFamily": "JetBrains Mono",
     "editor.fontSize": 14, // we may use 14.5 as well
     //"editor.fontLigatures": true,
+    "editor.renderWhitespace": "all",
 
 }
