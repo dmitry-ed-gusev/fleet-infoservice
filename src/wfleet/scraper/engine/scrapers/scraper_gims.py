@@ -11,19 +11,18 @@
       - http://www.gims.ru/ - looks like unofficial web site
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 12.12.2021
+    Modified: Dmitrii Gusev, 02.01.2022
 """
 
 import logging
-
-from wfleet.scraper.config import scraper_defaults as const
-from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run
-from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from datetime import datetime
+from wfleet.scraper.config.scraper_config import CONFIG, MSG_MODULE_ISNT_RUNNABLE
+# from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run
+from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
 # todo: implement unit tests for this module!
 
 # module logging setup
-# log = logging.getLogger(const.SYSTEM_GIMS)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
@@ -31,20 +30,18 @@ log.debug(f"Logging for module {__name__} is configured.")
 class GimsRuScraper(ScraperAbstractClass):
     """Scraper for GIMS source system."""
 
-    def __init__(self, source_name: str, cache_path: str):
-        super().__init__(source_name, cache_path)
-        self.log = logging.getLogger(const.SYSTEM_GIMS)
-        self.log.info(f"GimsRuScraper: source name {self.source_name}, cache path: {self.cache_path}.")
+    def __init__(self):
+        # super().__init__()
+        log.info("GimsRuScraper: initializing.")
 
-    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
-        """GIMS data scraper."""
+    def scrap(self, timestamp: datetime, dry_run: bool, requests_limit: int = 0):
+        """GIMS data scraper method."""
         log.info("scrap(): processing GIMS")
 
         if dry_run:  # dry run mode - won't do anything!
-            process_scraper_dry_run(const.SYSTEM_GIMS)
+            # process_scraper_dry_run(const.SYSTEM_GIMS)
             return SCRAPE_RESULT_OK
 
 
-# main part of the script
 if __name__ == "__main__":
-    print("Don't run this script directly! Use wrapper script!")
+    print(MSG_MODULE_ISNT_RUNNABLE)

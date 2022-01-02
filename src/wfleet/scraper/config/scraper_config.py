@@ -4,7 +4,7 @@
 """
     World Fleet Scraper configuration for the application. In case cache dir [.wfleet] exists
     in the current dir - use it, otherwise cache dir will be placed/used in the use home dir.
-    
+
     Useful materials:
       - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 
@@ -14,14 +14,16 @@
 
 from pathlib import Path
 
-CACHE_DIR_NAME: str = ".wfleet"
+CACHE_DIR_NAME: str = ".wfleet"  # cache dir name
+MSG_MODULE_ISNT_RUNNABLE = "This module is not runnable!"
 
-# if cache is in curr dir (exists and is dir) - use it, otherwise - use the user 
+# if cache is in curr dir (exists and is dir) - use it, otherwise - use the user
 # home directory (mostly suitable for development, in most cases user home dir will be used)
-if Path(CACHE_DIR_NAME).exists() and Path(CACHE_DIR_NAME).is_dir():  
-    cache_dir: str = CACHE_DIR_NAME
+cache_dir: str = ""
+if Path(CACHE_DIR_NAME).exists() and Path(CACHE_DIR_NAME).is_dir():
+    cache_dir = CACHE_DIR_NAME
 else:  # cache dir not exists or is not a dir
-    cache_dir: str = str(Path.home()) + '/' + CACHE_DIR_NAME
+    cache_dir = str(Path.home()) + '/' + CACHE_DIR_NAME
 
 # configuration dictionary
 CONFIG = {
@@ -35,4 +37,4 @@ CONFIG = {
 
 
 if __name__ == "__main__":
-    print("Don't run configuration module directly!")
+    print(MSG_MODULE_ISNT_RUNNABLE)

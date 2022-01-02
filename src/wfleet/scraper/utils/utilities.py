@@ -6,17 +6,15 @@
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 12.12.2021
+    Modified: Gusev Dmitrii, 02.01.2022
 """
 
 import logging
 import hashlib
-
 from wfleet.scraper.config import scraper_defaults as const
 from datetime import datetime
 
 # init module logger
-# log = logging.getLogger(const.LOGGING_UTILITIES_LOGGER)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
@@ -113,21 +111,6 @@ def build_variations_list() -> list:
                 result.append(letter1 + spec_symbol + letter2)  # add value to resulting list
 
     return result
-
-
-def generate_timed_filename(postfix: str) -> str:
-    """Generates file name with timestamp and provided postfix, human-readable.
-    :param postfix:
-    :return:
-    """
-    log.debug(f"generate_timed_filename(): generating file name with postfix {postfix}.")
-
-    result: str = datetime.now().strftime(const.SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN)
-    if postfix is not None and len(postfix.strip()) > 0:
-        result += "-" + postfix.strip()
-
-    return result
-
 
 # todo: implement unit tests that module isn't runnable directly!
 if __name__ == "__main__":

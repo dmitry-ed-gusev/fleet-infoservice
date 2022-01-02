@@ -44,7 +44,6 @@ ERROR_OVER_1000_RECORDS = "Результат запроса более 1000 з�
 WORKERS_COUNT = 30  # workers (threads) count for multi-threaded scraping
 
 # module logging setup
-# log = logging.getLogger(const.SYSTEM_RSCLASSORG)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 

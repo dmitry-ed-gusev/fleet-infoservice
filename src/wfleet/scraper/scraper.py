@@ -14,7 +14,7 @@
       - (click library) https://click.palletsprojects.com/en/8.0.x/
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 28.12.2021
+    Modified: Dmitrii Gusev, 02.02.2022
 """
 
 # todo: create unit tests for dry run mode
@@ -28,35 +28,40 @@ import click
 from wfleet.scraper import VERSION
 from wfleet.scraper.config.scraper_config import CONFIG
 from wfleet.scraper.config.logging_config import LOGGING_CONFIG
-from wfleet.scraper.engine.scraper_engine import cache_cleanup, scrap_all_data
+from wfleet.scraper.cache.scraper_cache import cache_cleanup
+from wfleet.scraper.engine.scraper_engine import scrap_all_data
 
 # some useful defaults - main scraper logger, application name
-MAIN_LOGGER: str = "wfleet.scraper"
+MAIN_LOGGER: str = "wfleet.scraper.scraper"
 APP_NAME: str = "World Fleet Scraper"
 
-log = logging.getLogger(MAIN_LOGGER)  # main module logger
+# main module logger
+log = logging.getLogger(MAIN_LOGGER)
 
 
 @click.group()
-@click.option('--dry-run', default=False, is_flag=True, help='Dry run for Scraper (no action).')
-# todo: add option for the # of requests for scraper
-# @click.option('--zzz', default=False, is_flag=True, help='ZZZ.')
+@click.option('--dry-run', default=False, is_flag=True, help='Dry run mode for Scraper (no action).')
+@click.option('--req-count', default=0, help='Limit number of requests for parsers, 0 - no limit.',
+              type=int, show_default=True)
 @click.version_option(version=VERSION, prog_name=APP_NAME)
 @click.pass_context  # pass context to other sub command(s)
-def main(context, dry_run: bool):
+def main(context, dry_run: bool, req_count: int):
     """World Fleet Scraper. (C) Dmitrii Gusev, Sergei Lukin, 2020-2022."""
 
     # makes sure logging directories exists
     os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)
     # init logger with config dictionary
     logging.config.dictConfig(LOGGING_CONFIG)
+    log.debug(f"Logging for {APP_NAME} is configured.")
 
     # log some initial info
     log.info(f"{APP_NAME} application init finished OK. Starting the application.")
+
     # initial debug info
-    log.debug(f"Logging for module {MAIN_LOGGER} is configured.")
     log.debug(f"Scraper working dir: {os.getcwd()}")
     log.debug(f"Scraper configuration: {CONFIG}")
+    log.debug(f"Scraper requests limit: {req_count}")
+
     # dry run mode on - warning/debug message
     if dry_run:
         log.warning("DRY RUN MODE IS ON!")
@@ -68,22 +73,23 @@ def main(context, dry_run: bool):
     context.ensure_object(dict)
     # init the context
     context.obj['DRYRUN'] = dry_run
+    context.obj['REQCOUNT'] = req_count
 
 
-@main.command(help="Scraper cache cleanup.")
+@main.command(help="Scraper local cache cleanup.")
 @click.pass_context
 def cleanup(context):
     log.debug("Executing command: cleanup.")
-    click.echo(f"DRYRUN is {'on' if context.obj['DRYRUN'] else 'off'}")
+    # click.echo(f"DRYRUN is {'on' if context.obj['DRYRUN'] else 'off'}")
     cache_cleanup(context.obj['DRYRUN'])
 
 
-@main.command(help="Perform data scraping.")
+@main.command(help="Perform data scraping from all sources.")
 @click.pass_context
 def scrap(context):
     log.debug("Executing command: scrap.")
-    click.echo(f"DRYRUN is {'on' if context.obj['DRYRUN'] else 'off'}")
-    scrap_all_data(context.obj['DRYRUN'])
+    # click.echo(f"DRYRUN is {'on' if context.obj['DRYRUN'] else 'off'}")
+    scrap_all_data(context.obj['DRYRUN'], context.obj['REQCOUNT'])
 
 
 if __name__ == '__main__':

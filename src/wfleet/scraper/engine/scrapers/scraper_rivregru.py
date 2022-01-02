@@ -30,13 +30,12 @@ from wfleet.scraper.entities.ships import ShipDto
 RIVER_REG_BOOK_URL = "https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx"
 
 # module logging setup
-# log = logging.getLogger(const.SYSTEM_RIVREGRU)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
 
 def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
-    """Parse raw data excel file and return list of ShipDto objects.
+    """Parse raw data excel file from River Register web-site and return list of ShipDto objects.
     :param raw_data_file:
     :return:
     """
@@ -60,7 +59,7 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
 
         # skip empty row (won't create empty ship)
         if imo_number is None and proprietary_number1 is None and proprietary_number2 is None:
-            log.debug(f"Skipping empty row...")
+            log.debug("Skipping empty row...")
             continue
 
         # create new ship object
