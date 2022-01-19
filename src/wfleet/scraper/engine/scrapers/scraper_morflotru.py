@@ -12,19 +12,19 @@
       - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 07.11.2021
+    Modified: Dmitrii Gusev, 14.12.2021
 """
 
 import logging
 from openpyxl import load_workbook
 from typing import List
 
-from wfleet.scraper.utils import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import generate_timed_filename
 from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
 from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from src.wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
 # todo: implement search for new excel file on the page above (see above marker -> *)
@@ -36,7 +36,9 @@ from src.wfleet.scraper.entities.ships import ShipDto
 MORFLOT_DATA_URL = "http://morflot.gov.ru/files/docslist/3926-4267-ts_razdel_3+.xlsx"
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+# log = logging.getLogger(const.SYSTEM_MORFLOTRU)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def parse_raw_data(raw_data_file: str) -> List[ShipDto]:

@@ -7,19 +7,21 @@
         - (download file) https://stackoverflow.com/questions/7243750/download-file-from-web-in-python-3
 
     Created:  Dmitrii Gusev, 01.06.2021
-    Modified: Dmitrii Gusev, 16.06.2021
+    Modified: Dmitrii Gusev, 12.12.2021
 """
 
 import ssl
 import logging
 import shutil
-from urllib import request, response, parse, error
+from urllib import request, parse, error
 from pathlib import Path
 
-from . import constants as const
+from ..config import scraper_defaults as const
 
 # init module logger
-log = logging.getLogger(const.LOGGING_UTILITIES_HTTP_LOGGER)
+# log = logging.getLogger(const.LOGGING_UTILITIES_HTTP_LOGGER)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 # todo: add perform_http_get_request() method + appropriately rename the method below

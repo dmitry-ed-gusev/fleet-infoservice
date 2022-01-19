@@ -7,24 +7,34 @@
 #   system shell) and from the pipenv environment as well (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 23.03.2021
-#   Modified: Dmitrii Gusev, 14.11.2021
+#   Modified: Dmitrii Gusev, 14.12.2021
 #
 ###############################################################################
 
 # todo: do put output of utilities - mypy/black/flake8 - to a separated file(s)?
 
+# -- verbose output mode
+VERBOSE="--verbose"
+# -- set up encoding/language
+export LANG="en_US.UTF-8"
+# -- build directories
 BUILD_DIR='build/'
 DIST_DIR='dist/'
 
-# - clean build and distribution folders
+echo
+echo "Build is starting..."
+echo
+
+# -- clean build and distribution folders
+echo "Clearing temporary directories."
 echo "Deleting ${BUILD_DIR}..."
 rm -r "${BUILD_DIR}"
 echo "Deleting ${DIST_DIR}..."
 rm -r "${DIST_DIR}"
 
 # -- clean caches and sync + lock pipenv dependencies (update from the file Pipfile.lock)
-pipenv clean
-pipenv update
+pipenv clean ${VERBOSE}
+pipenv update ${VERBOSE}
 # -- update outdated dependencies (optional)
 #pipenv update --outdated
 

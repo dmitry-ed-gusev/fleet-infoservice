@@ -9,7 +9,7 @@
         - (pathlib - 2) https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 20.06.2021
+    Modified: Dmitrii Gusev, 14.12.2021
 """
 
 import xlwt
@@ -18,12 +18,14 @@ from pathlib import Path
 
 from typing import List
 
-from . import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from .utilities import generate_timed_filename
-from src.wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ships import ShipDto
 
 # init module logger
-log = logging.getLogger(const.LOGGING_UTILITIES_XLS_LOGGER)
+# log = logging.getLogger(const.LOGGING_UTILITIES_XLS_LOGGER)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def verify_and_process_xls_file(xls_file: str) -> None:

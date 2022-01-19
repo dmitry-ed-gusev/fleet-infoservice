@@ -11,17 +11,14 @@
       - (excel direct link) https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx
 
     Created:  Gusev Dmitrii, 04.05.2021
-    Modified: Dmitrii Gusev, 07.11.2021
+    Modified: Dmitrii Gusev, 12.12.2021
 """
 
 import logging
-import shutil
-from pathlib import Path
-from urllib import request
-from openpyxl import load_workbook, Workbook
+from openpyxl import load_workbook
 from typing import List
 
-from wfleet.scraper.utils import constants as const
+from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import generate_timed_filename
 from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
@@ -33,11 +30,12 @@ from wfleet.scraper.entities.ships import ShipDto
 RIVER_REG_BOOK_URL = "https://www.rivreg.ru/assets/Uploads/Registrovaya-kniga3.xlsx"
 
 # module logging setup
-log = logging.getLogger(const.SYSTEM_RIVREGRU)
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
-    """Parse raw data excel file and return list of ShipDto objects.
+    """Parse raw data excel file from River Register web-site and return list of ShipDto objects.
     :param raw_data_file:
     :return:
     """
@@ -61,7 +59,7 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
 
         # skip empty row (won't create empty ship)
         if imo_number is None and proprietary_number1 is None and proprietary_number2 is None:
-            log.debug(f"Skipping empty row...")
+            log.debug("Skipping empty row...")
             continue
 
         # create new ship object
