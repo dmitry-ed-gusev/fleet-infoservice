@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 ###############################################################################
 #
 #   Development environment setup script. Script can be used to re-create
@@ -9,10 +8,9 @@
 #            environment (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 13.11.2021
-#   Modified: Dmitrii Gusev, 12.12.2021
+#   Modified: Dmitrii Gusev, 19.01.2022
 #
 ###############################################################################
-
 
 # -- verbose output mode
 VERBOSE="--verbose"
@@ -23,9 +21,8 @@ DIST_DIR='dist/'
 # -- local ipykernel name
 IPYKERNEL_NAME='fleet-service-kernel'
 
-echo
-echo "Development Virtual Environment setup is starting..."
-echo
+clear
+printf "Development Virtual Environment setup is starting...\n\n"
 
 # -- upgrading pipenv (just for the case)
 echo "Upgrading pipenv."
@@ -59,7 +56,7 @@ pipenv run ipython kernel install --user --name=${IPYKERNEL_NAME}
 jupyter kernelspec list
 
 # -- update all + outdated
-pipenv update --clear ${VERBOSE}
+#pipenv update --clear ${VERBOSE}
 pipenv update --outdated --clear ${VERBOSE}
 
 # - check for vulnerabilities and show dependencies graph
