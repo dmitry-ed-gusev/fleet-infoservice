@@ -4,12 +4,12 @@
 """
     Scraper for Morflot Ships Book.
 
-    Main data source (source system address): http://morflot.gov.ru/
+    Main data source (source system address): https://morflot.gov.ru/
 
     Useful materials and resources:
-      - *(excel) http://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
-      - (direct link to excel - 02.06.2021) http://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx
-      - (direct link to excel - 11.06.2021) http://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
+      - *(excel) https://morflot.gov.ru/deyatelnost/transportnaya_bezopasnost/reestryi/reestr_obyektov_i_transportnyih_sredstv/f3926.html
+      - (direct link to excel - 02.06.2021) https://morflot.gov.ru/files/docslist/3926-6154-ts_razdel_3.xlsx
+      - (direct link to excel - 11.06.2021) https://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
     Modified: Dmitrii Gusev, 14.12.2021

@@ -11,7 +11,8 @@
 
 import logging
 from datetime import datetime
-# from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.engine.scrapers.scraper_clarksonsnet import ClarksonsNetScraper
 from wfleet.scraper.engine.scrapers.scraper_gims import GimsRuScraper
 
 # init module logging
@@ -32,16 +33,22 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     # scraper run timestamp
     timestamp: datetime = datetime.now()
 
-    # - scraper class for gims.ru
-    gims_scraper: GimsRuScraper = GimsRuScraper()
-    gims_scraper.scrap(timestamp, dry_run)
+    # --- run scraper for clarcksons.net
+    clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper()
+    clarksons_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
 
-    # --- scraper for rivreg.ru
+    # --- run scraper class for GIMS
+    gims_scraper: GimsRuScraper = GimsRuScraper()
+    gims_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
+
+    # --- run scraper for rivreg.ru
     # riv_scraper: RivRegRuScraper = RivRegRuScraper(const.SYSTEM_RIVREGRU, const.SCRAPER_CACHE_PATH)
     # riv_scraper.scrap(dry_run=dry_run)
+    
     # --- scraper class for morflot.ru
     # morflot_scraper: MorflotRuScraper = MorflotRuScraper(const.SYSTEM_MORFLOTRU, const.SCRAPER_CACHE_PATH)
     # morflot_scraper.scrap(dry_run=dry_run)
+    
     # --- scraper for rs-class.org
     # rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
     # rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
@@ -52,9 +59,6 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     # const.SCRAPER_CACHE_PATH)
     # vf_scraper.scrap(dry_run=dry_run)
     # # scraper class for clarksons.net
-    # clarksons_scraper: ClarksonsNetScraper = ClarksonsNetScraper(const.SYSTEM_CLARKSONSNET,
-    # const.SCRAPER_CACHE_PATH)
-    # clarksons_scraper.scrap(dry_run=dry_run)
     # # scraper class for marinetraffic.com
     # mtraffic_scraper: MarineTrafficComScraper = MarineTrafficComScraper(const.SYSTEM_MARINETRAFFICCOM,
     #                                                                     const.SCRAPER_CACHE_PATH)
