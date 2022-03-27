@@ -11,11 +11,12 @@
 #            environment (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 13.11.2021
-#   Modified: Dmitrii Gusev, 19.01.2022
+#   Modified: Dmitrii Gusev, 27.03.2022
 #
 ###############################################################################
 
 
+# -- general setup - some variables
 export LANG='en_US.UTF-8'
 TMP_FILE="req.txt"
 
@@ -23,26 +24,28 @@ clear
 printf "Python Development Environment setup is starting...\n\n"
 
 # -- upgrading pip (just for the case)
-pip install --upgrade pip
-echo "  - upgrading pip - done"
+pip --no-cache-dir install --upgrade pip
+printf "\n\n ** upgrading pip - done **\n"
 
 # -- freeze current global dependencies
 pip freeze > ${TMP_FILE}
+printf "\n\n ** freezing the current dependencies to the [%s] file - done **\n\n" ${TMP_FILE}
 
 # -- remove all dependencies
 pip uninstall -r ${TMP_FILE} -y
-echo "  - uninstalled current dependencies - done"
+printf "\n\n ** uninstalling the current dependencies - done **\n"
 
 # -- list the current empty environment
-printf "\n\n--- Current Empty Environment ---\n\n"
+printf "\n\n--- The Current Empty Environment (no dependencies) ---\n\n"
 pip list
+sleep 5
 
 # -- remove temporary file
 rm ${TMP_FILE}
-echo "  - removing tmp file ${TMP_FILE} - done"
+printf "\n\n ** removing tmp file %s - done **\n\n" ${TMP_FILE}
 
 # -- install necessary dependencies
-pip install pipenv pytest jupyter
-echo "  - installing dependencies - done"
+pip --no-cache-dir install pipenv pytest jupyter
+printf "\n\n ** installing core dependencies - done **\n"
 
-printf "\n\nPython Development Environment setup is done."
+printf "\n\nPython Development Environment setup is done.\n\n\n"
