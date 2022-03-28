@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import List
 
 from wfleet.scraper.config import scraper_defaults as const
-from .utilities import generate_timed_filename
+# from .utilities import generate_timed_filename
 from wfleet.scraper.entities.ships import ShipDto
 
 # init module logger

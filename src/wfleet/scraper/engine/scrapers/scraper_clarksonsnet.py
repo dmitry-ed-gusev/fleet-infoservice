@@ -9,7 +9,7 @@
       - ??? (TBD)
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 27.03.2022
+    Modified: Dmitrii Gusev, 28.03.2022
 """
 
 # todo: implement the module content (scraping)!
@@ -22,7 +22,6 @@ from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
 # module logging setup
-# log = logging.getLogger(const.SYSTEM_CLARKSONSNET)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 

@@ -12,18 +12,20 @@
       - (direct link to excel - 11.06.2021) https://morflot.gov.ru/files/docslist/3926-5792-ts_razdel_3+.xlsx
 
     Created:  Dmitrii Gusev, 29.05.2021
-    Modified: Dmitrii Gusev, 14.12.2021
+    Modified: Dmitrii Gusev, 28.03.2021
 """
 
 import logging
+import warnings
 from openpyxl import load_workbook
 from typing import List
-
+from datetime import datetime
 from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import generate_timed_filename
 from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
-from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
@@ -94,37 +96,34 @@ def parse_raw_data(raw_data_file: str) -> List[ShipDto]:
 class MorflotRuScraper(ScraperAbstractClass):
     """Scraper for morflot.ru source system."""
 
-    def __init__(self, source_name: str, cache_path: str):
-        super().__init__(source_name, cache_path)
-        self.log = logging.getLogger(const.SYSTEM_MORFLOTRU)
-        self.log.info(f"MorflotRuScraper: source name {self.source_name}, cache path: {self.cache_path}.")
+    def __init__(self):
+        log.info("MorflotRuScraper: initializing.")
 
-    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
+    def scrap(self, dtimestamp: datetime, dry_run: bool, requests_limit: int = 0):
         """Morflot data scraper."""
         log.info("scrap(): processing morflot.ru")
 
+        # not implemented warning
+        warnings.warn("This module is not implemented yet!", Warning, stacklevel=2)
+
         if dry_run:  # dry run mode - won't do anything!
-            process_scraper_dry_run(const.SYSTEM_MORFLOTRU)
             return SCRAPE_RESULT_OK
 
-        # generate scraper cache directory path
-        scraper_cache_dir: str = self.cache_path + "/" + generate_timed_filename(self.source_name)
-
-        # download raw data file
-        downloaded_file: str = perform_file_download_over_http(MORFLOT_DATA_URL, scraper_cache_dir)
-        self.log.info(f"Downloaded raw data file: {downloaded_file}")
-
-        # parse raw data into list of ShipDto objects
-        ships: List[ShipDto] = parse_raw_data(downloaded_file)
-        self.log.info(f"Parsed row data and found {len(ships)} ship(s).")
-
-        excel_file: str = scraper_cache_dir + "/" + const.EXCEL_SHIPS_DATA
-        save_ships_2_excel(ships, excel_file)
-        self.log.info(f"Found ships saved into {excel_file} file.")
+        # # generate scraper cache directory path
+        # scraper_cache_dir: str = self.cache_path + "/" + generate_timed_filename(self.source_name)
+        # # download raw data file
+        # downloaded_file: str = perform_file_download_over_http(MORFLOT_DATA_URL, scraper_cache_dir)
+        # self.log.info(f"Downloaded raw data file: {downloaded_file}")
+        # # parse raw data into list of ShipDto objects
+        # ships: List[ShipDto] = parse_raw_data(downloaded_file)
+        # self.log.info(f"Parsed row data and found {len(ships)} ship(s).")
+        # excel_file: str = scraper_cache_dir + "/" + const.EXCEL_SHIPS_DATA
+        # save_ships_2_excel(ships, excel_file)
+        # self.log.info(f"Found ships saved into {excel_file} file.")
 
         return SCRAPE_RESULT_OK
 
 
 # main part of the script
 if __name__ == "__main__":
-    print("Don't run this script directly! Use wrapper script!")
+    print(MSG_MODULE_ISNT_RUNNABLE)
