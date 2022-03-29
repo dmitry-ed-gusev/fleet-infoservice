@@ -3,14 +3,13 @@
 
 """
     Scraper for Russian Maritime Register of Shipping Register Book.
-
     Main data source (source system address): https://rs-class.org/
 
     Useful materials and resources:
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 12.12.2021
+    Modified: Gusev Dmitrii, 29.03.2022
 """
 
 import sys
@@ -18,17 +17,16 @@ import time
 import logging
 import requests
 import threading
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
 from wfleet.scraper.config import scraper_defaults as const
 from wfleet.scraper.utils.utilities import build_variations_list, generate_timed_filename
-from wfleet.scraper.utils.utilities_xls import (
-    save_ships_2_excel,
-    process_scraper_dry_run,
-)
+from wfleet.scraper.utils.utilities_xls import save_ships_2_excel
 from wfleet.scraper.utils.utilities_http import perform_http_post_request
-from .scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from wfleet.scraper.entities.ships import ShipDto
 
 # todo: implement unit tests for this module!
@@ -212,35 +210,33 @@ class RsClassOrgScraper(ScraperAbstractClass):
     """Scraper for rs-class.org source system."""
 
     def __init__(self, source_name: str, cache_path: str):
-        super().__init__(source_name, cache_path)
-        self.log = logging.getLogger(const.SYSTEM_RSCLASSORG)
-        self.log.info(f"RsClassOrgScraper: source name {self.source_name}, cache path: {self.cache_path}.")
+        log.info("RsClassOrgScraper: initializing.")
 
-    def scrap(self, dry_run: bool = False, requests_limit: int = 0):
+    def scrap(self, timestamp: datetime, dry_run: bool, requests_limit: int = 0):
         """RS Class Org data scraper."""
+
         log.info("scrap(): processing rs-class.org")
 
         if dry_run:  # dry run mode - won't do anything!
-            process_scraper_dry_run(const.SYSTEM_RSCLASSORG)
             return SCRAPE_RESULT_OK
 
         main_ships: dict = {}  # ships search result
 
         # build list of variations for search strings + measure time
-        start_time = time.time()
+        start_time = time.time()  # todo: replace with decorator measurements
         variations = build_variations_list()
-        self.log.debug(f"Built variations [{len(variations)}] in {time.time() - start_time} second(s).")
+        log.debug(f"Built variations [{len(variations)}] in {time.time() - start_time} second(s).")
 
         try:
             # process all generated variations strings + measure time - multi-/single-threaded processing
             start_time = time.time()
             if WORKERS_COUNT <= 1:  # single-threaded processing
-                self.log.info("Processing mode: [SINGLE THREADED].")
+                log.info("Processing mode: [SINGLE THREADED].")
                 main_ships.update(
                     perform_ships_base_search_single_thread(variations, requests_limit=requests_limit)
                 )
             else:
-                self.log.info("Processing mode: [MULTI THREADED].")
+                log.info("Processing mode: [MULTI THREADED].")
                 main_ships.update(
                     perform_ships_base_search_multiple_threads(
                         variations,
@@ -257,10 +253,12 @@ class RsClassOrgScraper(ScraperAbstractClass):
             raise
 
         # path to cache directory for the current scraper run
+        # todo: replace with cache management module
         if requests_limit > 0:  # mark limited run directory appropriately
             suffix = self.source_name + const.SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX
         else:
             suffix = self.source_name
+            
         xls_path: str = self.cache_path + "/" + generate_timed_filename(suffix) + "/"
 
         # save base ships info
@@ -273,4 +271,4 @@ class RsClassOrgScraper(ScraperAbstractClass):
 
 # main part of the script
 if __name__ == "__main__":
-    print("Don't run this script directly! Use wrapper script!")
+    print(MSG_MODULE_ISNT_RUNNABLE)
