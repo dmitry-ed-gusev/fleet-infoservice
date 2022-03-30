@@ -13,7 +13,7 @@ warnings.warn("This module [scraper_defaults.py] is deprecated", DeprecationWarn
 # DEFAULT_ENCODING = "utf-8"  # default application encoding
 # WFLEET_CACHE_DIR = ".wfleet"
 # SCRAPER_CACHE_PATH = "./engine/cache"
-# SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX = "-requests-limited"
+
 # TIMEOUT_URLLIB_URLOPEN: int = 12 * 60 * 60  # timeout is set in seconds (?) - 12h (currently)
 # systems names + logging configuration (system name is used as a logger name as well)
 # LOGGING_CONFIG_FILE = "logging.yml"

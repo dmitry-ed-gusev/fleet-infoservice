@@ -27,7 +27,7 @@ from wfleet.scraper.entities.ships import ShipDto
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
-
+# todo: move to cache management dir
 def verify_and_process_xls_file(xls_file: str) -> None:
     """Verification of the provided file name and creating all necessary parent dirs in
         the provided file path (if needed).
@@ -41,7 +41,8 @@ def verify_and_process_xls_file(xls_file: str) -> None:
     if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
         raise ValueError(f"Provided file path {xls_file} is an existing directory!")
 
-    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
+    # create necessary parent dirs in the file path
+    xls_file_path.parent.mkdir(parents=True, exist_ok=True)
 
 
 def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:

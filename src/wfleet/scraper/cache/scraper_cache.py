@@ -6,7 +6,7 @@
     This module should'n be called directly - rather be imported and functions used.
 
     Created:  Dmitrii Gusev, 01.01.2022
-    Modified: Dmitrii Gusev, 02.01.2022
+    Modified: Dmitrii Gusev, 30.03.2022
 """
 
 import os
@@ -27,6 +27,8 @@ DIR_TIMESTAMP_PATTERN: str = "%Y-%m-%d_%H-%M-%S"  # example: 2021-02-01_22:01:20
 DIR_TIMESTAMP_REGEX: Pattern = re.compile(r'^(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}-)')
 # in case of dry run mode - this suffix will be added to the directory
 DIR_SUFFIX_DRY_RUN: str = "-dryrun"
+# in case of "requests limited" mode - this suffix will be added to the directory
+DIR_SUFFIX_LIMITED_REQUESTS_RUN = "-requests-limited"
 # exception list used by cache cleanup functions
 CACHE_EXCEPTION_LIST: list = ["readme.txt"]
 
@@ -99,12 +101,14 @@ def cache_cleanup(dry_run: bool) -> None:
     _cache_remove_invalid_entries(invalid_items, dry_run)
 
 
-def cache_create_cache_dir(timestamp: datetime, name: str, dry_run: bool) -> str:
-    """Create cache dir with provided timestamp and name. If dry run parameter is true - add
-    appropriate postfix to the name.
+def _cache_generate_raw_dir_name(timestamp: datetime, name: str, dry_run: bool, requests_number: int) -> str:
+    """Generate cache dir name with provided timestamp and name. If dry run parameter is true - add
+    appropriate postfix to the name. If requests limited mode is on - add the suffix as well. The only 
+    one suffix will be added, dry run mode suffix overrides the requests limited mode suffix.
     :param timestamp: timestamp for the dir
     :param name: general dir name
     :param dry_run: dry run mode - true/false
+    :param requests_limit: requests limited mode if this parameter is > 0
     :return: created dir name (in the cache directory)
     """
     log.debug("cache_create_cache_dir(): creating new cache directory.")
@@ -112,25 +116,29 @@ def cache_create_cache_dir(timestamp: datetime, name: str, dry_run: bool) -> str
     if not name:  # fail-fast, in case of empty dir name
         raise ScraperException("Provided empty cache directory name!")
 
-    result: str = timestamp.strftime(DIR_TIMESTAMP_PATTERN) + '-' + name
-    if dry_run:
+    # generate the base name - without any suffixes
+    result: str = timestamp.strftime(DIR_TIMESTAMP_PATTERN) + '_' + name
+
+    if dry_run:  # dry-run mode is on
         result += DIR_SUFFIX_DRY_RUN
+    elif requests_number > 0:  # requests limited mode is on
+        result += DIR_SUFFIX_LIMITED_REQUESTS_RUN
 
     return result
 
 
-# def generate_timed_filename(postfix: str) -> str:
-#     """Generates file name with timestamp and provided postfix, human-readable.
-#     :param postfix:
-#     :return:
-#     """
-#     log.debug(f"generate_timed_filename(): generating file name with postfix {postfix}.")
+def cache_get_raw_dir() -> str:
+    
+    # todo: build raw dir path and create it (if exists and is a dir - OK) and return it
+    
+    pass
 
-#     result: str = datetime.now().strftime(const.SCRAPER_CACHE_DIRECTORY_TIMESTAMP_PATTERN)
-#     if postfix is not None and len(postfix.strip()) > 0:
-#         result += "-" + postfix.strip()
 
-#     return result
+def cache_get_raw_file(file_name: str) -> str:
+    
+    # todo: us cache_get_raw_dir() function...
+    
+    pass
 
 
 if __name__ == "__main__":

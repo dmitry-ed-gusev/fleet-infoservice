@@ -9,9 +9,10 @@
       - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 25.12.2021
+    Modified: Dmitrii Gusev, 30.03.2022
 """
 
+import os
 from pathlib import Path
 
 CACHE_DIR_NAME: str = ".wfleet"  # cache dir name
@@ -28,12 +29,17 @@ else:  # cache dir not exists or is not a dir
 # configuration dictionary
 CONFIG = {
     "encoding": "utf-8",
+    "work_dir": os.getcwd(),
     "cache_dir": cache_dir,  # absolute path to cache
     "cache_raw_files_dir": cache_dir + "/.scraper_raw_files",  # raw files dir in the cache
     "cache_logs_dir": cache_dir + "/logs",  # logs dir
-    "db_name": ".scraperdb",  # db name (sqlite?)
-    "aaa": "bbb"
+    "db_dir": cache_dir + "/.scraper_db",  # DB dir
+    "db_name": ".scraperdb",  # DB name (sqlite?)
+    "raw_data_file": "ships_data.xls"
 }
+
+# makes sure logging directories exists
+os.makedirs(CONFIG["cache_logs_dir"], exist_ok=True)
 
 
 if __name__ == "__main__":

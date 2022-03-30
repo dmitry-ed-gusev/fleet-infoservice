@@ -6,7 +6,7 @@
     directly - rather should be imported and functions used.
 
     Created:  Dmitrii Gusev, 24.12.2021
-    Modified: Dmitrii Gusev, 29.03.2022
+    Modified: Dmitrii Gusev, 30.03.2022
 """
 
 # todo: add DB support for scraper runs telemetry
@@ -22,6 +22,7 @@ from wfleet.scraper.engine.scrapers.scraper_rivregru import RivRegRuScraper
 from wfleet.scraper.engine.scrapers.scraper_morflotru import MorflotRuScraper
 from wfleet.scraper.engine.scrapers.scraper_marinetrafficcom import MarineTrafficComScraper
 from wfleet.scraper.engine.scrapers.scraper_vesselfindercom import VesselFinderComScraper
+from wfleet.scraper.engine.scrapers.scraper_rsclassorg import RsClassOrgScraper
 
 # init module logging
 log = logging.getLogger(__name__)
@@ -63,8 +64,8 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     vf_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
 
     # --- scraper for rs-class.org
-    # rs_scraper: RsClassOrgScraper = RsClassOrgScraper(const.SYSTEM_RSCLASSORG, const.SCRAPER_CACHE_PATH)
-    # rs_scraper.scrap(dry_run=dry_run, requests_limit=requests_limit)
+    rs_scraper: RsClassOrgScraper = RsClassOrgScraper()
+    rs_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
 
 
 # main part of the script

@@ -14,7 +14,7 @@
       - (click library) https://click.palletsprojects.com/en/8.0.x/
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 27.03.2022
+    Modified: Dmitrii Gusev, 30.03.2022
 """
 
 # todo: create unit tests for dry run mode
@@ -22,7 +22,6 @@
 # todo: implement multithreading for calling scrapers, some of scrapers will spawn more threads (???)
 # todo: add cmd key for list of scrapers
 
-import os
 import logging
 import logging.config
 import click
@@ -47,18 +46,12 @@ log = logging.getLogger(MAIN_LOGGER)
 def main(context, dry_run: bool):
     """World Fleet Scraper. (C) Dmitrii Gusev, Sergei Lukin, 2020-2022."""
 
-    # makes sure logging directories exists
-    os.makedirs(CONFIG["cache_dir"] + "/logs/", exist_ok=True)
-    # init logger with config dictionary
+    # init logger with config dictionary + do initial debug output
     logging.config.dictConfig(LOGGING_CONFIG)
     log.debug(f"Logging for {APP_NAME} is configured.")
+    log.debug(f"Scraper configuration:\n{CONFIG}")
 
-    # log some initial info
     log.info(f"{APP_NAME} application init finished OK. Starting the application.")
-
-    # initial debug info
-    log.debug(f"Scraper working dir: {os.getcwd()}")
-    log.debug(f"Scraper configuration: {CONFIG}")
 
     # dry run mode on - warning/debug message
     if dry_run:

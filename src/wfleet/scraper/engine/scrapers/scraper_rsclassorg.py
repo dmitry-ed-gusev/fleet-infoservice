@@ -45,7 +45,6 @@ WORKERS_COUNT = 30  # workers (threads) count for multi-threaded scraping
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
-
 # setup for multithreading processing
 thread_local = threading.local()  # thread local storage
 futures = []  # list to store future results of threads
@@ -209,7 +208,7 @@ def perform_ships_base_search_multiple_threads(
 class RsClassOrgScraper(ScraperAbstractClass):
     """Scraper for rs-class.org source system."""
 
-    def __init__(self, source_name: str, cache_path: str):
+    def __init__(self):
         log.info("RsClassOrgScraper: initializing.")
 
     def scrap(self, timestamp: datetime, dry_run: bool, requests_limit: int = 0):
@@ -261,8 +260,9 @@ class RsClassOrgScraper(ScraperAbstractClass):
             
         xls_path: str = self.cache_path + "/" + generate_timed_filename(suffix) + "/"
 
-        # save base ships info
+        # save ships info into the raw data file in the scraper cache dir
         xls_base_file = xls_path + const.EXCEL_SHIPS_DATA
+        
         save_ships_2_excel(list(main_ships.values()), xls_base_file)
         log.info(f"Saved ships info to file {xls_base_file}")
 
