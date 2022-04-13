@@ -143,3 +143,6 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+# temporary ignore
+.seaweb_db/
