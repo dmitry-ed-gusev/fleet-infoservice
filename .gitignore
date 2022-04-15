@@ -146,3 +146,4 @@ dmypy.json
 
 # temporary ignore
 .seaweb_db/
+temp/

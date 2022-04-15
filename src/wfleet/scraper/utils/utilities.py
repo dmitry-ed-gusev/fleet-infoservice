@@ -112,6 +112,7 @@ def build_variations_list() -> list:
 
     return result
 
+
 # todo: implement unit tests that module isn't runnable directly!
 if __name__ == "__main__":
     print("Don't run this utility script directly!")

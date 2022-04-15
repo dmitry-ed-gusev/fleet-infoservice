@@ -5,7 +5,7 @@
     Data scraper for Sea Web database. Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 05.04.2022
+    Modified: Gusev Dmitrii, 15.04.2022
 """
 
 import os
@@ -15,6 +15,7 @@ import time
 import random
 import requests
 from pathlib import Path
+from bs4 import BeautifulSoup
 
 # base ship data URL
 ship_url = 'https://maritime.ihs.com/Ships/Details/Index/'
@@ -116,7 +117,7 @@ session_headers = {
 #     "shiphead": "1",
 # }
 
-print(f"Starting... Current working dir: [{os.getcwd()}].")
+print("Starting...")
 
 # setup HTTP session
 session = requests.Session()
@@ -130,6 +131,13 @@ TIMEOUT_DELAY_MAX = 4  # max timeout between requests, seconds
 TIMEOUT_CADENCE = 100  # timeout cadence - # of requests between timeout/delay
 IMO_NUMBERS_FILE = "EquasisToIACS_20220401_731.csv"  # csv file with imo numbers (warning - format!)
 BASE_WORKING_DIR = os.getcwd() + "/.seaweb_db"
+RAW_SHIPS_DIR = BASE_WORKING_DIR + "/seaweb"
+MAIN_SHIP_DATA_FILE = "ship_main.html"
+
+# debug output
+print(f"OS working dir: [{os.getcwd()}]")
+print(f"Base working dir: [{BASE_WORKING_DIR}].")
+print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
 
 def get_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
@@ -169,7 +177,7 @@ def get_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
                 print(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
                 line_count += 1
 
-                ship_dir = BASE_WORKING_DIR + "/seaweb/" + row[0]  # directory to store the current ship
+                ship_dir = RAW_SHIPS_DIR + "/" + row[0]  # directory to store the current ship
                 print(f"\tship dir: {ship_dir}")
 
                 with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
@@ -194,9 +202,9 @@ def get_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
                     break
 
                 os.makedirs(ship_dir, exist_ok=True)  # if all is OK - create dir for the ship data
-                with open(Path(ship_dir + '/ship_main.html'), 'w') as f:  # write received content to file
+                with open(Path(ship_dir + '/' + MAIN_SHIP_DATA_FILE), 'w') as f:  # write received content to file
                     f.write(response.text)
-                    print(f"\tWritten file: {ship_dir + '/ship_main.html'}")
+                    print(f"\tWritten file: {ship_dir + '/' + MAIN_SHIP_DATA_FILE}")
 
         print(f'Processed {line_count} lines.')
 
@@ -240,7 +248,7 @@ def get_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX
                 print(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
                 line_count += 1
 
-                ship_dir = BASE_WORKING_DIR + "/seaweb/" + row[0]  # directory to store the current ship
+                ship_dir = RAW_SHIPS_DIR + "/" + row[0]  # directory to store the current ship
                 print(f"\tship dir: {ship_dir}")
 
                 # check existence of several files with additional info and request it if missing
@@ -279,6 +287,48 @@ def get_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX
         print(f'Processed {line_count} lines.')
 
 
+def read_file(file_path: str):
+    with open(file_path, mode='r') as infile:
+        return infile.read()
+
+
+def ship_main_parse(html_text: str):
+    # todo: read from file - replace with the method parameter
+    data_file = os.getcwd() + "/temp/9336505/ship_main.html"
+    data = read_file(data_file)
+
+    soup = BeautifulSoup(data, "html.parser")  # parser
+    # find all data rows
+    data_rows = soup.find_all("div", class_="col-sm-12 col-md-6 col-lg-6")
+
+    for row in data_rows:
+        # print(row)
+        key: str = row.find("div", class_="col-4 keytext").text
+        value: str = row.find("div", class_="col-8 valuetext").text
+        print(f"{key} -> {value}")
+
+
+def process_raw_data():
+    ships_dirs = os.listdir(RAW_SHIPS_DIR)
+    print(f"Total ships: {len(ships_dirs)}.")
+
+    counter: int = 0
+    # iterate over all dirs/ships and process data
+    for ship in ships_dirs:
+
+        if not ship.isnumeric():  # skip non-numeric dirs
+            print(f"Found non-numeric object: [{ship}]")
+            continue
+
+        ship_data: str = read_file(RAW_SHIPS_DIR + "/" + ship + "/" + MAIN_SHIP_DATA_FILE)
+        if "Access is denied." in ship_data:
+            continue
+
+        counter += 1
+
+    print(f"Ships with data: {counter}")
+
+
 @click.command()
 @click.option('--imo-file', default=IMO_NUMBERS_FILE, help='File with IMO numbers.',
               type=str, show_default=True)
@@ -289,10 +339,13 @@ def get_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX
 @click.option('--processed-ext-file', default="processed_extended.csv",
               help='Processed IMO numbers (ext info)', type=str, show_default=True)
 def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed_ext_file: str):
-    get_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
-                  processed_imo_numbers=processed_base_file)
-    get_extended_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
-                      processed_imo_numbers=processed_ext_file)
+    # get_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
+    #               processed_imo_numbers=processed_base_file)
+    # get_extended_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
+    #                   processed_imo_numbers=processed_ext_file)
+
+    # process_raw_data()
+    ship_main_parse("")
 
 
 if __name__ == '__main__':
