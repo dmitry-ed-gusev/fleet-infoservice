@@ -25,7 +25,7 @@ from wfleet.scraper.utils.utilities_http import perform_file_download_over_http
 from wfleet.scraper.utils.utilities_xls import process_scraper_dry_run, save_ships_2_excel
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
-from wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ship import ShipDto
 
 # todo: implement unit tests for this module!
 # todo: implement search for new excel file on the page above (see above marker -> *)

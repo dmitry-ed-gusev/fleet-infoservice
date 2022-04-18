@@ -2,10 +2,11 @@
 # coding=utf-8
 
 """
-    Data scraper for Sea Web database. Main data source address is https://maritime.ihs.com
+    Data scraper for Sea Web database. 
+    Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 15.04.2022
+    Modified: Gusev Dmitrii, 17.04.2022
 """
 
 import os
@@ -15,7 +16,9 @@ import time
 import random
 import requests
 from pathlib import Path
-from bs4 import BeautifulSoup
+from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
+from wfleet.scraper.utils.utilities import read_file_as_text
+
 
 # base ship data URL
 ship_url = 'https://maritime.ihs.com/Ships/Details/Index/'
@@ -66,6 +69,18 @@ ship_additional_data_urls = {
     # "inmarsat": "https://maritime.ihs.com/Ships/Links/InmarsatAsync/",  # may be added later
     # "equasis": "https://maritime.ihs.com/Ships/Links/Equasis/",  # may be added later
     # "ship_perf": "https://maritime.ihs.com/Ships/ShipPerformance/ShipPerformanceAsync/",  # may be added later
+}
+
+# ship builder details main url
+ship_builder_url = "https://maritime.ihs.com/Builders/Details/"
+
+# ship builder additional details urls
+ship_builder_additional_urls = {
+    "builder_addresses": "https://maritime.ihs.com/Builders/Details/GetBuilderAddressesAsync/",
+    "builder_history": "https://maritime.ihs.com/Builders/Details/GetBuilderHistoryAsync/",
+    "builder_assoc": "https://maritime.ihs.com/Builders/Details/GetBuilderAssociationsAsync/",
+    "builder_fleet": "https://maritime.ihs.com/Builders/Details/GetBuilderBuiltFleetAsync/",
+    "builder_orders": "https://maritime.ihs.com/Builders/Details/GetBuilderOrderbookAsync/",
 }
 
 # session data - headers
@@ -122,16 +137,22 @@ print("Starting...")
 # setup HTTP session
 session = requests.Session()
 session.headers.update(session_headers)
-# session.cookies.update(session_cookies)
-# session.max_redirects = 100
+# session.cookies.update(session_cookies)  # add cookies to session headers
+# session.max_redirects = 100  # limit max redirects # to follow
 
 # some useful constants
 LIMIT = 100000  # requests limit
 TIMEOUT_DELAY_MAX = 4  # max timeout between requests, seconds
 TIMEOUT_CADENCE = 100  # timeout cadence - # of requests between timeout/delay
 IMO_NUMBERS_FILE = "EquasisToIACS_20220401_731.csv"  # csv file with imo numbers (warning - format!)
+
 BASE_WORKING_DIR = os.getcwd() + "/.seaweb_db"
+
+# various working dirs
 RAW_SHIPS_DIR = BASE_WORKING_DIR + "/seaweb"
+RAW_BUILDERS_DIR = BASE_WORKING_DIR + "/shipbuilders"
+RAW_COMPANIES_DIR = BASE_WORKING_DIR + "/shipcompanies"
+
 MAIN_SHIP_DATA_FILE = "ship_main.html"
 
 # debug output
@@ -140,7 +161,7 @@ print(f"Base working dir: [{BASE_WORKING_DIR}].")
 print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
 
-def get_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
+def scrap_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
                   req_delay_cadence: int = TIMEOUT_CADENCE,
                   imo_numbers_file: str = IMO_NUMBERS_FILE, imo_numbers_file_delimeter: str = ";",
                   processed_imo_numbers: str = "processed.csv"):
@@ -209,7 +230,7 @@ def get_base_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
         print(f'Processed {line_count} lines.')
 
 
-def get_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
+def scrap_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
                       req_delay_cadence: int = TIMEOUT_CADENCE,
                       imo_numbers_file: str = IMO_NUMBERS_FILE, imo_numbers_file_delimeter: str = ";",
                       processed_imo_numbers: str = "processed_extended.csv"):
@@ -287,25 +308,22 @@ def get_extended_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX
         print(f'Processed {line_count} lines.')
 
 
-def read_file(file_path: str):
-    with open(file_path, mode='r') as infile:
-        return infile.read()
+def collect_companies_and_builders_data():
+    ships_dirs_list = os.listdir(RAW_SHIPS_DIR)
+
+    # iterate over all dirs/ships and process data
+    for ship in ships_dirs_list:
+
+        if not ship.isnumeric():  # skip non-numeric dirs
+            print(f"Found non-numeric object: [{ship}]")
+            continue
+
+        # read main data file as a whole
+        ship_data: str = read_file_as_text(RAW_SHIPS_DIR + "/" + ship + "/" + MAIN_SHIP_DATA_FILE)
 
 
-def ship_main_parse(html_text: str):
-    # todo: read from file - replace with the method parameter
-    data_file = os.getcwd() + "/temp/9336505/ship_main.html"
-    data = read_file(data_file)
-
-    soup = BeautifulSoup(data, "html.parser")  # parser
-    # find all data rows
-    data_rows = soup.find_all("div", class_="col-sm-12 col-md-6 col-lg-6")
-
-    for row in data_rows:
-        # print(row)
-        key: str = row.find("div", class_="col-4 keytext").text
-        value: str = row.find("div", class_="col-8 valuetext").text
-        print(f"{key} -> {value}")
+def scrap_companies_and_builders_data():
+    pass
 
 
 def process_raw_data():
@@ -320,7 +338,7 @@ def process_raw_data():
             print(f"Found non-numeric object: [{ship}]")
             continue
 
-        ship_data: str = read_file(RAW_SHIPS_DIR + "/" + ship + "/" + MAIN_SHIP_DATA_FILE)
+        ship_data: str = read_file_as_text(RAW_SHIPS_DIR + "/" + ship + "/" + MAIN_SHIP_DATA_FILE)
         if "Access is denied." in ship_data:
             continue
 
@@ -339,13 +357,15 @@ def process_raw_data():
 @click.option('--processed-ext-file', default="processed_extended.csv",
               help='Processed IMO numbers (ext info)', type=str, show_default=True)
 def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed_ext_file: str):
-    # get_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
+    # scrap_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
     #               processed_imo_numbers=processed_base_file)
-    # get_extended_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
+    # scrap_extended_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
     #                   processed_imo_numbers=processed_ext_file)
-
     # process_raw_data()
-    ship_main_parse("")
+
+    data_file = os.getcwd() + "/temp/9336505/ship_main.html"
+    ship_data = _parse_ship_main(read_file_as_text(data_file))
+    print(ship_data)
 
 
 if __name__ == '__main__':

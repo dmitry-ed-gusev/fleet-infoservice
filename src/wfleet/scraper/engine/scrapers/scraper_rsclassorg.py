@@ -27,7 +27,7 @@ from wfleet.scraper.utils.utilities_xls import save_ships_2_excel
 from wfleet.scraper.utils.utilities_http import perform_http_post_request
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ship import ShipDto
 
 # todo: implement unit tests for this module!
 

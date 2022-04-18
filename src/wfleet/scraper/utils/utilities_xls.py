@@ -20,7 +20,7 @@ from typing import List
 
 from wfleet.scraper.config import scraper_defaults as const
 # from .utilities import generate_timed_filename
-from wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ship import ShipDto
 
 # init module logger
 # log = logging.getLogger(const.LOGGING_UTILITIES_XLS_LOGGER)

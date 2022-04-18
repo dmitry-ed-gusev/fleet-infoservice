@@ -2,17 +2,19 @@
 
 """
     Common utilities module for Fleet DB Scraper.
+
     Useful materials:
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 02.01.2022
+    Modified: Gusev Dmitrii, 16.04.2022
 """
 
 import logging
 import hashlib
-from wfleet.scraper.config import scraper_defaults as const
-from datetime import datetime
+
+from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
+
 
 # init module logger
 log = logging.getLogger(__name__)
@@ -111,6 +113,21 @@ def build_variations_list() -> list:
                 result.append(letter1 + spec_symbol + letter2)  # add value to resulting list
 
     return result
+
+
+def read_file_as_text(file_path: str) -> str:
+    if not file_path:  # fail-fast behaviour
+        raise ScraperException("Specified empty file path!")
+
+    with open(file_path, mode='r') as infile:
+        return infile.read()
+
+
+def get_last_part_of_the_url(url: str) -> str:
+    if not url:  # fail-fast behaviour
+        raise ScraperException("Specified empty URL!")
+
+    return url[url.rfind('/') + 1:]
 
 
 # todo: implement unit tests that module isn't runnable directly!

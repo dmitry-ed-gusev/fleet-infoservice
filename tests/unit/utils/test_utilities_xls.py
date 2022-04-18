@@ -12,7 +12,7 @@ import unittest
 import logging
 from pathlib import Path
 from pyutilities.pylog import setup_logging
-from wfleet.scraper.entities.ships import ShipDto  # , ExtendedShipDto
+from wfleet.scraper.entities.ship import ShipDto  # , ExtendedShipDto
 from wfleet.scraper.utils.utilities_xls import save_ships_2_excel
 
 # some useful constants
