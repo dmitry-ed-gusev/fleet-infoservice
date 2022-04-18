@@ -9,8 +9,13 @@
       - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 30.03.2022
+    Modified: Dmitrii Gusev, 18.04.2022
 """
+
+# todo: make this a python class (@dataclass)
+# todo: make this python class a singleton
+# todo: https://python.plainenglish.io/singleton-class-in-java-vs-python-554bbcee3470
+# todo: https://elbenshira.com/blog/singleton-pattern-in-python/
 
 import os
 from pathlib import Path
@@ -33,9 +38,12 @@ CONFIG = {
     "cache_dir": cache_dir,  # absolute path to cache
     "cache_raw_files_dir": cache_dir + "/.scraper_raw_files",  # raw files dir in the cache
     "cache_logs_dir": cache_dir + "/logs",  # logs dir
-    "db_dir": cache_dir + "/.scraper_db",  # DB dir
+    "db_dir": cache_dir + "/.scraper_db",  # DB dir + DB name (SQLite)
+    "imo_file": cache_dir + "/imo_numbers.csv",
+    "imo_file_backup": cache_dir + "/imo_numbers.bak",
     "db_name": ".scraperdb",  # DB name (sqlite?)
-    "raw_data_file": "ships_data.xls"
+    "raw_data_file": "ships_data.xls",
+    "": "",
 }
 
 # makes sure logging directories exists

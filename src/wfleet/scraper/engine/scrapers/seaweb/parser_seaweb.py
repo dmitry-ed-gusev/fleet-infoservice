@@ -6,11 +6,10 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii,
+    Modified: Gusev Dmitrii, 18.04.2022
 """
 
-from ast import Str
-from typing import Dict
+from typing import Dict, AnyStr
 from bs4 import BeautifulSoup
 from wfleet.scraper.entities.ship import ShipDto
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
@@ -18,7 +17,7 @@ from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import get_last_part_of_the_url
 
 
-def _parse_ship_main(html_text: str) -> Dict[Str, Str]:
+def _parse_ship_main(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
 
@@ -73,8 +72,54 @@ def _parse_ship_main(html_text: str) -> Dict[Str, Str]:
     return ship_data
 
 
+def _parse_ship_xxx1(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx2(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx3(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx4(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx5(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx6(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx7(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx8(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
+def _parse_ship_xxx1(html_text: str) -> Dict[AnyStr, AnyStr]:
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
+
+
 def parse_ship(ship_dir: str) -> ShipDto:
-    pass
+    if not html_text:  # fail-fast behaviour
+        raise ScraperException("Empty HTML text for parsing!")
 
 
 if __name__ == "__main__":
