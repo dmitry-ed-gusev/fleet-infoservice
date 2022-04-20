@@ -6,10 +6,10 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii, 18.04.2022
+    Modified: Gusev Dmitrii, 20.04.2022
 """
 
-from typing import Dict, AnyStr
+from typing import Dict, List, AnyStr
 from bs4 import BeautifulSoup
 from wfleet.scraper.entities.ship import ShipDto
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
@@ -75,51 +75,68 @@ def _parse_ship_main(html_text: str) -> Dict[AnyStr, AnyStr]:
 def _parse_ship_xxx1(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx2(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx3(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx4(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx5(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx6(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx7(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
 def _parse_ship_xxx8(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
-def _parse_ship_xxx1(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx9(html_text: str) -> Dict[AnyStr, AnyStr]:
     if not html_text:  # fail-fast behaviour
         raise ScraperException("Empty HTML text for parsing!")
+    raise NotImplementedError('Not implemented yet!')
 
 
-def parse_ship(ship_dir: str) -> ShipDto:
-    if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
+def parse_one_ship(ship_dir: str) -> ShipDto:
+    
+    # read main ship data
+    
+    
+    # read XXX data
+    pass
+
+
+def parse_all_ships(raw_ships_dir: str) -> List[ShipDto]:
+    pass
 
 
 if __name__ == "__main__":
