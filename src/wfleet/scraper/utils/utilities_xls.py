@@ -9,7 +9,7 @@
         - (pathlib - 2) https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 14.12.2021
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 import xlwt
@@ -17,9 +17,6 @@ import logging
 from pathlib import Path
 
 from typing import List
-
-from wfleet.scraper.config import scraper_defaults as const
-# from .utilities import generate_timed_filename
 from wfleet.scraper.entities.ship import ShipDto
 
 # init module logger

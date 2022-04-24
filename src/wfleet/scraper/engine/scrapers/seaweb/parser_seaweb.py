@@ -2,29 +2,47 @@
 # coding=utf-8
 
 """
-    Data parser for Sea Web database. 
+    Data parser for Sea Web database.
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii, 20.04.2022
+    Modified: Gusev Dmitrii, 24.04.2022
 """
 
-from typing import Dict, List, AnyStr
+import os
+import logging
 from bs4 import BeautifulSoup
+from datetime import datetime
+from pathlib import Path
+
 from wfleet.scraper.entities.ship import ShipDto
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import Config
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
+from wfleet.scraper.engine.scrapers.seaweb.defaults_seaweb import MAIN_SHIP_DATA_FILE
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
-from wfleet.scraper.utils.utilities import get_last_part_of_the_url
+from wfleet.scraper.utils.utilities import get_last_part_of_the_url, read_file_as_text
+
+EMPTY_HTML_MSG: str = "Empty HTML text for parsing!"
+
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 
-def _parse_ship_main(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_main(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
+        raise ScraperException(EMPTY_HTML_MSG)
 
     soup = BeautifulSoup(html_text, "html.parser")  # parser
     data_rows = soup.find_all("div", class_="col-sm-12 col-md-6 col-lg-6")  # find all data rows
 
-    ship_data: dict = dict()
+    config = Config()  # get config instance
+
+    ship_data: dict[str, str] = dict()  # resulting dictionary
+    # current timestamp to string
+    ship_data['timestamp'] = datetime.now().strftime(config.timestamp_pattern)
+    # source system
+    ship_data['source_system'] = 'seaweb'
+
     for row in data_rows:  # iterate over data rows and parse data
         # print(f"\n{row}")  # <- debug output
         key: str = row.find("div", class_="col-4 keytext").text  # row -> key column
@@ -72,71 +90,108 @@ def _parse_ship_main(html_text: str) -> Dict[AnyStr, AnyStr]:
     return ship_data
 
 
-def _parse_ship_xxx1(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx1(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx2(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx2(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx3(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx3(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx4(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx4(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx5(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx5(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx6(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx6(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx7(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx7(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx8(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx8(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def _parse_ship_xxx9(html_text: str) -> Dict[AnyStr, AnyStr]:
+def _parse_ship_xxx9(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
-        raise ScraperException("Empty HTML text for parsing!")
-    raise NotImplementedError('Not implemented yet!')
+        raise ScraperException(EMPTY_HTML_MSG)
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
 def parse_one_ship(ship_dir: str) -> ShipDto:
-    
-    # read main ship data
-    
-    
+    log.debug(f"parse_one_ship(): parsing ship [{ship_dir}].")
+
+    # read and parse main ship data
+    text: str = read_file_as_text(ship_dir + "/" + MAIN_SHIP_DATA_FILE)
+    ship_dict = _parse_ship_main(text)
+
     # read XXX data
-    pass
+    # todo: implement!
+
+    # build Ship object from dictionary
+    ship = ShipDto.ship_from_dict(ship_dict)
+    log.debug(ship)
+
+    return ship
 
 
-def parse_all_ships(raw_ships_dir: str) -> List[ShipDto]:
-    pass
+def parse_all_ships(raw_ships_dir: str) -> list[ShipDto]:
+    log.debug(f"parse_all_ships(): parsing ships in [{raw_ships_dir}].")
+
+    if raw_ships_dir is None:  # fail-fast - empty dir
+        raise ValueError("Provided empty ships dir!")
+
+    # fail-fast - dir doesn't exist or not a dir
+    if not Path(raw_ships_dir).exists() or not Path(raw_ships_dir).is_dir():
+        raise ValueError(f"Provided ships dir [{raw_ships_dir}] doesn't exist or not a dir!")
+
+    ships_dirs = os.listdir(raw_ships_dir)
+    log.debug(f"Found total ships/directories: {len(ships_dirs)}.")
+
+    ships_list: list[ShipDto] = list()
+    for ship in ships_dirs:  # iterate over all dirs/ships and process data
+
+        if not ship.isnumeric():  # skip non-numeric dirs
+            log.warning(f"Found non-numeric object: [{ship}]")
+            continue
+
+        ship_dir: str = raw_ships_dir + "/" + ship
+
+        # check - if we can parse this ship
+        ship_data: str = read_file_as_text(ship_dir + "/" + MAIN_SHIP_DATA_FILE)
+        if "Access is denied." in ship_data:
+            log.warning(f"Skipped current number [{ship}].")
+            continue
+
+        ships_list.append(parse_one_ship(ship_dir))
+
+    return ships_list
 
 
 if __name__ == "__main__":

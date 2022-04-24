@@ -5,22 +5,24 @@
     IMO numbers list processor - load, update, etc.
 
     Created:  Gusev Dmitrii, 18.04.2022
-    Modified: Dmitrii Gusev, 20.04.2022
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 import csv
 import logging
 import shutil
-from typing import AnyStr, List, Set
-from wfleet.scraper.config.scraper_config import CONFIG
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from typing import List, Set
+from wfleet.scraper.config.scraper_config import Config
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
 
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
+config = Config()  # get system config instance
+
 
 def read_imo_numbers() -> Set[int]:
-    file: str = CONFIG['imo_file']
+    file: str = config.imo_file
 
     imo_numbers: Set[int] = set()
     with open(file, mode='r') as imo_file:  # read CSV with IMO numbers
@@ -42,8 +44,8 @@ def read_imo_numbers() -> Set[int]:
 
 
 def reset_imo_numbers() -> None:
-    file: str = CONFIG['imo_file']
-    backup_file = CONFIG['imo_file_backup']
+    file: str = config.imo_file
+    backup_file: str = config.imo_file_backup
 
     shutil.copy(file, backup_file)  # create a backup copy of the file
 
@@ -59,15 +61,18 @@ def reset_imo_numbers() -> None:
 
 
 def is_imo_in_list(imo: str) -> None:
-    raise NotImplementedError('Not implemented yet!')
+    # todo: implementation!
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
 def add_imo_to_list(imo: str) -> None:
-    raise NotImplementedError('Not implemented yet!')
+    # todo: implementation!
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
-def divide_imo_list_to_ranges(num_of_ranges: int) -> List[List[AnyStr]]:
-    raise NotImplementedError('Not implemented yet!')
+def divide_imo_list_to_ranges(num_of_ranges: int) -> List[List[str]]:
+    # todo: implementation!
+    raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
 
 if __name__ == "__main__":

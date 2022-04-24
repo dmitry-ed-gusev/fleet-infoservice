@@ -2,11 +2,11 @@
 # coding=utf-8
 
 """
-    Data scraper for Sea Web database. 
+    Data scraper for Sea Web database.
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 20.04.2022
+    Modified: Gusev Dmitrii, 24.04.2022
 """
 
 import os
@@ -301,24 +301,6 @@ def scrap_extended_ships_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_D
                     time.sleep(delay_sec)
 
         print(f'Processed {line_count} lines.')
-
-
-def scrap_companies_and_builders_data():
-    raise NotImplementedError('Not implemented yet!')
-
-
-def collect_companies_and_builders_data():
-    ships_dirs_list = os.listdir(RAW_SHIPS_DIR)
-
-    # iterate over all dirs/ships and process data
-    for ship in ships_dirs_list:
-
-        if not ship.isnumeric():  # skip non-numeric dirs
-            print(f"Found non-numeric object: [{ship}]")
-            continue
-
-        # read main data file as a whole
-        ship_data: str = read_file_as_text(RAW_SHIPS_DIR + "/" + ship + "/" + MAIN_SHIP_DATA_FILE)
 
 
 def process_raw_data():

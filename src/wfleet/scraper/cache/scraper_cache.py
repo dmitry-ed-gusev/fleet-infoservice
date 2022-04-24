@@ -6,7 +6,7 @@
     This module should'n be called directly - rather be imported and functions used.
 
     Created:  Dmitrii Gusev, 01.01.2022
-    Modified: Dmitrii Gusev, 30.03.2022
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 import os
@@ -17,7 +17,7 @@ from datetime import datetime
 from typing import Pattern
 from pathlib import Path
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
-from wfleet.scraper.config.scraper_config import CONFIG, MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
 
 # todo: create cache class in order to merge cache properties and cache operations..?
 
@@ -34,7 +34,7 @@ CACHE_EXCEPTION_LIST: list = ["readme.txt"]
 
 # init module logging
 log = logging.getLogger(__name__)
-# log.debug(f"Logging for module {__name__} is configured.")
+log.debug(f"Logging for module {__name__} is configured.")
 
 
 def _cache_find_invalid_entries() -> list:
@@ -45,7 +45,8 @@ def _cache_find_invalid_entries() -> list:
     log.debug("cache_find_invalid_entries(): search for invalid entries in scraper cache.")
 
     invalid_items = []  # list of invalid items in cache folder
-    cache_dir: str = CONFIG['cache_raw_files_dir']
+    config = Config()
+    cache_dir: str = config.cache_raw_files_dir
 
     for item in os.listdir(cache_dir):
         match_object = DIR_TIMESTAMP_REGEX.search(item)
@@ -103,7 +104,7 @@ def cache_cleanup(dry_run: bool) -> None:
 
 def _cache_generate_raw_dir_name(timestamp: datetime, name: str, dry_run: bool, requests_number: int) -> str:
     """Generate cache dir name with provided timestamp and name. If dry run parameter is true - add
-    appropriate postfix to the name. If requests limited mode is on - add the suffix as well. The only 
+    appropriate postfix to the name. If requests limited mode is on - add the suffix as well. The only
     one suffix will be added, dry run mode suffix overrides the requests limited mode suffix.
     :param timestamp: timestamp for the dir
     :param name: general dir name
@@ -128,16 +129,12 @@ def _cache_generate_raw_dir_name(timestamp: datetime, name: str, dry_run: bool, 
 
 
 def cache_get_raw_dir() -> str:
-    
     # todo: build raw dir path and create it (if exists and is a dir - OK) and return it
-    
     pass
 
 
 def cache_get_raw_file(file_name: str) -> str:
-    
     # todo: us cache_get_raw_dir() function...
-    
     pass
 
 

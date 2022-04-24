@@ -7,7 +7,7 @@
         - (download file) https://stackoverflow.com/questions/7243750/download-file-from-web-in-python-3
 
     Created:  Dmitrii Gusev, 01.06.2021
-    Modified: Dmitrii Gusev, 12.12.2021
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 import ssl
@@ -16,10 +16,7 @@ import shutil
 from urllib import request, parse, error
 from pathlib import Path
 
-from ..config import scraper_defaults as const
-
 # init module logger
-# log = logging.getLogger(const.LOGGING_UTILITIES_HTTP_LOGGER)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
@@ -48,7 +45,7 @@ def perform_http_post_request(url: str, request_params: dict, retry_count: int =
         raise ValueError("Provided empty URL, can't perform the request!")
 
     data = parse.urlencode(request_params).encode(
-        const.DEFAULT_ENCODING
+        DEFAULT_ENCODING
     )  # perform encoding of request params
     req = request.Request(url, data=data)  # this will make the method "POST" request (with data load)
     context = ssl.SSLContext()  # new SSLContext -> to bypass security certificate check
@@ -70,7 +67,7 @@ def perform_http_post_request(url: str, request_params: dict, retry_count: int =
         tries_counter += 1
 
     if my_response is not None:
-        result = my_response.read().decode(const.DEFAULT_ENCODING)  # read response and perform decode
+        result = my_response.read().decode(DEFAULT_ENCODING)  # read response and perform decode
     else:
         result = None
 

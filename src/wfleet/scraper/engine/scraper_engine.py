@@ -6,7 +6,7 @@
     directly - rather should be imported and functions used.
 
     Created:  Dmitrii Gusev, 24.12.2021
-    Modified: Dmitrii Gusev, 30.03.2022
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 # todo: add DB support for scraper runs telemetry
@@ -14,7 +14,7 @@
 
 import logging
 from datetime import datetime
-from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scrapers.scraper_clarksonsnet import ClarksonsNetScraper
 from wfleet.scraper.engine.scrapers.scraper_gims import GimsRuScraper
@@ -68,6 +68,9 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     rs_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
 
 
-# main part of the script
+def execute_seaweb_engine():
+    log.debug("execute_seaweb_engine(): processing Seaweb scrap/parse.")
+
+
 if __name__ == "__main__":
     print(MSG_MODULE_ISNT_RUNNABLE)

@@ -9,7 +9,7 @@
       - ???
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Gusev Dmitrii, 29.03.2022
+    Modified: Gusev Dmitrii, 24.04.2022
 """
 
 import sys
@@ -21,8 +21,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from bs4 import BeautifulSoup
 
-from wfleet.scraper.config import scraper_defaults as const
-from wfleet.scraper.utils.utilities import build_variations_list, generate_timed_filename
+from wfleet.scraper.utils.utilities import build_variations_list
 from wfleet.scraper.utils.utilities_xls import save_ships_2_excel
 from wfleet.scraper.utils.utilities_http import perform_http_post_request
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
@@ -92,7 +91,7 @@ def parse_data(html: str) -> dict:
                 proprietary_number = cells[4].text  # get tag content (text value)
 
                 # create base ship class instance
-                ship: ShipDto = ShipDto(imo_number, proprietary_number, "", const.SYSTEM_RSCLASSORG)
+                ship: ShipDto = ShipDto(imo_number, proprietary_number, "", SYSTEM_RSCLASSORG)
 
                 # fill in the main value for base ship
                 ship.flag = cells[0].img["title"]  # get attribute 'title' of tag <img>
@@ -254,14 +253,14 @@ class RsClassOrgScraper(ScraperAbstractClass):
         # path to cache directory for the current scraper run
         # todo: replace with cache management module
         if requests_limit > 0:  # mark limited run directory appropriately
-            suffix = self.source_name + const.SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX
+            suffix = self.source_name + SCRAPER_CACHE_LIMITED_RUN_DIR_SUFFIX
         else:
             suffix = self.source_name
             
         xls_path: str = self.cache_path + "/" + generate_timed_filename(suffix) + "/"
 
         # save ships info into the raw data file in the scraper cache dir
-        xls_base_file = xls_path + const.EXCEL_SHIPS_DATA
+        xls_base_file = xls_path + EXCEL_SHIPS_DATA
         
         save_ships_2_excel(list(main_ships.values()), xls_base_file)
         log.info(f"Saved ships info to file {xls_base_file}")

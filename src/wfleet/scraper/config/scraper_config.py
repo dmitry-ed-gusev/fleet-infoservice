@@ -7,47 +7,64 @@
 
     Useful materials:
       - https://hackernoon.com/4-ways-to-manage-the-configuration-in-python-4623049e841b
+      - https://python.plainenglish.io/singleton-class-in-java-vs-python-554bbcee3470
+      - https://elbenshira.com/blog/singleton-pattern-in-python/
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 18.04.2022
+    Modified: Dmitrii Gusev, 24.04.2022
 """
-
-# todo: make this a python class (@dataclass)
-# todo: make this python class a singleton
-# todo: https://python.plainenglish.io/singleton-class-in-java-vs-python-554bbcee3470
-# todo: https://elbenshira.com/blog/singleton-pattern-in-python/
 
 import os
 from pathlib import Path
+from dataclasses import dataclass
 
-CACHE_DIR_NAME: str = ".wfleet"  # cache dir name
+# common system messages
 MSG_MODULE_ISNT_RUNNABLE = "This module is not runnable!"
+MSG_NOT_IMPLEMENTED: str = "Not implemented yet!"
+# common constants/defaults
+CACHE_DIR_NAME: str = ".wfleet"  # cache dir name
+
 
 # if cache is in curr dir (exists and is dir) - use it, otherwise - use the user
 # home directory (mostly suitable for development, in most cases user home dir will be used)
-cache_dir: str = ""
-if Path(CACHE_DIR_NAME).exists() and Path(CACHE_DIR_NAME).is_dir():
-    cache_dir = CACHE_DIR_NAME
-else:  # cache dir not exists or is not a dir
-    cache_dir = str(Path.home()) + '/' + CACHE_DIR_NAME
+def get_cache_dir(base_name: str) -> str:
+    if not base_name:
+        raise ValueError("Empty base name!")
 
-# configuration dictionary
-CONFIG = {
-    "encoding": "utf-8",
-    "work_dir": os.getcwd(),
-    "cache_dir": cache_dir,  # absolute path to cache
-    "cache_raw_files_dir": cache_dir + "/.scraper_raw_files",  # raw files dir in the cache
-    "cache_logs_dir": cache_dir + "/logs",  # logs dir
-    "db_dir": cache_dir + "/.scraper_db",  # DB dir + DB name (SQLite)
-    "imo_file": cache_dir + "/imo_numbers.csv",
-    "imo_file_backup": cache_dir + "/imo_numbers.bak",
-    "db_name": ".scraperdb",  # DB name (sqlite?)
-    "raw_data_file": "ships_data.xls",
-    "": "",
-}
+    if Path(base_name).exists() and Path(base_name).is_dir():
+        return base_name
+    else:  # cache dir not exists or is not a dir
+        return str(Path.home()) + '/' + base_name
 
-# makes sure logging directories exists
-os.makedirs(CONFIG["cache_logs_dir"], exist_ok=True)
+
+def singleton(class_):  # singleton decorator
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
+
+
+@singleton
+@dataclass(frozen=True)
+class Config():
+    cache_dir: str = get_cache_dir(CACHE_DIR_NAME)
+    log_dir: str = cache_dir + "/logs"  # log directory
+    work_dir: str = str(os.getcwd())  # current working dir
+    user_dir: str = str(Path.home())  # user directory
+    encoding: str = "utf-8"  # general encoding
+    imo_file: str = cache_dir + "/imo_numbers.csv"  # file with IMO numbers
+    imo_file_backup: str = cache_dir + "/imo_numbers.bak"  # file with IMO - backup
+    timestamp_pattern: str = "%d-%b-%Y %H:%M:%S"  # general timestamp for the app
+    cache_raw_files_dir: str = cache_dir + "/.scraper_raw_files"  # raw files dir in the cache
+    db_dir: str = cache_dir + "/.scraper_db"  # DB dir + DB name (SQLite)
+    db_name: str = ".scraperdb"  # DB name (sqlite?)
+    raw_data_file: str = "ships_data.xls"
+
+    def __post_init__(self):  # post-init method - create necessary sub-dirs
+        os.makedirs(str(self.log_dir), exist_ok=True)
 
 
 if __name__ == "__main__":
