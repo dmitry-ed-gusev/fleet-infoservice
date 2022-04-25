@@ -6,7 +6,7 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 24.04.2022
+    Modified: Gusev Dmitrii, 25.04.2022
 """
 
 import os
@@ -15,14 +15,21 @@ import csv
 import time
 import random
 import requests
+import logging
+from datetime import datetime
 from pathlib import Path
 from wfleet.scraper.engine.scrapers.seaweb.defaults_seaweb import (
     LIMIT, BASE_WORKING_DIR, RAW_SHIPS_DIR, IMO_NUMBERS_FILE,
     TIMEOUT_CADENCE, TIMEOUT_DELAY_MAX, MAIN_SHIP_DATA_FILE
 )
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
+from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import read_file_as_text
 
+log = logging.getLogger(__name__)
+log.debug(f"Logging for module {__name__} is configured.")
 
 # base ship data URL
 ship_url = 'https://maritime.ihs.com/Ships/Details/Index/'
@@ -115,32 +122,7 @@ session_headers = {
 
 # session data - cookies
 # session_cookies = {
-#     # these two cookies are the most important ones for the scraping
-#     ".AspNet.ApplicationCookie": "tDpBsG1oYSJIc_3Vb2geMLwS1EdEi8CceoZsq8p3i27RVfqQFiGEIGdwA3P3e9BduhX90QmJLe40P6rBGrm8EpRF6qtq6URvSoMMrDFMp15mz6WkwNPqE2TKqm87ENzQ_rGgwnptOcAm03TcokUgajbG1KGGnyuZyiBwVRGlHRvkiWpH8N-Qq4SI8cmdwk6nobUx6oW80cFHL1A1duolWZxr9d9E-fNnQWO-LwzL3Oz4F8Sxn7uVujUUT91ELWvvWGtWLoz2i7By2jThKlznyl57hzo4spj-f9RirHprTmHoj5RetwBrEfYRpLw2Ukd8FQDG4Z6DdikeMNW-v_ZSAcHPc1YWaT7_lFTblwiUtL3n6AGhh2ygWNZOz_ZYDIxHFEJuUupOhol--GiVzVRLbK0mqptdSm2nmk9Rj-fcUn7Jgr0SOIvgkJCESu4U0U9AjPlJlmn3L79sRe5XT2V6ScA0f_8LjnMJalrl8HiQY4JIaCACvK0bJ_wFzrNlkOOeZRwcfi64TampIsqk6SC-n7Z9jq4sOEQcg8nO_V8q8qiFv_S0",    
-#     "ASP.NET_SessionId": "vgw3qjc0jnenb2fzbeu0wzrc",
-
-#     "BIGipServer~ProdWeb~pool-maritime.ihs.com-80": "rd1100o00000000000000000000ffff0aa8006bo80",
-#     "LastBuilderVisited": "JPN138Miho Zosensho K.K.+RUS018Vyborgskiy Sudostroitelnyy Zavod%2c Oao",
-#     "LastShipVisited": "1009340A+8009129DF 19+9237371WEC VERMEER+9237369MOVEON+9334600ABAI+7920259ABDUL B",
-#     "ShipCommercialHistoryExpanded": "ShipCommercialHistoryExpanded",
-#     "ckDefault": "page=shipsearch&records=20",
-#     "ckShip": "db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&" \
-#               "db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&" \
-#               "en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&" \
-#               "en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&" \
-#               "db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&" \
-#               "en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&" \
-#               "db_name012=YEAROFBUILDBROWSE&en_name012=Year",
-#     "ckShipDiv": "hidehidehidehidehideshowhidehide",
-#     "list": "",
-#     "rememberMeLogin": "C85751F4D8BAC8E64E7C1278E492E3F616BC06CAD6FE828D8DD1CED1D48892E81320AE0853EE3F6B5BF" \
-#                        "47B6B82CBA646A7CD8EA72472A24EDEFA6A78F14AABFA34F9C3001C95D0C472E89C263A6B2D1138EA70FF73" \
-#                        "A2EA721BAE40B17B83539F14889F7FB612664A05B31FCD",
-#     "shipsearch": "",
-#     "shiphead": "1",
 # }
-
-print("Starting...")
 
 # setup HTTP session
 session = requests.Session()
@@ -154,43 +136,46 @@ print(f"Base working dir: [{BASE_WORKING_DIR}].")
 print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
 
-def scrap_base_ships_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
-                          req_delay_cadence: int = TIMEOUT_CADENCE,
-                          imo_numbers_file: str = IMO_NUMBERS_FILE,
-                          imo_numbers_file_delimeter: str = ";",
-                          processed_imo_numbers: str = "processed.csv"):
+def scrap_base_ships_data(imo_numbers: list[int], req_limit: int = LIMIT,
+                          req_delay: int = TIMEOUT_DELAY_MAX, req_delay_cadence: int = TIMEOUT_CADENCE,
+                          # imo_numbers_file: str = IMO_NUMBERS_FILE,
+                          # imo_numbers_file_delimeter: str = ";",
+                          # processed_imo_numbers: str = "processed.csv"
+                          ):
+    log.debug("scrap_base_ships_data() is working.")
 
-    print("Working -> get_base_data().")
+    if imo_numbers is None or len(imo_numbers) == 0:  # fail-fast - empty IMo numbers list
+        raise ScraperException("Empty IMO numbers list for processing!")
 
     # calculate full abs path to IMO numbers file
-    file_imo_numbers_list = BASE_WORKING_DIR + "/" + imo_numbers_file
-    print(f"Use IMO numbers file: {file_imo_numbers_list}")
+    # file_imo_numbers_list = BASE_WORKING_DIR + "/" + imo_numbers_file
+    # print(f"Use IMO numbers file: {file_imo_numbers_list}")
 
     # calculate full abs path to <processed IMO numbers> file
-    file_processed_imo_numbers = BASE_WORKING_DIR + "/" + processed_imo_numbers
-    print(f"Use <processed IMO numbers file>: {file_processed_imo_numbers}")
+    # file_processed_imo_numbers = BASE_WORKING_DIR + "/" + processed_imo_numbers
+    # print(f"Use <processed IMO numbers file>: {file_processed_imo_numbers}")
 
-    with open(file_imo_numbers_list) as csv_file:  # read CSV from equasis with IMO numbers
-        csv_reader = csv.reader(csv_file, delimiter=imo_numbers_file_delimeter)
+    #with open(file_imo_numbers_list) as csv_file:  # read CSV from equasis with IMO numbers
+    #    csv_reader = csv.reader(csv_file, delimiter=imo_numbers_file_delimeter)
 
-        line_count = 0
-        for row in csv_reader:  # iterate over all IMO numbers
-            print(f"Total processed: {line_count}")  # just a debug
+    line_count = 0
+    for imo_number in imo_numbers:  # iterate over all IMO numbers
+        log.debug(f"Total processed: {line_count}")  # just a debug
 
-            if line_count > req_limit:  # just a stopper
-                break
+        if line_count > req_limit:  # just a stopper
+            break
 
-            if line_count == 0:  # skip the header row
-                print(f'Column names are {", ".join(row)}')
-                line_count += 1
-                with open(file_processed_imo_numbers, mode='w') as processed_file:  # rewrite existing file
-                    processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-                                                  quoting=csv.QUOTE_MINIMAL)
-                    processed_writer.writerow([f"{row[0]}", "Processed"])
-
-            else:  # data rows processing
-                print(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
-                line_count += 1
+            # if line_count == 0:  # skip the header row
+            #     print(f'Column names are {", ".join(row)}')
+            #     line_count += 1
+            #     with open(file_processed_imo_numbers, mode='w') as processed_file:  # rewrite existing file
+            #         processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
+            #                                       quoting=csv.QUOTE_MINIMAL)
+            #         processed_writer.writerow([f"{row[0]}", "Processed"])
+            # else:  # data rows processing
+                
+        log.debug(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
+        line_count += 1
 
                 ship_dir = RAW_SHIPS_DIR + "/" + row[0]  # directory to store the current ship
                 print(f"\tship dir: {ship_dir}")
@@ -345,5 +330,23 @@ def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed
     print(ship_data)
 
 
+class SeawebScraper(ScraperAbstractClass):
+    """Scraper for maritime.ihs.com source system (Sea Web)."""
+
+    def __init__(self):
+        log.info("SeawebScraper: initializing.")
+
+    def scrap(self, timestamp: datetime, dry_run: bool, requests_limit: int = 0) -> str:
+        """Sea Web data scraper."""
+        log.info("scrap(): processing maritime.ihs.com")
+        return ""
+
+    def scrap_ships_data(self):
+        log.debug("jjj")
+
+    def parse_ships_data(self):
+        log.debug("nnn")
+
+
 if __name__ == '__main__':
-    main()
+    print(MSG_MODULE_ISNT_RUNNABLE)
