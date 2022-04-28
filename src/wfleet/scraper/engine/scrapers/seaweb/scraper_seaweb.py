@@ -10,6 +10,7 @@
 """
 
 import os
+from typing import Iterable
 import click
 import csv
 import time
@@ -135,16 +136,13 @@ print(f"OS working dir: [{os.getcwd()}]")
 print(f"Base working dir: [{BASE_WORKING_DIR}].")
 print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
+def scrap_base_ships_data(imo_numbers: Iterable[int], req_limit: int = LIMIT,
+                          req_delay: int = TIMEOUT_DELAY_MAX,
+                          req_delay_cadence: int = TIMEOUT_CADENCE):
 
-def scrap_base_ships_data(imo_numbers: list[int], req_limit: int = LIMIT,
-                          req_delay: int = TIMEOUT_DELAY_MAX, req_delay_cadence: int = TIMEOUT_CADENCE,
-                          # imo_numbers_file: str = IMO_NUMBERS_FILE,
-                          # imo_numbers_file_delimeter: str = ";",
-                          # processed_imo_numbers: str = "processed.csv"
-                          ):
     log.debug("scrap_base_ships_data() is working.")
 
-    if imo_numbers is None or len(imo_numbers) == 0:  # fail-fast - empty IMo numbers list
+    if not imo_numbers or len(imo_numbers) == 0:  # fail-fast - empty IMo numbers list
         raise ScraperException("Empty IMO numbers list for processing!")
 
     # calculate full abs path to IMO numbers file
@@ -174,26 +172,26 @@ def scrap_base_ships_data(imo_numbers: list[int], req_limit: int = LIMIT,
             #         processed_writer.writerow([f"{row[0]}", "Processed"])
             # else:  # data rows processing
                 
-        log.debug(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
+        log.debug(f'\nProcessing: IMO #{imo_number}.')
         line_count += 1
 
-                ship_dir = RAW_SHIPS_DIR + "/" + row[0]  # directory to store the current ship
-                print(f"\tship dir: {ship_dir}")
+        ship_dir = RAW_SHIPS_DIR + "/" + str(imo_number)  # directory to store the current ship
+        log.debug(f"\tship dir: {ship_dir}")
 
-                with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
-                    processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-                                                  quoting=csv.QUOTE_MINIMAL)
-                    processed_writer.writerow([f"{row[0]}", "+"])
+                # with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
+                #     processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
+                #                                   quoting=csv.QUOTE_MINIMAL)
+                #     processed_writer.writerow([f"{row[0]}", "+"])
 
-                if Path(ship_dir).exists() and Path(ship_dir).is_dir():  # skip already processed ships
-                    print(f"\tShip IMO: {row[0]} already processed. Skipped.")
-                    continue
+        if Path(ship_dir).exists() and Path(ship_dir).is_dir():  # skip already processed ships
+            log.info(f"\tShip IMO: {imo_number} already processed. Skipped.")
+            continue
 
-                # artificial delay for every 50 run
-                if line_count % req_delay_cadence == 0:
-                    delay_sec = random.randint(1, req_delay)  # delay 1 to X sec (both inclusive)
-                    print(f"\tDelay {delay_sec} seconds.")
-                    time.sleep(delay_sec)
+        # artificial delay for every 50 run
+        if line_count % req_delay_cadence == 0:
+            delay_sec = random.randint(1, req_delay)  # delay 1 to X sec (both inclusive)
+            log.debug(f"\tDelay {delay_sec} seconds.")
+            time.sleep(delay_sec)
 
                 # real ship processing
                 response = session.get(ship_url + row[0], allow_redirects=True)  # request the site...
@@ -209,7 +207,8 @@ def scrap_base_ships_data(imo_numbers: list[int], req_limit: int = LIMIT,
         print(f'Processed {line_count} lines.')
 
 
-def scrap_extended_ships_data(req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
+def scrap_extended_ships_data(imo_numbers: list[str],
+                              req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
                               req_delay_cadence: int = TIMEOUT_CADENCE,
                               imo_numbers_file: str = IMO_NUMBERS_FILE,
                               imo_numbers_file_delimeter: str = ";",

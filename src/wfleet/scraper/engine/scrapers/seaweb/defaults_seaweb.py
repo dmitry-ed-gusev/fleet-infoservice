@@ -5,7 +5,7 @@
     Defaults for the Seweb database Scraper/Parser.
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Dmitrii Gusev, 20.04.2022
+    Modified: Dmitrii Gusev, 28.04.2022
 """
 
 import os
@@ -16,7 +16,7 @@ TIMEOUT_DELAY_MAX = 4  # max timeout between requests, seconds
 TIMEOUT_CADENCE = 100  # timeout cadence - # of requests between timeout/delay
 IMO_NUMBERS_FILE = "EquasisToIACS_20220401_731.csv"  # csv file with imo numbers (warning - format!)
 # base scraper/parser working dir
-BASE_WORKING_DIR = os.getcwd() + "/.seaweb_db"
+BASE_WORKING_DIR = os.getcwd() + "/.wfleet/.seaweb_db"
 # various working dirs - for ships/builders/companies
 RAW_SHIPS_DIR = BASE_WORKING_DIR + "/seaweb"
 RAW_BUILDERS_DIR = BASE_WORKING_DIR + "/shipbuilders"

@@ -62,6 +62,7 @@ class Config():
     db_dir: str = cache_dir + "/.scraper_db"  # DB dir + DB name (SQLite)
     db_name: str = ".scraperdb"  # DB name (sqlite?)
     raw_data_file: str = "ships_data.xls"
+    seaweb_base_dir: str = ""
 
     def __post_init__(self):  # post-init method - create necessary sub-dirs
         os.makedirs(str(self.log_dir), exist_ok=True)

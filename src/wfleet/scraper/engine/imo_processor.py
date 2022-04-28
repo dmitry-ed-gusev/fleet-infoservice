@@ -11,7 +11,7 @@
 import csv
 import logging
 import shutil
-from typing import List, Set
+from typing import List
 from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
 
@@ -21,10 +21,10 @@ log.debug(f"Logging for module {__name__} is configured.")
 config = Config()  # get system config instance
 
 
-def read_imo_numbers() -> Set[int]:
+def get_imo_numbers() -> set[int]:
     file: str = config.imo_file
 
-    imo_numbers: Set[int] = set()
+    imo_numbers: set[int] = set()
     with open(file, mode='r') as imo_file:  # read CSV with IMO numbers
         csv_reader = csv.reader(imo_file, delimiter=';')
 
@@ -49,7 +49,7 @@ def reset_imo_numbers() -> None:
 
     shutil.copy(file, backup_file)  # create a backup copy of the file
 
-    imo_numbers: Set[int] = read_imo_numbers()  # read imo numbers from file
+    imo_numbers: set[int] = get_imo_numbers()  # read imo numbers from file
 
     with open(file, mode='w') as imo_file:  # update imo numbers file
         csv_writer = csv.writer(imo_file, delimiter=';', quotechar='"',
