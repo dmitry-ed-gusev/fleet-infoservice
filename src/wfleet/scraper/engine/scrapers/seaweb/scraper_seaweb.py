@@ -6,7 +6,7 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 25.04.2022
+    Modified: Gusev Dmitrii, 02.05.2022
 """
 
 import os
@@ -19,13 +19,9 @@ import requests
 import logging
 from datetime import datetime
 from pathlib import Path
-from wfleet.scraper.engine.scrapers.seaweb.defaults_seaweb import (
-    LIMIT, BASE_WORKING_DIR, RAW_SHIPS_DIR, IMO_NUMBERS_FILE,
-    TIMEOUT_CADENCE, TIMEOUT_DELAY_MAX, MAIN_SHIP_DATA_FILE
-)
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
-from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
+# from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import read_file_as_text
 
@@ -132,13 +128,18 @@ session.headers.update(session_headers)
 # session.max_redirects = 100  # limit max redirects # to follow
 
 # debug output
-print(f"OS working dir: [{os.getcwd()}]")
-print(f"Base working dir: [{BASE_WORKING_DIR}].")
-print(f"Ships dir: [{RAW_SHIPS_DIR}].")
+# print(f"OS working dir: [{os.getcwd()}]")
+# print(f"Base working dir: [{BASE_WORKING_DIR}].")
+# print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
-def scrap_base_ships_data(imo_numbers: Iterable[int], req_limit: int = LIMIT,
-                          req_delay: int = TIMEOUT_DELAY_MAX,
-                          req_delay_cadence: int = TIMEOUT_CADENCE):
+# get app config instance
+config = Config()
+
+
+def scrap_base_ships_data(imo_numbers: Iterable[int],
+                          req_limit: int = config.default_requests_limit,
+                          req_delay: int = config.default_timeout_delay_max,
+                          req_delay_cadence: int = config.default_timeout_cadence):
 
     log.debug("scrap_base_ships_data() is working.")
 
@@ -175,7 +176,7 @@ def scrap_base_ships_data(imo_numbers: Iterable[int], req_limit: int = LIMIT,
         log.debug(f'\nProcessing: IMO #{imo_number}.')
         line_count += 1
 
-        ship_dir = RAW_SHIPS_DIR + "/" + str(imo_number)  # directory to store the current ship
+        ship_dir = config.seaweb_raw_ships_dir + "/" + str(imo_number)  # directory to store the current ship
         log.debug(f"\tship dir: {ship_dir}")
 
                 # with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
@@ -193,26 +194,25 @@ def scrap_base_ships_data(imo_numbers: Iterable[int], req_limit: int = LIMIT,
             log.debug(f"\tDelay {delay_sec} seconds.")
             time.sleep(delay_sec)
 
-                # real ship processing
-                response = session.get(ship_url + row[0], allow_redirects=True)  # request the site...
-                if response.status_code != 200:  # check that 200 is returned
-                    print(f"Error code: {response.status_code} returned! Stopping!")
-                    break
+        # real ship processing
+        response = session.get(ship_url + row[0], allow_redirects=True)  # request the site...
+        if response.status_code != 200:  # check that 200 is returned
+            log.error(f"Got error code: {response.status_code}! Stopping!")
+            break
 
-                os.makedirs(ship_dir, exist_ok=True)  # if all is OK - create dir for the ship data
-                with open(Path(ship_dir + '/' + MAIN_SHIP_DATA_FILE), 'w') as f:  # write content to the file
-                    f.write(response.text)
-                    print(f"\tWritten file: {ship_dir + '/' + MAIN_SHIP_DATA_FILE}")
+        os.makedirs(ship_dir, exist_ok=True)  # if all is OK - create dir for the ship data
+        ship_data_file: str = ship_dir + '/' + config.main_ship_data_file
+        with open(Path(ship_data_file), 'w') as f:  # write content to the file
+            f.write(response.text)
+            log.debug(f"\tWritten file: {ship_data_file}")
 
-        print(f'Processed {line_count} lines.')
+        log.debug(f'Processed {line_count} lines.')
 
 
-def scrap_extended_ships_data(imo_numbers: list[str],
-                              req_limit: int = LIMIT, req_delay: int = TIMEOUT_DELAY_MAX,
-                              req_delay_cadence: int = TIMEOUT_CADENCE,
-                              imo_numbers_file: str = IMO_NUMBERS_FILE,
-                              imo_numbers_file_delimeter: str = ";",
-                              processed_imo_numbers: str = "processed_extended.csv"):
+def scrap_extended_ships_data(imo_numbers: Iterable[int],
+                              req_limit: int = config.default_requests_limit,
+                              req_delay: int = config.default_timeout_delay_max,
+                              req_delay_cadence: int = config.default_timeout_cadence):
 
     print("Working -> get_extended_data().")
 
@@ -308,15 +308,6 @@ def process_raw_data():
     print(f"Ships with data: {counter}")
 
 
-@click.command()
-@click.option('--imo-file', default=IMO_NUMBERS_FILE, help='File with IMO numbers.',
-              type=str, show_default=True)
-@click.option('--imo-file-delim', default=";", help='Default delimeter for file with IMO numbers.',
-              type=str, show_default=True)
-@click.option('--processed-base-file', default="processed.csv",
-              help='Processed IMO numbers (base info).', type=str, show_default=True)
-@click.option('--processed-ext-file', default="processed_extended.csv",
-              help='Processed IMO numbers (ext info)', type=str, show_default=True)
 def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed_ext_file: str):
     # scrap_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
     #               processed_imo_numbers=processed_base_file)
@@ -341,10 +332,13 @@ class SeawebScraper(ScraperAbstractClass):
         return ""
 
     def scrap_ships_data(self):
-        log.debug("jjj")
+        log.debug("scrap_ships_data(): working.")
 
     def parse_ships_data(self):
-        log.debug("nnn")
+        log.debug("parse_ships_data(): working.")
+
+    def process_raw_data(self):
+        log.debug("process_raw_data(): working.")
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@
     directly - rather should be imported and functions used.
 
     Created:  Dmitrii Gusev, 24.12.2021
-    Modified: Dmitrii Gusev, 24.04.2022
+    Modified: Dmitrii Gusev, 02.05.2022
 """
 
 # todo: add DB support for scraper runs telemetry
@@ -14,7 +14,7 @@
 
 import logging
 from datetime import datetime
-from wfleet.scraper.config.scraper_config import Config
+# from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scrapers.scraper_clarksonsnet import ClarksonsNetScraper
 from wfleet.scraper.engine.scrapers.scraper_gims import GimsRuScraper
@@ -23,6 +23,7 @@ from wfleet.scraper.engine.scrapers.scraper_morflotru import MorflotRuScraper
 from wfleet.scraper.engine.scrapers.scraper_marinetrafficcom import MarineTrafficComScraper
 from wfleet.scraper.engine.scrapers.scraper_vesselfindercom import VesselFinderComScraper
 from wfleet.scraper.engine.scrapers.scraper_rsclassorg import RsClassOrgScraper
+from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import SeawebScraper
 
 # init module logging
 log = logging.getLogger(__name__)
@@ -70,6 +71,12 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
 
 def execute_seaweb_engine():
     log.debug("execute_seaweb_engine(): processing Seaweb scrap/parse.")
+    seaweb_scraper: SeawebScraper = SeawebScraper()
+
+    # scrap raw ships data according to IMO numbers list
+    seaweb_scraper.scrap_ships_data()
+    # parse raw ships data
+    seaweb_scraper.parse_ships_data()
 
 
 if __name__ == "__main__":

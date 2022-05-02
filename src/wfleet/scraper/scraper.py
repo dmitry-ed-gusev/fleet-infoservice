@@ -14,7 +14,7 @@
       - (click library) https://click.palletsprojects.com/en/8.0.x/
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 24.04.2022
+    Modified: Dmitrii Gusev, 02.05.2022
 """
 
 # todo: create unit tests for dry run mode
@@ -22,14 +22,15 @@
 # todo: implement multithreading for calling scrapers, some of scrapers will spawn more threads (???)
 # todo: add cmd key for list of scrapers
 
+import sys
+import click
 import logging
 import logging.config
-import click
 from wfleet.scraper import VERSION
 from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.config.logging_config import LOGGING_CONFIG
 from wfleet.scraper.cache.scraper_cache import cache_cleanup
-from wfleet.scraper.engine.scraper_engine import scrap_all_data
+from wfleet.scraper.engine.scraper_engine import scrap_all_data, execute_seaweb_engine
 
 # some useful defaults - main scraper logger, application name
 MAIN_LOGGER: str = "wfleet.scraper.scraper"
@@ -45,6 +46,11 @@ log = logging.getLogger(MAIN_LOGGER)
 @click.pass_context  # pass context to other sub command(s)
 def main(context, dry_run: bool):
     """World Fleet Scraper. (C) Dmitrii Gusev, Sergei Lukin, 2020-2022."""
+
+    # todo: implement "no processing" in case --help option specified
+
+    # collect cmd line arguments
+    options = [opt for opt in sys.argv[1:] if opt.startswith('--')]
 
     config = Config()  # get config instance
 
@@ -67,7 +73,7 @@ def main(context, dry_run: bool):
     context.obj['DRYRUN'] = dry_run
 
 
-@main.command(help="Scraper :: local cache cleanup.")
+@main.command(help="Scraper :: local scraper cache cleanup.")
 @click.pass_context
 def cleanup(context):
     log.debug("Executing command: cleanup.")
@@ -75,7 +81,7 @@ def cleanup(context):
     cache_cleanup(context.obj['DRYRUN'])
 
 
-@main.command(help="Scraper :: perform data scraping from all sources.")
+@main.command(help="Scraper :: perform data scraping from sources.")
 @click.option('--req-count', default=0, help='Limit number of requests for parsers, 0 - no limit.',
               type=int, show_default=True)
 @click.pass_context
@@ -90,6 +96,7 @@ def scrap(context, req_count: int):
 @click.pass_context
 def seaweb(context):
     log.debug("Executing command: seaweb.")
+    execute_seaweb_engine()
 
 
 if __name__ == '__main__':
