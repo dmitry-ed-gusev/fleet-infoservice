@@ -11,13 +11,13 @@
       - https://elbenshira.com/blog/singleton-pattern-in-python/
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 02.05.2022
+    Modified: Dmitrii Gusev, 03.05.2022
 """
 
-# todo: implement __repr__ with json.dump()
-
 import os
+import json
 from pathlib import Path
+from dataclasses import asdict
 from dataclasses import dataclass
 
 # common system messages
@@ -60,6 +60,7 @@ class Config():
     cache_raw_files_dir: str = cache_dir + "/.scraper_raw_files"  # raw files dir in the cache
 
     # -- some useful defaults
+    app_name: str = "World Fleet Scraper"
     encoding: str = "utf-8"  # general encoding
     timestamp_pattern: str = "%d-%b-%Y %H:%M:%S"  # general timestamp for the app
     default_requests_limit: int = 100000  # default limit for HTTP requests
@@ -79,13 +80,16 @@ class Config():
     main_ship_data_file: str = "ship_main.html"
 
     # -- seaweb scraper/parser settings
-    seaweb_base_dir: str = cache_dir + "/seaweb_db"
+    seaweb_base_dir: str = cache_dir + "/.seaweb_db"
     seaweb_raw_ships_dir: str = seaweb_base_dir + "/seaweb"
     seaweb_raw_builders_dir: str = seaweb_base_dir + "/shipbuilders"
     seaweb_raw_companies_dir: str = seaweb_base_dir + "/shipcompanies"
 
     def __post_init__(self):  # post-init method - create necessary sub-dirs
         os.makedirs(str(self.log_dir), exist_ok=True)
+
+    def __repr__(self):
+        return "Config " + json.dumps(asdict(self), indent=4)
 
 
 if __name__ == "__main__":

@@ -6,21 +6,18 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 02.05.2022
+    Modified: Gusev Dmitrii, 04.05.2022
 """
 
 import os
-from typing import Iterable
-import click
 import csv
 import time
 import random
 import requests
 import logging
-from datetime import datetime
 from pathlib import Path
+from typing import Set
 from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
-from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 # from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import read_file_as_text
@@ -114,7 +111,7 @@ session_headers = {
     "X-Requested-With": "XMLHttpRequest",
 
     # main header (cookie)
-    "Cookie": "_ga=GA1.2.1607646022.1648412853; shipsearch=; ckShipDiv=hidehidehidehidehideshowhidehide; ckDefault=page=shipsearch&records=20; list=; ShipCommercialHistoryExpanded=ShipCommercialHistoryExpanded; ckShip=db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&db_name012=YEAROFBUILDBROWSE&en_name012=Year; rememberMeLogin=903C2E6ED95029E847A45CBBA806034E344A8D08EEF2BEF8D865B9ED17CBA4861D8A6A0A9E5BE8A9554EB3CB99E67FC0C86AFC7A28FB6FF17C42E6AB5FA3994FEDB6581C716DC1E3FD3EBC4E243BFC29E7482B1DF44D2BB481F2B5CFE124E693C44793BD0447CAF52DE7301D; BIGipServer~ProdWeb~pool-maritime.ihs.com-80=rd1100o00000000000000000000ffff0aa8006bo80; LastShipVisited=1009340A+8009129DF 19+9237371WEC VERMEER+7920259ABDUL B+9237369MOVEON; _gid=GA1.2.254984490.1649579321; ASP.NET_SessionId=cuhf5vw5htiyjgm5oakzfows; SameSite=None; .AspNet.ApplicationCookie=4VI95rU2G3rXizTMD4Yl5oQ9LyTwyfYDqGI5QKeELKg4aSI7IrrydWe4Om-GfRQf4WSsg13AiUreHjf8pIyDyaEh3ankl8WauGvKw3TbpD9N4SWU8vJpHr5A9u-3-FaToT11fLMgwshtvtSqLH4JRiCsakyM9NrgGSSy1hdzNzOq6yxPpHnSO5L6cD6OmG-p54qcMQ7lvLAAyQY6Gal1jesbZR46Ms-hYpDqjcSRCc_7ZB93MIjYyl5dV23HNEWtn9XW-k6mBJg_gwMWQ90ylTajqMB8xVl8L0qR8so3Nkje_h85BXU9UXa4I_Xxt_ymj0fIjQ8G6bO6oiM0Jdt9MfaHdWm3Qi-kQ8G2Y53cfRo8TGFbO_Jt9XTZKxekT6awwyRYvi9BKhmYEqi6Wc64cfXwEYURqslh5cAOZhjihGnPGFeLttUqQds6p09EQ_tmwnbMnRLdVA7raJFgzEZVKvHrfE_0zZThAx7sGRiZHHjUrpc_f1I9c-j_ehNDOTtrzrkQ3kDKZfJdUCgZJ0s2bufSQX91RKfHt_ZCzV8oeKySpIpx; ADRUM_BTa=R:0|g:a5bf79ed-1ca8-45d0-804d-d9f0490eb35a|n:ihsco_86f4fc53-86e8-4feb-bc7a-7921d526821f; ADRUM_BT1=R:0|i:461009; ADRUM_BTs=R:0|s:f",
+    "Cookie": "_ga=GA1.2.1607646022.1648412853; shipsearch=; ckShipDiv=hidehidehidehidehideshowhidehide; list=; ShipCommercialHistoryExpanded=ShipCommercialHistoryExpanded; ckShip=db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&db_name012=YEAROFBUILDBROWSE&en_name012=Year; rememberMeLogin=903C2E6ED95029E847A45CBBA806034E344A8D08EEF2BEF8D865B9ED17CBA4861D8A6A0A9E5BE8A9554EB3CB99E67FC0C86AFC7A28FB6FF17C42E6AB5FA3994FEDB6581C716DC1E3FD3EBC4E243BFC29E7482B1DF44D2BB481F2B5CFE124E693C44793BD0447CAF52DE7301D; LastShipVisited=1009340A+8009129DF 19+9237371WEC VERMEER+7920259ABDUL B+9237369MOVEON; ownersearch=; ckOwnDiv=hidehidehidehideshowhidehidehide; buildersearch=; ckBuilderDiv=hidehideshowhidehidehidehidehide; ckbuilder=db_name001=BUILDERNAME&en_name001=Builder Name&db_name002=COUNTRYNAME&en_name002=Country&db_name003=STATUS&en_name003=Status&db_name004=TOWNNAME&en_name004=Town; ckDefault=page=buildersearch&records=20; builderovw=; LastBuilderVisited=USAE95A & B Industries Of Morgan City+IRN030Abadan Kashti Nooh+JPN028Onomichi Dockyard Co Ltd; ASP.NET_SessionId=pmr4jdtsrcr2k4frsmrzyhen; SameSite=None; BIGipServer~ProdWeb~pool-maritime.ihs.com-80=rd1100o00000000000000000000ffff0aa80069o80; AttemptsToLogin=XwsNHfGK7AFvYICFRjPeuTyTLQUS8ALHuSVVs94kHgtsuuPB; .AspNet.ApplicationCookie=OQ4DAxTK8p5kDwIwRvcmE_Nyw2OAjDEeNjrKFi17h6_07Fhg7MmnpSlWIXrrWEgfE_u0CD30IjfddfWJgrTbSnX77WmDP9qnOilgttGs4MVSyeGCyo3n4pYzrCCRRTCSf35diFNzpNvJgcA-iJ4t7Xo4_iWhh2b2w9RvfSAC7nauT9Sy_nw7mE709Vq0htA8sdMPzmwO1c4QZBwn_OcR6WC71k9xcNMpwAZykkV1Kp_fcfXNF7AQHD5B4xWPcqjp7KKf665O8qAPaekrY8QHFehg3ZWM7c7mUvtbP6Hgu2P6__BNM7ThS-MMlRxyMuN5rwu74RznQzbb9I7B0YD7PYQvuxMNvN7PJhEjNVI6K-nR6YS16gaX-Ke56tGKKciiIqmVIZRMd774ndzgQNiyuE01fVZsFt1AbgXNiEAJnTf5DI3oMibZ471ZzM_0_z6udfFkH3jBs8aU9i8JUALwkuT0TeGKk9ES3kEGa7p-dkk2_lYwB_fIkqo_y12SpmUR5ygp60AsPE6xuyFu2ZBREMK9v3CUkk5uFyyGE22sveoJvej2; _gid=GA1.2.1476109304.1651695844; _gat=1; ADRUM_BT1=R:0|i:461009; ADRUM_BTa=R:0|g:9a6fc6b0-70be-4572-b237-ad6f0f20a6ab|n:ihsco_86f4fc53-86e8-4feb-bc7a-7921d526821f",
 }
 
 # session data - cookies
@@ -136,7 +133,7 @@ session.headers.update(session_headers)
 config = Config()
 
 
-def scrap_base_ships_data(imo_numbers: Iterable[int],
+def scrap_base_ships_data(imo_numbers: Set[int],
                           req_limit: int = config.default_requests_limit,
                           req_delay: int = config.default_timeout_delay_max,
                           req_delay_cadence: int = config.default_timeout_cadence):
@@ -146,46 +143,20 @@ def scrap_base_ships_data(imo_numbers: Iterable[int],
     if not imo_numbers or len(imo_numbers) == 0:  # fail-fast - empty IMo numbers list
         raise ScraperException("Empty IMO numbers list for processing!")
 
-    # calculate full abs path to IMO numbers file
-    # file_imo_numbers_list = BASE_WORKING_DIR + "/" + imo_numbers_file
-    # print(f"Use IMO numbers file: {file_imo_numbers_list}")
-
-    # calculate full abs path to <processed IMO numbers> file
-    # file_processed_imo_numbers = BASE_WORKING_DIR + "/" + processed_imo_numbers
-    # print(f"Use <processed IMO numbers file>: {file_processed_imo_numbers}")
-
-    #with open(file_imo_numbers_list) as csv_file:  # read CSV from equasis with IMO numbers
-    #    csv_reader = csv.reader(csv_file, delimiter=imo_numbers_file_delimeter)
-
     line_count = 0
     for imo_number in imo_numbers:  # iterate over all IMO numbers
         log.debug(f"Total processed: {line_count}")  # just a debug
 
-        if line_count > req_limit:  # just a stopper
+        if req_limit > 0 and line_count > req_limit:  # just a stopper (sentinel)
             break
 
-            # if line_count == 0:  # skip the header row
-            #     print(f'Column names are {", ".join(row)}')
-            #     line_count += 1
-            #     with open(file_processed_imo_numbers, mode='w') as processed_file:  # rewrite existing file
-            #         processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-            #                                       quoting=csv.QUOTE_MINIMAL)
-            #         processed_writer.writerow([f"{row[0]}", "Processed"])
-            # else:  # data rows processing
-                
-        log.debug(f'\nProcessing: IMO #{imo_number}.')
         line_count += 1
 
         ship_dir = config.seaweb_raw_ships_dir + "/" + str(imo_number)  # directory to store the current ship
-        log.debug(f"\tship dir: {ship_dir}")
-
-                # with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
-                #     processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-                #                                   quoting=csv.QUOTE_MINIMAL)
-                #     processed_writer.writerow([f"{row[0]}", "+"])
+        log.info(f'Ship: IMO #{imo_number}. Dir: [{ship_dir}].')
 
         if Path(ship_dir).exists() and Path(ship_dir).is_dir():  # skip already processed ships
-            log.info(f"\tShip IMO: {imo_number} already processed. Skipped.")
+            log.debug(f"Ship IMO: #{imo_number} already processed. Skipped.")
             continue
 
         # artificial delay for every 50 run
@@ -195,7 +166,7 @@ def scrap_base_ships_data(imo_numbers: Iterable[int],
             time.sleep(delay_sec)
 
         # real ship processing
-        response = session.get(ship_url + row[0], allow_redirects=True)  # request the site...
+        response = session.get(ship_url + str(imo_number), allow_redirects=True)  # request the site...
         if response.status_code != 200:  # check that 200 is returned
             log.error(f"Got error code: {response.status_code}! Stopping!")
             break
@@ -204,12 +175,12 @@ def scrap_base_ships_data(imo_numbers: Iterable[int],
         ship_data_file: str = ship_dir + '/' + config.main_ship_data_file
         with open(Path(ship_data_file), 'w') as f:  # write content to the file
             f.write(response.text)
-            log.debug(f"\tWritten file: {ship_data_file}")
+            log.debug(f"Written file: {ship_data_file}")
 
         log.debug(f'Processed {line_count} lines.')
 
 
-def scrap_extended_ships_data(imo_numbers: Iterable[int],
+def scrap_extended_ships_data(imo_numbers: Set[int],
                               req_limit: int = config.default_requests_limit,
                               req_delay: int = config.default_timeout_delay_max,
                               req_delay_cadence: int = config.default_timeout_cadence):
@@ -318,27 +289,6 @@ def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed
     data_file = os.getcwd() + "/temp/9336505/ship_main.html"
     ship_data = _parse_ship_main(read_file_as_text(data_file))
     print(ship_data)
-
-
-class SeawebScraper(ScraperAbstractClass):
-    """Scraper for maritime.ihs.com source system (Sea Web)."""
-
-    def __init__(self):
-        log.info("SeawebScraper: initializing.")
-
-    def scrap(self, timestamp: datetime, dry_run: bool, requests_limit: int = 0) -> str:
-        """Sea Web data scraper."""
-        log.info("scrap(): processing maritime.ihs.com")
-        return ""
-
-    def scrap_ships_data(self):
-        log.debug("scrap_ships_data(): working.")
-
-    def parse_ships_data(self):
-        log.debug("parse_ships_data(): working.")
-
-    def process_raw_data(self):
-        log.debug("process_raw_data(): working.")
 
 
 if __name__ == '__main__':

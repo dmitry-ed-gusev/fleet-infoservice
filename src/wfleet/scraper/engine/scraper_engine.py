@@ -23,7 +23,7 @@ from wfleet.scraper.engine.scrapers.scraper_morflotru import MorflotRuScraper
 from wfleet.scraper.engine.scrapers.scraper_marinetrafficcom import MarineTrafficComScraper
 from wfleet.scraper.engine.scrapers.scraper_vesselfindercom import VesselFinderComScraper
 from wfleet.scraper.engine.scrapers.scraper_rsclassorg import RsClassOrgScraper
-from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import SeawebScraper
+from wfleet.scraper.engine.scrapers.seaweb.seaweb import SeawebScraper
 
 # init module logging
 log = logging.getLogger(__name__)
@@ -69,14 +69,16 @@ def scrap_all_data(dry_run: bool = False, requests_limit: int = 0):
     rs_scraper.scrap(timestamp, dry_run=dry_run, requests_limit=requests_limit)
 
 
-def execute_seaweb_engine():
-    log.debug("execute_seaweb_engine(): processing Seaweb scrap/parse.")
+def execute_seaweb_scrap(dry_run: bool = False):
+    log.debug("execute_seaweb_scrap(): processing Seaweb scraping data.")
     seaweb_scraper: SeawebScraper = SeawebScraper()
+    seaweb_scraper.scrap(datetime.now(), dry_run)
 
-    # scrap raw ships data according to IMO numbers list
-    seaweb_scraper.scrap_ships_data()
-    # parse raw ships data
-    seaweb_scraper.parse_ships_data()
+
+def execute_seaweb_parse(dry_run: bool = False):
+    log.debug("execute_seaweb_parse(): processing Seaweb parsing data.")
+    seaweb_scraper: SeawebScraper = SeawebScraper()
+    seaweb_scraper.parse(dry_run)
 
 
 if __name__ == "__main__":

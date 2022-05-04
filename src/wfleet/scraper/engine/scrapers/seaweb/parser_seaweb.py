@@ -6,7 +6,7 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii, 24.04.2022
+    Modified: Gusev Dmitrii, 03.05.2022
 """
 
 import os
@@ -18,7 +18,6 @@ from pathlib import Path
 from wfleet.scraper.entities.ship import ShipDto
 from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
-from wfleet.scraper.engine.scrapers.seaweb.defaults_seaweb import MAIN_SHIP_DATA_FILE
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import get_last_part_of_the_url, read_file_as_text
 
@@ -27,6 +26,8 @@ EMPTY_HTML_MSG: str = "Empty HTML text for parsing!"
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
+config = Config()  # get config instance
+
 
 def _parse_ship_main(html_text: str) -> dict[str, str]:
     if not html_text:  # fail-fast behaviour
@@ -34,8 +35,6 @@ def _parse_ship_main(html_text: str) -> dict[str, str]:
 
     soup = BeautifulSoup(html_text, "html.parser")  # parser
     data_rows = soup.find_all("div", class_="col-sm-12 col-md-6 col-lg-6")  # find all data rows
-
-    config = Config()  # get config instance
 
     ship_data: dict[str, str] = dict()  # resulting dictionary
     # current timestamp to string
@@ -148,7 +147,7 @@ def parse_one_ship(ship_dir: str) -> ShipDto:
     log.debug(f"parse_one_ship(): parsing ship [{ship_dir}].")
 
     # read and parse main ship data
-    text: str = read_file_as_text(ship_dir + "/" + MAIN_SHIP_DATA_FILE)
+    text: str = read_file_as_text(ship_dir + "/" + config.main_ship_data_file)
     ship_dict = _parse_ship_main(text)
 
     # read XXX data
@@ -184,7 +183,7 @@ def parse_all_ships(raw_ships_dir: str) -> list[ShipDto]:
         ship_dir: str = raw_ships_dir + "/" + ship
 
         # check - if we can parse this ship
-        ship_data: str = read_file_as_text(ship_dir + "/" + MAIN_SHIP_DATA_FILE)
+        ship_data: str = read_file_as_text(ship_dir + "/" + config.main_ship_data_file)
         if "Access is denied." in ship_data:
             log.warning(f"Skipped current number [{ship}].")
             continue
