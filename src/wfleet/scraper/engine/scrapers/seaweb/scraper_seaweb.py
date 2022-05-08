@@ -6,21 +6,20 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 04.05.2022
+    Modified: Gusev Dmitrii, 08.05.2022
 """
 
 import os
-import csv
 import time
 import random
 import requests
 import logging
 from pathlib import Path
 from typing import Set
-from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
-# from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_ship
-from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
+from requests import Response
 from wfleet.scraper.utils.utilities import read_file_as_text
+from wfleet.scraper.config.scraper_config import Config, singleton, MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
@@ -115,22 +114,55 @@ session_headers = {
 }
 
 # session data - cookies
-# session_cookies = {
-# }
+session_cookies: dict = {}
 
 # setup HTTP session
-session = requests.Session()
-session.headers.update(session_headers)
+# session = requests.Session()
+# session.headers.update(session_headers)
 # session.cookies.update(session_cookies)  # add cookies to session headers
 # session.max_redirects = 100  # limit max redirects # to follow
 
-# debug output
-# print(f"OS working dir: [{os.getcwd()}]")
-# print(f"Base working dir: [{BASE_WORKING_DIR}].")
-# print(f"Ships dir: [{RAW_SHIPS_DIR}].")
 
-# get app config instance
-config = Config()
+@singleton
+class WebClient():
+    """Simple WebClient class."""
+
+    def __init__(self, headers: dict, cookies: dict) -> None:
+        log.debug("Initializing WebCLient() singleton instance.")
+        self.headers = headers
+        self.cookies = cookies
+        self.session = requests.Session()
+
+        if headers and len(headers) > 0:  # add headers
+            self.session.headers.update(self.headers)
+            log.debug("Headers are not empty, adding to the HTTP session.")
+
+        if cookies and len(cookies) > 0:  # add cookies
+            self.session.cookies.update(self.cookies)
+            log.debug("Cookies are not empty, adding to the HTTP session.")
+
+    def set_redirects_count(self, redirects_count: int):
+        if redirects_count > 0:
+            self.session.max_redirects = redirects_count
+
+    def get_request(self, url: str, allow_redirects=True, fail_on_error=True) -> Response:
+        log.debug(f"Performing get request: [{url}].")
+
+        if not url:
+            raise ScraperException("Empty URL for get request!")
+
+        response = self.session.get(url, allow_redirects=allow_redirects)
+        if response.status_code != 200 and fail_on_error:  # fail on purpose - by parameter
+            raise ScraperException(f"Get request [{url}] failed with [{response.status_code}]!")
+
+        return response
+
+    def get_request_return_text(self, url: str, allow_redicrects: bool, fail_on_error: bool) -> str:
+        return self.get_request(url, allow_redicrects, fail_on_error).text
+
+
+config = Config()  # get app config instance
+web_client = WebClient(session_headers, session_cookies)  # get web client instance
 
 
 def scrap_base_ships_data(imo_numbers: Set[int],
@@ -140,17 +172,16 @@ def scrap_base_ships_data(imo_numbers: Set[int],
 
     log.debug("scrap_base_ships_data() is working.")
 
-    if not imo_numbers or len(imo_numbers) == 0:  # fail-fast - empty IMo numbers list
+    if not imo_numbers or len(imo_numbers) == 0:  # fail-fast - empty IMO numbers list
         raise ScraperException("Empty IMO numbers list for processing!")
 
-    line_count = 0
-    for imo_number in imo_numbers:  # iterate over all IMO numbers
-        log.debug(f"Total processed: {line_count}")  # just a debug
+    for counter, imo_number in enumerate(imo_numbers):  # iterate over all IMO numbers
 
-        if req_limit > 0 and line_count > req_limit:  # just a stopper (sentinel)
+        if counter > 0 and counter % 1000 == 0:  # just a debug
+            log.debug(f"Processing: {counter}/{len(imo_numbers)}.")
+
+        if req_limit > 0 and counter > req_limit:  # just a stopper (sentinel)
             break
-
-        line_count += 1
 
         ship_dir = config.seaweb_raw_ships_dir + "/" + str(imo_number)  # directory to store the current ship
         log.info(f'Ship: IMO #{imo_number}. Dir: [{ship_dir}].')
@@ -160,24 +191,28 @@ def scrap_base_ships_data(imo_numbers: Set[int],
             continue
 
         # artificial delay for every 50 run
-        if line_count % req_delay_cadence == 0:
+        if counter % req_delay_cadence == 0:
             delay_sec = random.randint(1, req_delay)  # delay 1 to X sec (both inclusive)
             log.debug(f"\tDelay {delay_sec} seconds.")
             time.sleep(delay_sec)
 
         # real ship processing
-        response = session.get(ship_url + str(imo_number), allow_redirects=True)  # request the site...
-        if response.status_code != 200:  # check that 200 is returned
-            log.error(f"Got error code: {response.status_code}! Stopping!")
-            break
+        text = web_client.get_request_return_text(ship_url + str(imo_number),
+                                                  allow_redicrects=True,
+                                                  fail_on_error=True)
+        # response = session.get(ship_url + str(imo_number), allow_redirects=True)  # request the site...
+        # if response.status_code != 200:  # check that 200 is returned
+        #     log.error(f"Got error code: {response.status_code}! Stopping!")
+        #     break
 
         os.makedirs(ship_dir, exist_ok=True)  # if all is OK - create dir for the ship data
         ship_data_file: str = ship_dir + '/' + config.main_ship_data_file
         with open(Path(ship_data_file), 'w') as f:  # write content to the file
-            f.write(response.text)
+            # f.write(response.text)
+            f.write(text)
             log.debug(f"Written file: {ship_data_file}")
 
-        log.debug(f'Processed {line_count} lines.')
+    log.info(f'Processed IMO numbers: {len(imo_numbers)}.')
 
 
 def scrap_extended_ships_data(imo_numbers: Set[int],
@@ -185,77 +220,53 @@ def scrap_extended_ships_data(imo_numbers: Set[int],
                               req_delay: int = config.default_timeout_delay_max,
                               req_delay_cadence: int = config.default_timeout_cadence):
 
-    print("Working -> get_extended_data().")
+    log.debug("scrap_extended_ships_data() is working.")
 
-    # calculate full abs path to IMO numbers file
-    file_imo_numbers_list = BASE_WORKING_DIR + "/" + imo_numbers_file
-    print(f"Use IMO numbers file: {file_imo_numbers_list}")
+    if not imo_numbers or len(imo_numbers) == 0:  # fail-fast - empty IMO numbers list
+        raise ScraperException("Empty IMO numbers list for processing!")
 
-    # calculate full abs path to <processed IMO numbers> file
-    file_processed_imo_numbers = BASE_WORKING_DIR + "/" + processed_imo_numbers
-    print(f"Use <processed IMO numbers file>: {file_processed_imo_numbers}")
+    for counter, imo_number in enumerate(imo_numbers):  # iterate over all IMO numbers
 
-    with open(file_imo_numbers_list) as csv_file:  # read CSV from equasis with IMO numbers
-        csv_reader = csv.reader(csv_file, delimiter=imo_numbers_file_delimeter)
+        if counter > 0 and counter % 1000 == 0:  # just a debug
+            log.debug(f"Processing: {counter}/{len(imo_numbers)}.")
 
-        line_count = 0
-        for row in csv_reader:  # iterate over all IMO numbers
-            print(f"Total processed: {line_count}")  # just a debug
+        if req_limit > 0 and counter > req_limit:  # just a stopper (sentinel)
+            break
 
-            if line_count > req_limit:  # just a stopper
-                break
+        ship_dir = config.seaweb_raw_ships_dir + "/" + str(imo_number)  # directory to store the current ship
+        log.info(f'Ship: IMO #{imo_number}. Dir: [{ship_dir}].')
 
-            if line_count == 0:  # skip the header row
-                print(f'Column names are {", ".join(row)}')
-                line_count += 1
+        # check existence of several files with additional info and request it if missing
+        skip_delay = True
+        for key in ship_additional_data_urls:
+            # print(f"key={key}, value={ship_additional_data_urls[key]}")
+            ship_ext_file = ship_dir + "/" + key + ".html"
+            if not Path(ship_ext_file).exists():
+                # print(f"\tFile [{key}].html doesn't exist, downloading...")  # <- too much output
+                skip_delay = False  # we're doing real requests, so need a delay
+                text = web_client.get_request_return_text(ship_additional_data_urls[key] + str(imo_number),
+                                                          allow_redicrects=True,
+                                                          fail_on_error=True)
+                # # download missing file
+                # response = session.get(ship_additional_data_urls[key] + row[0])
+                # # check that 200 is returned - break otherwise
+                # if response.status_code != 200:
+                #     print(f"Error code: {response.status_code} returned! Stopping!")
+                #     return
 
-            # todo: remove file log for processed?
-            #     with open(file_processed_imo_numbers, mode='w') as processed_file:  # rewrite existing file
-            #         processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-            #                                       quoting=csv.QUOTE_MINIMAL)
-            #         processed_writer.writerow([f"{row[0]}", "Processed"])
+                # save downloaded file if 200 OK returned
+                with open(Path(ship_ext_file), 'w') as f:  # write received content to file
+                    # f.write(response.text)
+                    f.write(text)
+                    log.debug(f"Written file: {ship_ext_file}")
 
-            else:  # data rows processing
-                print(f'\nProcessing: IMO = {row[0]}, SHIP NAME = {row[1]}')
-                line_count += 1
+        # artificial delay for every XX runs
+        if not skip_delay and counter % req_delay_cadence == 0:
+            delay_sec = random.randint(1, req_delay)  # delay 1 to X sec (both inclusive)
+            log.debug(f"Delay {delay_sec} seconds.")
+            time.sleep(delay_sec)
 
-                ship_dir = RAW_SHIPS_DIR + "/" + row[0]  # directory to store the current ship
-                print(f"\tship dir: {ship_dir}")
-
-                # check existence of several files with additional info and request it if missing
-                skip_delay = True
-                for key in ship_additional_data_urls:
-                    # print(f"key={key}, value={ship_additional_data_urls[key]}")
-                    ship_ext_file = ship_dir + "/" + key + ".html"
-                    if not Path(ship_ext_file).exists():
-                        # print(f"\tFile [{key}].html doesn't exist, downloading...")  # <- too much output
-                        skip_delay = False  # we're doing real requests, so need a delay
-                        # download missing file
-                        response = session.get(ship_additional_data_urls[key] + row[0])
-                        # check that 200 is returned - break otherwise
-                        if response.status_code != 200:
-                            print(f"Error code: {response.status_code} returned! Stopping!")
-                            # break
-                            return
-                        # save downloaded file if 200 OK returned
-                        with open(Path(ship_ext_file), 'w') as f:  # write received content to file
-                            f.write(response.text)
-                            print(f"\tWritten file: {ship_ext_file}")
-
-                # todo: remove file log for processed?
-                # # add the current IMO as processed
-                # with open(file_processed_imo_numbers, mode='a') as processed_file:  # other mode='w'
-                #     processed_writer = csv.writer(processed_file, delimiter=',', quotechar='"',
-                #                                   quoting=csv.QUOTE_MINIMAL)
-                #     processed_writer.writerow([f"{row[0]}", "+"])
-
-                # artificial delay for every XX runs
-                if not skip_delay and line_count % req_delay_cadence == 0:
-                    delay_sec = random.randint(1, req_delay)  # delay 1 to X sec (both inclusive)
-                    print(f"\tDelay {delay_sec} seconds.")
-                    time.sleep(delay_sec)
-
-        print(f'Processed {line_count} lines.')
+    log.debug(f'Processed IMO numbers {len(imo_numbers)}.')
 
 
 def process_raw_data():

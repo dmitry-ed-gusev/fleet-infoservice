@@ -40,8 +40,8 @@ class SeawebScraper(ScraperAbstractClass):
         log.debug("Base ships data scraped.")
 
         # scrap extended ships data
-        # scrap_extended_ships_data()
-        # log.debug("Extended ships data scraped.")
+        scrap_extended_ships_data(get_imo_numbers(), req_limit=requests_limit)
+        log.debug("Extended ships data scraped.")
 
         return SCRAPE_RESULT_OK
 
