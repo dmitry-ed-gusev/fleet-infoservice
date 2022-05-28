@@ -6,7 +6,7 @@
     directly - rather should be imported and functions used.
 
     Created:  Dmitrii Gusev, 24.12.2021
-    Modified: Dmitrii Gusev, 02.05.2022
+    Modified: Dmitrii Gusev, 26.05.2022
 """
 
 # todo: add DB support for scraper runs telemetry
@@ -14,8 +14,7 @@
 
 import logging
 from datetime import datetime
-# from wfleet.scraper.config.scraper_config import Config
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scrapers.scraper_clarksonsnet import ClarksonsNetScraper
 from wfleet.scraper.engine.scrapers.scraper_gims import GimsRuScraper
 from wfleet.scraper.engine.scrapers.scraper_rivregru import RivRegRuScraper

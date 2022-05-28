@@ -6,7 +6,7 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii, 03.05.2022
+    Modified: Gusev Dmitrii, 15.05.2022
 """
 
 import os
@@ -29,7 +29,8 @@ log.debug(f"Logging for module {__name__} is configured.")
 config = Config()  # get config instance
 
 
-def _parse_ship_main(html_text: str) -> dict[str, str]:
+def _parse_ship_main(html_text: str, interest_keys: set[str] = set()) -> dict[str, str]:
+
     if not html_text:  # fail-fast behaviour
         raise ScraperException(EMPTY_HTML_MSG)
 
@@ -45,10 +46,25 @@ def _parse_ship_main(html_text: str) -> dict[str, str]:
     for row in data_rows:  # iterate over data rows and parse data
         # print(f"\n{row}")  # <- debug output
         key: str = row.find("div", class_="col-4 keytext").text  # row -> key column
-        value: str = row.find("div", class_="col-8 valuetext").text  # row -> value column
-        anchor = row.find('a')  # anchor with the data for some of rows
-        print(f"Data row: {key} -> {value}")  # <- debug output
 
+        # if we specified interesting keys and the current key is not there - skip the rest!
+        if interest_keys and key not in interest_keys:
+            continue
+
+        # row value may not be presented, if so - skip the rest
+        row_value = row.find("div", class_="col-8 valuetext")
+        if not row_value:
+            log.debug('First attempt to get row value failed, trying different...')
+            row_value = row.find("div", class_="col-8 valuetext alert_red")
+            if not row_value:
+                log.warn(f'Skipped row value for key: {key}!')
+                continue
+
+        value: str = row_value.text  # row -> value column
+        anchor = row.find('a')  # anchor with the data for some of rows
+        # print(f"Data row: {key} -> {value}")  # todo: debug output -> comment it!
+
+        # todo: replace this construction with the dictionary (see 'case' operator for python)
         if key == 'Ship Name':
             ship_data['ship_name'] = value
         elif key == 'Shiptype':

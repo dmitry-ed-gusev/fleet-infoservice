@@ -11,7 +11,7 @@
       - https://elbenshira.com/blog/singleton-pattern-in-python/
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 03.05.2022
+    Modified: Dmitrii Gusev, 27.05.2022
 """
 
 import os
@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 from dataclasses import dataclass
+from wfleet.scraper.utils.utilities import singleton
 
 # common system messages
 MSG_MODULE_ISNT_RUNNABLE = "This module is not runnable!"
@@ -37,16 +38,6 @@ def get_cache_dir(base_name: str) -> str:
         return base_name
     else:  # cache dir not exists or is not a dir
         return str(Path.home()) + '/' + base_name
-
-
-def singleton(class_):  # singleton decorator
-    instances = {}
-
-    def getinstance(*args, **kwargs):
-        if class_ not in instances:
-            instances[class_] = class_(*args, **kwargs)
-        return instances[class_]
-    return getinstance
 
 
 @singleton
@@ -84,6 +75,8 @@ class Config():
     seaweb_raw_ships_dir: str = seaweb_base_dir + "/seaweb"
     seaweb_raw_builders_dir: str = seaweb_base_dir + "/shipbuilders"
     seaweb_raw_companies_dir: str = seaweb_base_dir + "/shipcompanies"
+    seaweb_shipbuilders_codes_file: str = seaweb_raw_builders_dir + '/shipbuilders.csv'
+    seaweb_shipcompanies_codes_file: str = seaweb_raw_companies_dir + '/shipcompanies.csv'
 
     def __post_init__(self):  # post-init method - create necessary sub-dirs
         os.makedirs(str(self.log_dir), exist_ok=True)

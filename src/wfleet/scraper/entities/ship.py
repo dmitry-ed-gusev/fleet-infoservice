@@ -7,8 +7,11 @@
       - ExtendedShipDto - class contains extended ship info
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 24.04.2022
+    Modified: Dmitrii Gusev, 15.05.2022
 """
+
+# todo: implement creation of dataclass from dictionary, see the link below
+# todo: https://www.reddit.com/r/learnpython/comments/9h74no/convert_dict_to_dataclass/
 
 from datetime import datetime
 from dataclasses import dataclass

@@ -6,10 +6,11 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 08.05.2022
+    Modified: Gusev Dmitrii, 18.05.2022
 """
 
 import os
+import csv
 import time
 import random
 import requests
@@ -20,6 +21,7 @@ from requests import Response
 from wfleet.scraper.utils.utilities import read_file_as_text
 from wfleet.scraper.config.scraper_config import Config, singleton, MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
+from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import _parse_ship_main
 
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
@@ -110,7 +112,7 @@ session_headers = {
     "X-Requested-With": "XMLHttpRequest",
 
     # main header (cookie)
-    "Cookie": "_ga=GA1.2.1607646022.1648412853; shipsearch=; ckShipDiv=hidehidehidehidehideshowhidehide; list=; ShipCommercialHistoryExpanded=ShipCommercialHistoryExpanded; ckShip=db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&db_name012=YEAROFBUILDBROWSE&en_name012=Year; rememberMeLogin=903C2E6ED95029E847A45CBBA806034E344A8D08EEF2BEF8D865B9ED17CBA4861D8A6A0A9E5BE8A9554EB3CB99E67FC0C86AFC7A28FB6FF17C42E6AB5FA3994FEDB6581C716DC1E3FD3EBC4E243BFC29E7482B1DF44D2BB481F2B5CFE124E693C44793BD0447CAF52DE7301D; LastShipVisited=1009340A+8009129DF 19+9237371WEC VERMEER+7920259ABDUL B+9237369MOVEON; ownersearch=; ckOwnDiv=hidehidehidehideshowhidehidehide; buildersearch=; ckBuilderDiv=hidehideshowhidehidehidehidehide; ckbuilder=db_name001=BUILDERNAME&en_name001=Builder Name&db_name002=COUNTRYNAME&en_name002=Country&db_name003=STATUS&en_name003=Status&db_name004=TOWNNAME&en_name004=Town; ckDefault=page=buildersearch&records=20; builderovw=; LastBuilderVisited=USAE95A & B Industries Of Morgan City+IRN030Abadan Kashti Nooh+JPN028Onomichi Dockyard Co Ltd; ASP.NET_SessionId=pmr4jdtsrcr2k4frsmrzyhen; SameSite=None; BIGipServer~ProdWeb~pool-maritime.ihs.com-80=rd1100o00000000000000000000ffff0aa80069o80; AttemptsToLogin=XwsNHfGK7AFvYICFRjPeuTyTLQUS8ALHuSVVs94kHgtsuuPB; .AspNet.ApplicationCookie=OQ4DAxTK8p5kDwIwRvcmE_Nyw2OAjDEeNjrKFi17h6_07Fhg7MmnpSlWIXrrWEgfE_u0CD30IjfddfWJgrTbSnX77WmDP9qnOilgttGs4MVSyeGCyo3n4pYzrCCRRTCSf35diFNzpNvJgcA-iJ4t7Xo4_iWhh2b2w9RvfSAC7nauT9Sy_nw7mE709Vq0htA8sdMPzmwO1c4QZBwn_OcR6WC71k9xcNMpwAZykkV1Kp_fcfXNF7AQHD5B4xWPcqjp7KKf665O8qAPaekrY8QHFehg3ZWM7c7mUvtbP6Hgu2P6__BNM7ThS-MMlRxyMuN5rwu74RznQzbb9I7B0YD7PYQvuxMNvN7PJhEjNVI6K-nR6YS16gaX-Ke56tGKKciiIqmVIZRMd774ndzgQNiyuE01fVZsFt1AbgXNiEAJnTf5DI3oMibZ471ZzM_0_z6udfFkH3jBs8aU9i8JUALwkuT0TeGKk9ES3kEGa7p-dkk2_lYwB_fIkqo_y12SpmUR5ygp60AsPE6xuyFu2ZBREMK9v3CUkk5uFyyGE22sveoJvej2; _gid=GA1.2.1476109304.1651695844; _gat=1; ADRUM_BT1=R:0|i:461009; ADRUM_BTa=R:0|g:9a6fc6b0-70be-4572-b237-ad6f0f20a6ab|n:ihsco_86f4fc53-86e8-4feb-bc7a-7921d526821f",
+    "Cookie": "_ga=GA1.2.1607646022.1648412853; shipsearch=; ckShipDiv=hidehidehidehidehideshowhidehide; list=; ShipCommercialHistoryExpanded=ShipCommercialHistoryExpanded; ckShip=db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&db_name012=YEAROFBUILDBROWSE&en_name012=Year; rememberMeLogin=903C2E6ED95029E847A45CBBA806034E344A8D08EEF2BEF8D865B9ED17CBA4861D8A6A0A9E5BE8A9554EB3CB99E67FC0C86AFC7A28FB6FF17C42E6AB5FA3994FEDB6581C716DC1E3FD3EBC4E243BFC29E7482B1DF44D2BB481F2B5CFE124E693C44793BD0447CAF52DE7301D; LastShipVisited=1009340A+8009129DF 19+9237371WEC VERMEER+7920259ABDUL B+9237369MOVEON; ownersearch=; ckOwnDiv=hidehidehidehideshowhidehidehide; buildersearch=; ckBuilderDiv=hidehideshowhidehidehidehidehide; ckbuilder=db_name001=BUILDERNAME&en_name001=Builder Name&db_name002=COUNTRYNAME&en_name002=Country&db_name003=STATUS&en_name003=Status&db_name004=TOWNNAME&en_name004=Town; ckDefault=page=buildersearch&records=20; builderovw=; LastBuilderVisited=USAE95A & B Industries Of Morgan City+IRN030Abadan Kashti Nooh+JPN028Onomichi Dockyard Co Ltd; ASP.NET_SessionId=144en2qq3h3m4h0z1exfqtfs; BIGipServer~ProdWeb~pool-maritime.ihs.com-80=rd1100o00000000000000000000ffff0aa80069o80; SameSite=None; AttemptsToLogin=O0H36qXSUP2UNgEXSnOtAkt2uc8iFw6l8PeOlJ4obVGWYRuC; .AspNet.ApplicationCookie=DApyVGx0cHKMePgWYt_dZpkqjocIJjghwrwRUNKRe7JWQd-dWctKvTT49DCgvyusrgT_BRjtwkuyqGktgFPcfWqLXgL0cpEztarfvY9pOnombM83mVs0-_F-dIkHHOWmqA9EsExyGdc78eSO-nzhq9BJmm0b-tMmrCODxl1dxlsaDBlvsKgspRbzUecWWAzGWYUhNayj8VobxKwETubgsijQrHOMaIi7_bba4OHJqb1h5Nx21OV8lp07pCeem01HSft0MSyKQ97OCf3p_rpoLhbfxXpjxjxxv4bAOjfRVQJrb5JX2B1KUJ4gZDQH-pyzxn1FmP8upCBd7gQ4s81eyxhWyzzr0HaLUj8e2VWbsk0e-kMeYKSj9_M5cI7826bhm7VjwVes9ACHMMXfnFdPzOb1mv8cE3JUo0pa9LT9fVX9EyfimsOhnS8KGLauC9k0QmtjDTQ-VuYvCPf_xwJnMtjuwHIma_OW8ptKpNp1c0lFPe37gcQsodeZWXlQUAAR_oSrhWB-T-zQzym7tkhmYDdiqqNAcBTk21Bkvg-xEgoIlpEnSmpEwenh0Io; _gid=GA1.2.1396874235.1652908372; _gat=1; ADRUM_BTa=R:0|g:9ca1bb55-1346-4153-86e7-2bb457546ba4|n:ihsco_86f4fc53-86e8-4feb-bc7a-7921d526821f; ADRUM_BT1=R:0|i:462877|e:1",
 }
 
 # session data - cookies
@@ -124,8 +126,8 @@ session_cookies: dict = {}
 
 
 @singleton
-class WebClient():
-    """Simple WebClient class."""
+class WebClientSingleton():  # todo: move to utilities class!
+    """Simple WebClient Singleton class."""
 
     def __init__(self, headers: dict, cookies: dict) -> None:
         log.debug("Initializing WebCLient() singleton instance.")
@@ -146,7 +148,7 @@ class WebClient():
             self.session.max_redirects = redirects_count
 
     def get_request(self, url: str, allow_redirects=True, fail_on_error=True) -> Response:
-        log.debug(f"Performing get request: [{url}].")
+        log.debug(f"get_request(): performing get request: [{url}].")
 
         if not url:
             raise ScraperException("Empty URL for get request!")
@@ -158,11 +160,29 @@ class WebClient():
         return response
 
     def get_request_return_text(self, url: str, allow_redicrects: bool, fail_on_error: bool) -> str:
-        return self.get_request(url, allow_redicrects, fail_on_error).text
+        log.debug('get_request_return_text(): working.')
+        response = self.get_request(url, allow_redicrects, fail_on_error)
+        if response:
+            return response.text
+
+        return ''
+
+    def get_request_return_text_to_file(self, url: str, file: str, allow_redicrects: bool,
+                                        fail_on_error: bool):
+        log.debug(f'get_request_return_text_to_file(): saving response text to file {file}.')
+
+        if not file or Path(file).exists():
+            raise ScraperException(f'File name {file} is empty or file already exists!')
+
+        response_text: str = self.get_request_return_text(url, allow_redicrects, fail_on_error)
+        if response_text:
+            with open(Path(file), 'w') as f:  # write content to the file
+                f.write(response_text)
+                log.debug(f"Written file: {file}")
 
 
 config = Config()  # get app config instance
-web_client = WebClient(session_headers, session_cookies)  # get web client instance
+web_client = WebClientSingleton(session_headers, session_cookies)  # get web client instance
 
 
 def scrap_base_ships_data(imo_numbers: Set[int],
@@ -196,21 +216,11 @@ def scrap_base_ships_data(imo_numbers: Set[int],
             log.debug(f"\tDelay {delay_sec} seconds.")
             time.sleep(delay_sec)
 
-        # real ship processing
-        text = web_client.get_request_return_text(ship_url + str(imo_number),
-                                                  allow_redicrects=True,
-                                                  fail_on_error=True)
-        # response = session.get(ship_url + str(imo_number), allow_redirects=True)  # request the site...
-        # if response.status_code != 200:  # check that 200 is returned
-        #     log.error(f"Got error code: {response.status_code}! Stopping!")
-        #     break
-
+        # real ship processing (create dirs/make name for data file/get file data by HTTP GET request)
         os.makedirs(ship_dir, exist_ok=True)  # if all is OK - create dir for the ship data
-        ship_data_file: str = ship_dir + '/' + config.main_ship_data_file
-        with open(Path(ship_data_file), 'w') as f:  # write content to the file
-            # f.write(response.text)
-            f.write(text)
-            log.debug(f"Written file: {ship_data_file}")
+        ship_data_file: str = ship_dir + '/' + config.main_ship_data_file  # create ship data file name
+        web_client.get_request_return_text_to_file(ship_url + str(imo_number), ship_data_file,
+                                                   allow_redicrects=True, fail_on_error=True)
 
     log.info(f'Processed IMO numbers: {len(imo_numbers)}.')
 
@@ -239,26 +249,14 @@ def scrap_extended_ships_data(imo_numbers: Set[int],
         # check existence of several files with additional info and request it if missing
         skip_delay = True
         for key in ship_additional_data_urls:
-            # print(f"key={key}, value={ship_additional_data_urls[key]}")
             ship_ext_file = ship_dir + "/" + key + ".html"
             if not Path(ship_ext_file).exists():
-                # print(f"\tFile [{key}].html doesn't exist, downloading...")  # <- too much output
                 skip_delay = False  # we're doing real requests, so need a delay
-                text = web_client.get_request_return_text(ship_additional_data_urls[key] + str(imo_number),
-                                                          allow_redicrects=True,
-                                                          fail_on_error=True)
-                # # download missing file
-                # response = session.get(ship_additional_data_urls[key] + row[0])
-                # # check that 200 is returned - break otherwise
-                # if response.status_code != 200:
-                #     print(f"Error code: {response.status_code} returned! Stopping!")
-                #     return
-
-                # save downloaded file if 200 OK returned
-                with open(Path(ship_ext_file), 'w') as f:  # write received content to file
-                    # f.write(response.text)
-                    f.write(text)
-                    log.debug(f"Written file: {ship_ext_file}")
+                # HTTP GET request + save to file
+                web_client.get_request_return_text_to_file(ship_additional_data_urls[key] + str(imo_number),
+                                                           ship_ext_file,
+                                                           allow_redicrects=True,
+                                                           fail_on_error=True)
 
         # artificial delay for every XX runs
         if not skip_delay and counter % req_delay_cadence == 0:
@@ -267,6 +265,84 @@ def scrap_extended_ships_data(imo_numbers: Set[int],
             time.sleep(delay_sec)
 
     log.debug(f'Processed IMO numbers {len(imo_numbers)}.')
+
+
+def _build_ship_builders_and_operators_codes_files() -> None:
+    log.debug("_build_shipbuilders_codes_file() is working.")
+
+    ships_dirs_list: list[str] = os.listdir(config.seaweb_raw_ships_dir)
+    log.debug(f"Found total ships/directories: {len(ships_dirs_list)}.")
+
+    shipbuilders: set = set()  # set for collecting ship builders codes
+    shipoperators: set = set()  # set for collecting ship operators codes
+    invalid_ships: set = set()  # set of invalid ships (wrong info)
+
+    for counter, ship in enumerate(ships_dirs_list):  # iterate over all dirs/ships and process data
+
+        log.debug(f'Currently processing: {ship} ({counter}/{len(ships_dirs_list)})')
+
+        if not ship.isnumeric():  # skip non-numeric dirs
+            log.warning(f"Skipped the current number [{ship}] - non-numeric object!")
+            continue
+
+        ship_main_file: str = config.seaweb_raw_ships_dir + "/" + ship + "/" + config.main_ship_data_file
+
+        # check - if we can parse this ship
+        ship_data: str = read_file_as_text(ship_main_file)
+        if "Access is denied." in ship_data:
+            log.warning(f"Skipped the current number [{ship}] - no data (Access is denied)!")
+            continue
+
+        # get parsed ship dictionary
+        ship_dict: dict = _parse_ship_main(ship_data, interest_keys={'Operator', 'Shipbuilder'})
+
+        # get ship builder code
+        builder_code: str = ship_dict.get('ship_builder_seaweb_id', 'x')
+        if builder_code != '-' and builder_code != 'x':
+            shipbuilders.add(builder_code)
+            log.debug(f'Added ship builder code: {builder_code}')
+        elif builder_code == 'x':
+            log.warn(f'Found wrong ship info for: {ship}!')
+            invalid_ships.add(ship)
+
+        # get ship operator code
+        operator_code: str = ship_dict.get('ship_operator_seaweb_id', 'x')
+        if operator_code != '-' and operator_code != 'x':
+            shipoperators.add(operator_code)
+            log.debug(f'Added ship operator code: {operator_code}')
+        elif operator_code == 'x':
+            log.warn(f'Found wrong ship info for: {ship}!')
+            invalid_ships.add(ship)
+
+    # write codes list to files - ship builders
+    ship_builders_file: str = config.seaweb_raw_builders_dir + "/shipbuilders.csv"
+    with open(ship_builders_file, mode='w') as file:
+        csv_writer = csv.writer(file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(['Ship Builder Code', 'Status'])  # write header row
+        for shipbuilder in sorted(shipbuilders):  # write data to file
+            csv_writer.writerow([shipbuilder, '+'])
+
+    # write codes list to files - ship operators
+    ship_operators_file: str = config.seaweb_raw_companies_dir + "/shipoperators.csv"
+    with open(ship_operators_file, mode='w') as file:
+        csv_writer = csv.writer(file, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        csv_writer.writerow(['Ship Operator Code', 'Status'])  # write header row
+        for shipoperator in sorted(shipoperators):  # write data to file
+            csv_writer.writerow([shipoperator, '+'])
+
+    # print(f'shipbuilders -> {shipbuilders}')
+    # print(f'shipoperators -> {shipoperators}')
+    print(f'invalid ships -> {invalid_ships}')
+
+
+def scrap_shipbuilders_data():
+    log.debug("scrap_shipbuilders_data() is working.")
+    # go through the codes and scrap necessary data
+
+
+def scrap_shipoperators_data():
+    log.debug("scrap_shipoperators_data() is working.")
+    # go through the codes and scrap necessary data
 
 
 def process_raw_data():
@@ -288,18 +364,6 @@ def process_raw_data():
         counter += 1
 
     print(f"Ships with data: {counter}")
-
-
-def main(imo_file: str, imo_file_delim: str, processed_base_file: str, processed_ext_file: str):
-    # scrap_base_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
-    #               processed_imo_numbers=processed_base_file)
-    # scrap_extended_data(imo_numbers_file=imo_file, imo_numbers_file_delimeter=imo_file_delim,
-    #                   processed_imo_numbers=processed_ext_file)
-    # process_raw_data()
-
-    data_file = os.getcwd() + "/temp/9336505/ship_main.html"
-    ship_data = _parse_ship_main(read_file_as_text(data_file))
-    print(ship_data)
 
 
 if __name__ == '__main__':
