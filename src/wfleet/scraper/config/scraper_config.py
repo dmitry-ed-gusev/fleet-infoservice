@@ -11,7 +11,7 @@
       - https://elbenshira.com/blog/singleton-pattern-in-python/
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 27.05.2022
+    Modified: Dmitrii Gusev, 29.05.2022
 """
 
 import os
@@ -20,10 +20,8 @@ from pathlib import Path
 from dataclasses import asdict
 from dataclasses import dataclass
 from wfleet.scraper.utils.utilities import singleton
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE
 
-# common system messages
-MSG_MODULE_ISNT_RUNNABLE = "This module is not runnable!"
-MSG_NOT_IMPLEMENTED: str = "Not implemented yet!"
 # common constants/defaults
 CACHE_DIR_NAME: str = ".wfleet"  # cache dir name
 

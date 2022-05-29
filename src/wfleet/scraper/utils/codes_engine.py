@@ -4,16 +4,15 @@
     Codes processor module for the Fleet Scraper.
 
     Created:  Gusev Dmitrii, 27.05.2022
-    Modified:
+    Modified: Gusev Dmitrii, 29.05.2022
 """
 
 import csv
 import logging
 from pathlib import Path
-from typing import List, Set
+from typing import Dict, List, Set
 from wfleet.scraper.config.scraper_config import Config
-from wfleet.scraper.utils.utilities import singleton
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 
 # init module logger
@@ -55,7 +54,7 @@ class CodesProcessor:
                 csv_writer.writerow([code])
         log.debug(f'Saved #{len(self.__codes_list)} codes to [{self.__file_name}].')
 
-    def get_codes(self) -> Set[str]:
+    def codes(self) -> Set[str]:
         log.debug('get_list(): returning codes list.')
         return self.__codes_list
 
@@ -66,26 +65,54 @@ class CodesProcessor:
             self.__codes_list.add(code)
             self.__save_list()
 
-    def get_ranges(self, num_of_ranges: int) -> List[Set[str]]:
+    def ranges(self, num_of_ranges: int) -> List[Set[str]]:
         log.debug('get_ranges(): ...')
         # todo: implementation!
         raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 
     def contains(self, code: str) -> bool:
-        log.debug('contains(): ...')
-        # todo: implementation!
-        raise NotImplementedError(MSG_NOT_IMPLEMENTED)
+        if not code:
+            return False
+
+        result: bool = code in self.__codes_list
+        log.debug(f'contains(): codes list contains code {code} = {result}.')
+        return result
 
 
-@singleton
 class CodesProcessorFactory:
     """Simple hard-coded factory class for the CodesProcessor instances."""
 
-    processors = dict()
+    # todo: remove hardcoded values
+    # todo: make methods for getting codes more genric
 
-    @cls
-    def get_imo_numbers():
-        pass
+    # class variables
+    processors: Dict[str, CodesProcessor] = dict()
+    config: Config = Config()
+
+    @classmethod
+    def imo_codes(cls) -> CodesProcessor:
+        log.debug('imo_codes(): working.')
+        if not cls.processors.get('imo', None):
+            log.debug('IMO processor is not initialized yet, initializing.')
+            cls.processors['imo'] = CodesProcessor(cls.config.imo_file)
+        return cls.processors['imo']
+
+    @classmethod
+    def seaweb_shipbuildes_codes(cls):
+        log.debug('seaweb_shipbuildes_codes(): working.')
+        if not cls.processors.get('seaweb_shipbuilders', None):
+            log.debug('Seaweb Shipbuilders processor is not initialized yet, initializing.')
+            cls.processors['seaweb_shipbuilders'] = CodesProcessor(cls.config.seaweb_shipbuilders_codes_file)
+        return cls.processors['seaweb_shipbuilders']
+
+    @classmethod
+    def seaweb_shipcompanies_codes(cls):
+        log.debug('seaweb_shipcompanies_codes(): working.')
+        if not cls.processors.get('seaweb_shipcompanies', None):
+            log.debug('Seaweb Shipcompanies processor is not initialized yet, initializing.')
+            cls.processors['seaweb_shipcompanies'] = \
+                CodesProcessor(cls.config.seaweb_shipcompanies_codes_file)
+        return cls.processors['seaweb_shipcompanies']
 
 
 if __name__ == "__main__":

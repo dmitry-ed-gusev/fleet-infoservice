@@ -6,20 +6,20 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 03.04.2022
-    Modified: Gusev Dmitrii, 18.05.2022
+    Modified: Gusev Dmitrii, 29.05.2022
 """
 
 import os
 import csv
 import time
 import random
-import requests
 import logging
 from pathlib import Path
 from typing import Set
-from requests import Response
 from wfleet.scraper.utils.utilities import read_file_as_text
-from wfleet.scraper.config.scraper_config import Config, singleton, MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import Config
+from wfleet.scraper.utils.utilities_http import WebClientSingleton
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import _parse_ship_main
 
@@ -115,77 +115,12 @@ session_headers = {
     "Cookie": "_ga=GA1.2.1607646022.1648412853; shipsearch=; ckShipDiv=hidehidehidehidehideshowhidehide; list=; ShipCommercialHistoryExpanded=ShipCommercialHistoryExpanded; ckShip=db_name001=VESSELNAMEBROWSE&en_name001=Name of Ship&db_name002=DATEOFBUILDBROWSE&en_name002=Built&db_name003=DWT&en_name003=Deadweight&db_name004=FLAG&en_name004=Flag&db_name005=STATUSBROWSE&en_name005=Status&db_name006=OWNER&en_name006=Registered Owner&db_name007=NBPriceUSDEquivalent&en_name007=Newbuilding Price&db_name008=EngineBuilderLargest&en_name008=Engine Builder&db_name009=EngineMakeLargest&en_name009=Engine Design&db_name010=SHIPBUILDER&en_name010=Shipbuilder&db_name011=BUILDERCODE&en_name011=Shipbuilder Code&db_name012=YEAROFBUILDBROWSE&en_name012=Year; rememberMeLogin=903C2E6ED95029E847A45CBBA806034E344A8D08EEF2BEF8D865B9ED17CBA4861D8A6A0A9E5BE8A9554EB3CB99E67FC0C86AFC7A28FB6FF17C42E6AB5FA3994FEDB6581C716DC1E3FD3EBC4E243BFC29E7482B1DF44D2BB481F2B5CFE124E693C44793BD0447CAF52DE7301D; LastShipVisited=1009340A+8009129DF 19+9237371WEC VERMEER+7920259ABDUL B+9237369MOVEON; ownersearch=; ckOwnDiv=hidehidehidehideshowhidehidehide; buildersearch=; ckBuilderDiv=hidehideshowhidehidehidehidehide; ckbuilder=db_name001=BUILDERNAME&en_name001=Builder Name&db_name002=COUNTRYNAME&en_name002=Country&db_name003=STATUS&en_name003=Status&db_name004=TOWNNAME&en_name004=Town; ckDefault=page=buildersearch&records=20; builderovw=; LastBuilderVisited=USAE95A & B Industries Of Morgan City+IRN030Abadan Kashti Nooh+JPN028Onomichi Dockyard Co Ltd; ASP.NET_SessionId=144en2qq3h3m4h0z1exfqtfs; BIGipServer~ProdWeb~pool-maritime.ihs.com-80=rd1100o00000000000000000000ffff0aa80069o80; SameSite=None; AttemptsToLogin=O0H36qXSUP2UNgEXSnOtAkt2uc8iFw6l8PeOlJ4obVGWYRuC; .AspNet.ApplicationCookie=DApyVGx0cHKMePgWYt_dZpkqjocIJjghwrwRUNKRe7JWQd-dWctKvTT49DCgvyusrgT_BRjtwkuyqGktgFPcfWqLXgL0cpEztarfvY9pOnombM83mVs0-_F-dIkHHOWmqA9EsExyGdc78eSO-nzhq9BJmm0b-tMmrCODxl1dxlsaDBlvsKgspRbzUecWWAzGWYUhNayj8VobxKwETubgsijQrHOMaIi7_bba4OHJqb1h5Nx21OV8lp07pCeem01HSft0MSyKQ97OCf3p_rpoLhbfxXpjxjxxv4bAOjfRVQJrb5JX2B1KUJ4gZDQH-pyzxn1FmP8upCBd7gQ4s81eyxhWyzzr0HaLUj8e2VWbsk0e-kMeYKSj9_M5cI7826bhm7VjwVes9ACHMMXfnFdPzOb1mv8cE3JUo0pa9LT9fVX9EyfimsOhnS8KGLauC9k0QmtjDTQ-VuYvCPf_xwJnMtjuwHIma_OW8ptKpNp1c0lFPe37gcQsodeZWXlQUAAR_oSrhWB-T-zQzym7tkhmYDdiqqNAcBTk21Bkvg-xEgoIlpEnSmpEwenh0Io; _gid=GA1.2.1396874235.1652908372; _gat=1; ADRUM_BTa=R:0|g:9ca1bb55-1346-4153-86e7-2bb457546ba4|n:ihsco_86f4fc53-86e8-4feb-bc7a-7921d526821f; ADRUM_BT1=R:0|i:462877|e:1",
 }
 
-# session data - cookies
-session_cookies: dict = {}
-
-# setup HTTP session
-# session = requests.Session()
-# session.headers.update(session_headers)
-# session.cookies.update(session_cookies)  # add cookies to session headers
-# session.max_redirects = 100  # limit max redirects # to follow
-
-
-@singleton
-class WebClientSingleton():  # todo: move to utilities class!
-    """Simple WebClient Singleton class."""
-
-    def __init__(self, headers: dict, cookies: dict) -> None:
-        log.debug("Initializing WebCLient() singleton instance.")
-        self.headers = headers
-        self.cookies = cookies
-        self.session = requests.Session()
-
-        if headers and len(headers) > 0:  # add headers
-            self.session.headers.update(self.headers)
-            log.debug("Headers are not empty, adding to the HTTP session.")
-
-        if cookies and len(cookies) > 0:  # add cookies
-            self.session.cookies.update(self.cookies)
-            log.debug("Cookies are not empty, adding to the HTTP session.")
-
-    def set_redirects_count(self, redirects_count: int):
-        if redirects_count > 0:
-            self.session.max_redirects = redirects_count
-
-    def get_request(self, url: str, allow_redirects=True, fail_on_error=True) -> Response:
-        log.debug(f"get_request(): performing get request: [{url}].")
-
-        if not url:
-            raise ScraperException("Empty URL for get request!")
-
-        response = self.session.get(url, allow_redirects=allow_redirects)
-        if response.status_code != 200 and fail_on_error:  # fail on purpose - by parameter
-            raise ScraperException(f"Get request [{url}] failed with [{response.status_code}]!")
-
-        return response
-
-    def get_request_return_text(self, url: str, allow_redicrects: bool, fail_on_error: bool) -> str:
-        log.debug('get_request_return_text(): working.')
-        response = self.get_request(url, allow_redicrects, fail_on_error)
-        if response:
-            return response.text
-
-        return ''
-
-    def get_request_return_text_to_file(self, url: str, file: str, allow_redicrects: bool,
-                                        fail_on_error: bool):
-        log.debug(f'get_request_return_text_to_file(): saving response text to file {file}.')
-
-        if not file or Path(file).exists():
-            raise ScraperException(f'File name {file} is empty or file already exists!')
-
-        response_text: str = self.get_request_return_text(url, allow_redicrects, fail_on_error)
-        if response_text:
-            with open(Path(file), 'w') as f:  # write content to the file
-                f.write(response_text)
-                log.debug(f"Written file: {file}")
-
-
+session_cookies: dict = {}  # session data - cookies
 config = Config()  # get app config instance
 web_client = WebClientSingleton(session_headers, session_cookies)  # get web client instance
 
 
-def scrap_base_ships_data(imo_numbers: Set[int],
+def scrap_base_ships_data(imo_numbers: Set[str],
                           req_limit: int = config.default_requests_limit,
                           req_delay: int = config.default_timeout_delay_max,
                           req_delay_cadence: int = config.default_timeout_cadence):
@@ -225,7 +160,7 @@ def scrap_base_ships_data(imo_numbers: Set[int],
     log.info(f'Processed IMO numbers: {len(imo_numbers)}.')
 
 
-def scrap_extended_ships_data(imo_numbers: Set[int],
+def scrap_extended_ships_data(imo_numbers: Set[str],
                               req_limit: int = config.default_requests_limit,
                               req_delay: int = config.default_timeout_delay_max,
                               req_delay_cadence: int = config.default_timeout_cadence):

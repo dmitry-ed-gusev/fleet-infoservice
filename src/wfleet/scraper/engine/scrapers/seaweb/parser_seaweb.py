@@ -6,7 +6,7 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 17.04.2022
-    Modified: Gusev Dmitrii, 15.05.2022
+    Modified: Gusev Dmitrii, 29.05.2022
 """
 
 import os
@@ -17,7 +17,7 @@ from pathlib import Path
 
 from wfleet.scraper.entities.ship import ShipDto
 from wfleet.scraper.config.scraper_config import Config
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE, MSG_NOT_IMPLEMENTED
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
 from wfleet.scraper.utils.utilities import get_last_part_of_the_url, read_file_as_text
 

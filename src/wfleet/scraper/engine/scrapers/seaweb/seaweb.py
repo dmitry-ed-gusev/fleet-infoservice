@@ -6,12 +6,12 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 04.05.2022
-    Modified: Gusev Dmitrii, 18.05.2022
+    Modified: Gusev Dmitrii, 29.05.2022
 """
 
 import logging
 from datetime import datetime
-from wfleet.scraper.engine.imo_processor import get_imo_numbers
+from wfleet.scraper.utils.codes_engine import CodesProcessor, CodesProcessorFactory
 from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import (
     scrap_base_ships_data,
     scrap_shipbuilders_data,
@@ -40,11 +40,11 @@ class SeawebScraper(ScraperAbstractClass):
             return SCRAPE_RESULT_OK
 
         # scrap base ships data
-        scrap_base_ships_data(get_imo_numbers(), req_limit=requests_limit)
+        scrap_base_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
         log.debug("Base ships data scraped.")
 
         # scrap extended ships data
-        scrap_extended_ships_data(get_imo_numbers(), req_limit=requests_limit)
+        scrap_extended_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
         log.debug("Extended ships data scraped.")
 
         # scrap shipbuilders data

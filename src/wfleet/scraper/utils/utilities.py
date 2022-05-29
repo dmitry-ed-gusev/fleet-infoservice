@@ -14,7 +14,7 @@ import logging
 import hashlib
 from typing import Dict, Any
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
-from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE
 
 # init module logger
 log = logging.getLogger(__name__)
