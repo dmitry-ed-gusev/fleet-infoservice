@@ -55,18 +55,25 @@ class CodesProcessor:
         log.debug(f'Saved #{len(self.__codes_list)} codes to [{self.__file_name}].')
 
     def codes(self) -> Set[str]:
-        log.debug('get_list(): returning codes list.')
+        log.debug('codes(): returning codes list.')
         return self.__codes_list
 
     def add(self, code: str) -> None:
-        log.debug(f'add_code(): adding code {code}.')
+        log.debug(f'add(): adding code {code}.')
         # if code not empty and not in the list - add and save list
         if code and code not in self.__codes_list:
             self.__codes_list.add(code)
             self.__save_list()
 
+    def add_all(self, codes: Set[str]) -> None:
+        log.debug('add_all(): adding a list of codes.')
+        # if codes list is not empty - adding all codes
+        if codes:
+            self.__codes_list.update(codes)
+            self.__save_list()
+
     def ranges(self, num_of_ranges: int) -> List[Set[str]]:
-        log.debug('get_ranges(): ...')
+        log.debug('ranges(): ...')
         # todo: implementation!
         raise NotImplementedError(MSG_NOT_IMPLEMENTED)
 

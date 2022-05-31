@@ -11,14 +11,14 @@
 
 import logging
 from datetime import datetime
-from wfleet.scraper.utils.codes_engine import CodesProcessor, CodesProcessorFactory
+from wfleet.scraper.utils.codes_engine import CodesProcessorFactory
 from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import (
     scrap_base_ships_data,
+    scrap_extended_ships_data,
+    _build_ship_builders_and_companies_codes,
     scrap_shipbuilders_data,
     scrap_shipoperators_data
 )
-from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import scrap_extended_ships_data
-# from wfleet.scraper.engine.scrapers.seaweb.parser_seaweb import parse_all_ships
 from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
@@ -40,12 +40,16 @@ class SeawebScraper(ScraperAbstractClass):
             return SCRAPE_RESULT_OK
 
         # scrap base ships data
-        scrap_base_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
-        log.debug("Base ships data scraped.")
+        # scrap_base_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
+        # log.debug("Base ships data scraped.")
 
         # scrap extended ships data
-        scrap_extended_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
-        log.debug("Extended ships data scraped.")
+        # scrap_extended_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
+        # log.debug("Extended ships data scraped.")
+
+        # build shipbuilders and shipcompanies codes
+        # _build_ship_builders_and_companies_codes(delete_invalid=True)
+        # log.debug('Built codes for shipbuilders and shipcompanies.')
 
         # scrap shipbuilders data
         scrap_shipbuilders_data()
