@@ -14,19 +14,20 @@ from importlib import reload
 import wfleet.scraper.config.scraper_config as sconfig
 import wfleet.scraper.config.logging_config as lconfig
 
+
 def mock_return_true(path):  # helper mock method
-        return True
+    return True
 
 
 def mock_return_false(path):  # helper mock method
-        return False
+    return False
 
 
 def mock_return_home_dir():  # helper mock method
-        return Path("/dummy/home/dir")
+    return Path("/dummy/home/dir")
 
-def test_scraper_config_local_dir(monkeypatch):
-    
+
+def _test_scraper_config_local_dir(monkeypatch):
     monkeypatch.setattr(Path, "exists", mock_return_true)
     monkeypatch.setattr(Path, "is_dir", mock_return_true)
 
@@ -44,12 +45,12 @@ def test_scraper_config_local_dir(monkeypatch):
         lconfig.LOGGING_CONFIG["handlers"]["error_file_handler"]["filename"]
 
 
-def test_scraper_config_home_dir_not_exists_not_a_dir(monkeypatch):
-    
+def _test_scraper_config_home_dir_not_exists_not_a_dir(monkeypatch):
+
     monkeypatch.setattr(Path, "exists", mock_return_false)
     monkeypatch.setattr(Path, "is_dir", mock_return_false)
     monkeypatch.setattr(Path, "home", mock_return_home_dir)
-    
+
     reload(sconfig)  # reload CONFIG for safe tests run
     reload(lconfig)  # reload LOGGER_CONFIG for safe tests run
 
@@ -64,7 +65,7 @@ def test_scraper_config_home_dir_not_exists_not_a_dir(monkeypatch):
         lconfig.LOGGING_CONFIG["handlers"]["error_file_handler"]["filename"]
 
 
-def test_scraper_config_home_dir_exists_not_a_dir(monkeypatch):
+def _test_scraper_config_home_dir_exists_not_a_dir(monkeypatch):
     
     monkeypatch.setattr(Path, "exists", mock_return_true)
     monkeypatch.setattr(Path, "is_dir", mock_return_false)
@@ -84,7 +85,7 @@ def test_scraper_config_home_dir_exists_not_a_dir(monkeypatch):
         lconfig.LOGGING_CONFIG["handlers"]["error_file_handler"]["filename"]
         
         
-def test_scraper_config_home_dir_not_exists_is_a_dir(monkeypatch):  # dummy case :)
+def _test_scraper_config_home_dir_not_exists_is_a_dir(monkeypatch):  # dummy case :)
     
     monkeypatch.setattr(Path, "exists", mock_return_false)
     monkeypatch.setattr(Path, "is_dir", mock_return_true)

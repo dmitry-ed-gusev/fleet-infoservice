@@ -56,12 +56,12 @@ class TestUtilitiesXls(unittest.TestCase):
         # todo: implementation!
         pass
 
-    def test_save_base_ships_2_excel_empty_xls_file_name(self):
+    def _test_save_base_ships_2_excel_empty_xls_file_name(self):
         self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), None))
         self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), ""))
         self.assertRaises(ValueError, lambda: save_ships_2_excel(list(), "     "))
 
-    def test_save_base_ships_2_excel_xls_file_is_a_directory(self):
+    def _test_save_base_ships_2_excel_xls_file_is_a_directory(self):
         # create empty dir in the current folder
         empty_dir: Path = Path(DIRECTORY_NAME_EMPTY)
         empty_dir.mkdir()
@@ -70,13 +70,13 @@ class TestUtilitiesXls(unittest.TestCase):
         # cleanup - remove created dir
         empty_dir.rmdir()
 
-    def test_save_base_ships_2_excel_empty_ships_list(self):
+    def _test_save_base_ships_2_excel_empty_ships_list(self):
         save_ships_2_excel(list(), EXCEL_FILE_NAME_EMPTY)
         empty_file: Path = Path(EXCEL_FILE_NAME_EMPTY)
         self.assertTrue(empty_file.exists())  # todo: add more checks / content checks
         self.assertTrue(empty_file.is_file())
 
-    def test_save_base_ships_2_excel(self):
+    def _test_save_base_ships_2_excel(self):
         ship1: ShipDto = ShipDto("123456", "987654", "", "system1")
         ship1.flag = "flag1"
         ship1.main_name = "name1"

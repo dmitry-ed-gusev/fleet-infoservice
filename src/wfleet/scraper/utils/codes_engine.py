@@ -44,7 +44,7 @@ class CodesProcessor:
             for row in csv_reader:  # process all rows in a file
                 codes.add(row[0])
         log.debug(f'Loaded #{len(codes)} codes from [{self.__file_name}].')
-        self.__codes_list = codes
+        self.__codes_list = sorted(codes)
 
     def __save_list(self) -> None:
         log.debug(f'__save_list(): saving codes to [{self.__file_name}].')

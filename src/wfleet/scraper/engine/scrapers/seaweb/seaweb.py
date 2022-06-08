@@ -6,20 +6,15 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 04.05.2022
-    Modified: Gusev Dmitrii, 29.05.2022
+    Modified: Gusev Dmitrii, 08.06.2022
 """
 
 import logging
 from datetime import datetime
-from wfleet.scraper.utils.codes_engine import CodesProcessorFactory
 from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import (
-    scrap_base_ships_data,
-    scrap_extended_ships_data,
-    _build_ship_builders_and_companies_codes,
-    scrap_shipbuilders_data,
-    scrap_shipoperators_data
+    scrap_all, _build_ship_builders_and_companies_codes
 )
-from wfleet.scraper.config.scraper_config import Config, MSG_MODULE_ISNT_RUNNABLE
+from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
 log = logging.getLogger(__name__)
@@ -39,25 +34,12 @@ class SeawebScraper(ScraperAbstractClass):
         if dry_run:  # dry run mode - won't do anything!
             return SCRAPE_RESULT_OK
 
-        # scrap base ships data
-        # scrap_base_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
-        # log.debug("Base ships data scraped.")
-
-        # scrap extended ships data
-        # scrap_extended_ships_data(CodesProcessorFactory.imo_codes().codes(), req_limit=requests_limit)
-        # log.debug("Extended ships data scraped.")
+        # scrap all data: ships, ship's companies, ship's builders
+        scrap_all()
 
         # build shipbuilders and shipcompanies codes
         # _build_ship_builders_and_companies_codes(delete_invalid=True)
         # log.debug('Built codes for shipbuilders and shipcompanies.')
-
-        # scrap shipbuilders data
-        scrap_shipbuilders_data()
-        log.debug("Ship builders data scraped.")
-
-        # scrap ship operators data
-        scrap_shipoperators_data()
-        log.debug("Ship builders data scraped.")
 
         return SCRAPE_RESULT_OK
 

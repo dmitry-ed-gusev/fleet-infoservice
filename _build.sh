@@ -2,16 +2,17 @@
 
 ###############################################################################
 #
-#   Build and test script for [fleet-db-scraping] utility.
+#   Build and test script for [fleet-scraping] project.
 #   Script can be run from outside of virtual (pipenv) environment (from the
 #   system shell) and from the pipenv environment as well (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 23.03.2021
-#   Modified: Dmitrii Gusev, 14.12.2021
+#   Modified: Dmitrii Gusev, 05.06.2022
 #
 ###############################################################################
 
-# todo: do put output of utilities - mypy/black/flake8 - to a separated file(s)?
+# -- safe bash scripting
+set -euf -o pipefail
 
 # -- verbose output mode
 VERBOSE="--verbose"
