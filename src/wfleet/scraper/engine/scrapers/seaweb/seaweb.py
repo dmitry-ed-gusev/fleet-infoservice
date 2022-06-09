@@ -6,14 +6,12 @@
     Main data source address is https://maritime.ihs.com
 
     Created:  Gusev Dmitrii, 04.05.2022
-    Modified: Gusev Dmitrii, 08.06.2022
+    Modified: Gusev Dmitrii, 09.06.2022
 """
 
 import logging
 from datetime import datetime
-from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import (
-    scrap_all, _build_ship_builders_and_companies_codes
-)
+from wfleet.scraper.engine.scrapers.seaweb.scraper_seaweb import scrap_all
 from wfleet.scraper.config.scraper_config import MSG_MODULE_ISNT_RUNNABLE
 from wfleet.scraper.engine.scraper_abstract import ScraperAbstractClass, SCRAPE_RESULT_OK
 
@@ -35,11 +33,8 @@ class SeawebScraper(ScraperAbstractClass):
             return SCRAPE_RESULT_OK
 
         # scrap all data: ships, ship's companies, ship's builders
+        # based on the params - may rebuild shipbuilders/shipcompanies codes list
         scrap_all()
-
-        # build shipbuilders and shipcompanies codes
-        # _build_ship_builders_and_companies_codes(delete_invalid=True)
-        # log.debug('Built codes for shipbuilders and shipcompanies.')
 
         return SCRAPE_RESULT_OK
 

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
@@ -7,7 +8,7 @@
       - ExtendedShipDto - class contains extended ship info
 
     Created:  Gusev Dmitrii, 10.01.2021
-    Modified: Dmitrii Gusev, 15.05.2022
+    Modified: Dmitrii Gusev, 09.06.2022
 """
 
 # todo: implement creation of dataclass from dictionary, see the link below
@@ -15,7 +16,7 @@
 
 from datetime import datetime
 from dataclasses import dataclass
-from dataclasses import asdict, astuple
+from dataclasses import asdict, astuple, field
 from wfleet.scraper.config.scraper_config import Config
 
 
@@ -28,7 +29,9 @@ class ShipDto:
     proprietary_number1: str  # (ID) proprietary number #1 (reg/riv-reg/etc number)
     proprietary_number2: str  # (ID) proprietary number #2 (reg/riv-reg/etc number)
     source_system: str        # (ID) source system name where ship data was retrieved
-    timestamp: datetime       # timestamp for the ship entity
+
+    # timestamp for the ship entity (field is excluded from comparison)
+    timestamp: datetime = field(compare=False)
 
     # full ship's data
     flag: str = ""             # ship's flag
@@ -56,7 +59,7 @@ class ShipDto:
     ship_builder_seaweb_id: str = ""   #
 
     # some tech info
-    extended_info_url: str = ""  # URL for ship extended info (usually - separated page)
+    extended_info_url: str = ""               # URL for ship extended info (usually - separated page)
     init_datetime: datetime = datetime.now()  # timestamp of creating ship instance
 
     @classmethod
