@@ -143,3 +143,20 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
+# see more here: https://riptutorial.com/git/example/911/exceptions-in-a--gitignore-file
+# seaweb ship data ignore
+!.wfleet/.seaweb_db/seaweb/
+.wfleet/.seaweb_db/seaweb/*
+
+# seaweb shipbuilders data ignore
+!.wfleet/.seaweb_db/shipbuilders/
+.wfleet/.seaweb_db/shipbuilders/*
+!.wfleet/.seaweb_db/shipbuilders/shipbuilders.csv
+
+# seaweb shipcompanies data ignore
+!.wfleet/.seaweb_db/shipcompanies/
+.wfleet/.seaweb_db/shipcompanies/*
+!.wfleet/.seaweb_db/shipcompanies/shipcompanies.csv
+
+temp/

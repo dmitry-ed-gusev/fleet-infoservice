@@ -5,10 +5,12 @@
     Logging configuration for the application.
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified:
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
-from wfleet.scraper.config.scraper_config import CONFIG
+from wfleet.scraper.config.scraper_config import Config
+
+config = Config()  # get single config instance
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -36,19 +38,19 @@ LOGGING_CONFIG = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "simple",
-            "filename": CONFIG["cache_logs_dir"] + "/log_info.log",
+            "filename": config.log_dir + "/log_info.log",
             "maxBytes": 10485760,  # 10MB
             "backupCount": 20,
-            "encoding": CONFIG["encoding"],
+            "encoding": config.encoding,
         },
         "error_file_handler": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "simple",
-            "filename": CONFIG["cache_logs_dir"] + "/log_errors.log",
+            "filename": config.log_dir + "/log_errors.log",
             "maxBytes": 10485760,  # 10MB
             "backupCount": 20,
-            "encoding": CONFIG["encoding"],
+            "encoding": config.encoding,
         },
     },  # end of handlers block
     "loggers": {

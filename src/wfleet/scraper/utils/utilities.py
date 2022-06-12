@@ -2,17 +2,19 @@
 
 """
     Common utilities module for Fleet DB Scraper.
+
     Useful materials:
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 02.01.2022
+    Modified: Gusev Dmitrii, 27.05.2022
 """
 
 import logging
 import hashlib
-from wfleet.scraper.config import scraper_defaults as const
-from datetime import datetime
+from typing import Dict, Any
+from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
+from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE
 
 # init module logger
 log = logging.getLogger(__name__)
@@ -23,6 +25,24 @@ RUS_CHARS = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"
 ENG_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 NUM_CHARS = "0123456789"
 SPEC_CHARS = "-"
+
+
+def singleton(class_):
+    """Simple singleton class decorator.
+
+    :param class_: _description_
+    :type class_: _type_
+    :return: _description_
+    :rtype: _type_
+    """
+
+    instances = {}  # classes instances storage
+
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
 
 
 def get_hash_bucket_number(value: str, buckets: int) -> int:
@@ -81,7 +101,7 @@ def build_variations_hashmap(buckets: int = 0) -> dict:
     """
     log.debug(f"build_variations_hashmap(): buckets [{buckets}].")
 
-    result = dict()  # resulting dictionary
+    result: Dict[int, Any] = dict()  # resulting dictionary
 
     for letter1 in RUS_CHARS + ENG_CHARS + NUM_CHARS:
         for letter2 in RUS_CHARS + ENG_CHARS + NUM_CHARS:
@@ -112,6 +132,22 @@ def build_variations_list() -> list:
 
     return result
 
+
+def read_file_as_text(file_path: str) -> str:
+    if not file_path:  # fail-fast behaviour
+        raise ScraperException("Specified empty file path!")
+
+    with open(file_path, mode='r') as infile:
+        return infile.read()
+
+
+def get_last_part_of_the_url(url: str) -> str:
+    if not url:  # fail-fast behaviour
+        raise ScraperException("Specified empty URL!")
+
+    return url[url.rfind('/') + 1:]
+
+
 # todo: implement unit tests that module isn't runnable directly!
 if __name__ == "__main__":
-    print("Don't run this utility script directly!")
+    print(MSG_MODULE_ISNT_RUNNABLE)

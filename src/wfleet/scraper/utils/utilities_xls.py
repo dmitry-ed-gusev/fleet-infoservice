@@ -9,7 +9,7 @@
         - (pathlib - 2) https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 14.12.2021
+    Modified: Dmitrii Gusev, 24.04.2022
 """
 
 import xlwt
@@ -17,17 +17,14 @@ import logging
 from pathlib import Path
 
 from typing import List
-
-from wfleet.scraper.config import scraper_defaults as const
-from .utilities import generate_timed_filename
-from wfleet.scraper.entities.ships import ShipDto
+from wfleet.scraper.entities.ship import ShipDto
 
 # init module logger
 # log = logging.getLogger(const.LOGGING_UTILITIES_XLS_LOGGER)
 log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
-
+# todo: move to cache management dir
 def verify_and_process_xls_file(xls_file: str) -> None:
     """Verification of the provided file name and creating all necessary parent dirs in
         the provided file path (if needed).
@@ -41,7 +38,8 @@ def verify_and_process_xls_file(xls_file: str) -> None:
     if xls_file_path.is_dir():  # fail-fast -> check if file is existing directory
         raise ValueError(f"Provided file path {xls_file} is an existing directory!")
 
-    xls_file_path.parent.mkdir(parents=True, exist_ok=True)  # create necessary parent dirs in path
+    # create necessary parent dirs in the file path
+    xls_file_path.parent.mkdir(parents=True, exist_ok=True)
 
 
 def save_ships_2_excel(ships: List[ShipDto], xls_file: str) -> None:
