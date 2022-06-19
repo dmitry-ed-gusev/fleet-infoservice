@@ -117,3 +117,10 @@ For all the mentioned tools we use the latest available versions (see [Pipfile](
 - if you can't install black with pipenv - use option --pre with pipenv install:  
     `pipenv install black --dev --pre`
 - ???
+
+### Technical Useful Resources
+
+- [Various Apps Layouts](https://realpython.com/python-application-layouts/)
+- [Python Web Apps](https://realpython.com/python-web-applications/)
+- [pipenv](https://pipenv.pypa.io/en/latest/)
+- ???
