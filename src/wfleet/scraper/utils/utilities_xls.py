@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
@@ -9,7 +10,7 @@
         - (pathlib - 2) https://habr.com/ru/company/otus/blog/540380/ (!)
 
     Created:  Dmitrii Gusev, 24.05.2021
-    Modified: Dmitrii Gusev, 24.04.2022
+    Modified: Dmitrii Gusev, 19.06.2022
 """
 
 import xlwt

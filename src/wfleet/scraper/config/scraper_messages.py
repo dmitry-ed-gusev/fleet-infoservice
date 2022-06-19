@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
     Fleet Scraper messages module.
 
     Created:  Gusev Dmitrii, 28.05.2022
-    Modified:
+    Modified: Dmitrii Gusev, 19.06.2022
 """
 
 # common system messages

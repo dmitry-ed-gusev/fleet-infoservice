@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
@@ -7,7 +8,7 @@
         - (download file) https://stackoverflow.com/questions/7243750/download-file-from-web-in-python-3
 
     Created:  Dmitrii Gusev, 01.06.2021
-    Modified: Dmitrii Gusev, 08.06.2022
+    Modified: Dmitrii Gusev, 19.06.2022
 """
 
 import os
