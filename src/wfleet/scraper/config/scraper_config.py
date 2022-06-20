@@ -11,7 +11,7 @@
       - https://elbenshira.com/blog/singleton-pattern-in-python/
 
     Created:  Gusev Dmitrii, 12.12.2021
-    Modified: Dmitrii Gusev, 29.05.2022
+    Modified: Dmitrii Gusev, 20.06.2022
 """
 
 import os
@@ -61,8 +61,9 @@ class Config():
     imo_file_backup: str = cache_dir + "/imo_numbers.bak"  # file with IMO - backup
 
     # -- scraper DB settings (SQLite - ?)
-    db_dir: str = cache_dir + "/.scraper_db"  # DB dir + DB name (SQLite)
-    db_name: str = ".scraperdb"  # DB name (sqlite?)
+    db_dir: str = cache_dir + "/.scraper_db"  # DB dir (SQLite)
+    db_name: str = db_dir + "/scraperdb.sqlite"  # full DB name (SQLite)
+    db_schema_file: str = db_dir + "/schema_db_sqlite.sql"  # DB schema file
 
     # -- some default files names
     raw_data_file: str = "ships_data.xls"
@@ -76,8 +77,12 @@ class Config():
     seaweb_shipbuilders_codes_file: str = seaweb_raw_builders_dir + '/shipbuilders.csv'
     seaweb_shipcompanies_codes_file: str = seaweb_raw_companies_dir + '/shipcompanies.csv'
 
-    def __post_init__(self):  # post-init method - create necessary sub-dirs
+    # post-init method - create necessary sub-dirs
+    #   - logging dir
+    #   - sqlite db dir
+    def __post_init__(self):
         os.makedirs(str(self.log_dir), exist_ok=True)
+        os.makedirs(self.db_dir, exist_ok=True)
 
     def __repr__(self):
         return "Config " + json.dumps(asdict(self), indent=4)

@@ -114,9 +114,6 @@ class GeoDB(object):
         self.log.debug("Geo points list [len = {}] has been added.".format(len(list_of_geo_points)))
 
 
-# todo: add exceptions handling for db operations (in case of exception close connection etc.)
-
-
 def db_create(dbname):
     """
     Create DB by executing DDL SQL script.
