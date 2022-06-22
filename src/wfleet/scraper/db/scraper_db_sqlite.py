@@ -5,8 +5,8 @@
     Scraper module for SQLite DBMS interaction (pure python).
 
     See additional resources here:
-      - https://habr.com/ru/post/321510/
-      - https://habr.com/ru/post/322086/
+      - https://habr.com/ru/post/321510/ - pure python
+      - https://habr.com/ru/post/322086/ - peewee ORM
 
     Created:  Dmitrii Gusev, 19.06.2022
     Modified: Dmitrii Gusev, 20.06.2022
@@ -51,6 +51,12 @@ class ScraperSQLiteDB:
         #     cursor.execute(query)
         connection.commit()
         connection.close()
+
+    def add_scraper_run_telemetry(self) -> int:
+        pass
+
+    def update_scraper_run_telemetry(self) -> int:
+        pass
 
 
 if __name__ == "__main__":
