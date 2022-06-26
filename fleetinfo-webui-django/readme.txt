@@ -1,0 +1,1 @@
+Folder for the Fleet Info system WebUI based on Django framework.

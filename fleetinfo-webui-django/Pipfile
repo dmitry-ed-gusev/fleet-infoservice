@@ -1,0 +1,31 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+sqlalchemy = "*"
+
+[dev-packages]
+ipykernel = "*"
+mock = "*"
+nose2 = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+responses = "*"
+mypy = "*"
+types-requests = "*"
+flake8 = "*"
+black = "*"
+pre-commit = "*"
+build = "*"
+sphinx = "*"
+types-six = "*"
+
+[requires]
+python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true
