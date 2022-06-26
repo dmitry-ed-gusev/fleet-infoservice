@@ -121,6 +121,7 @@ For all the mentioned tools we use the latest available versions (see [Pipfile](
 ### Technical Useful Resources
 
 - [Various Apps Layouts](https://realpython.com/python-application-layouts/)
+- [Monorepo example](https://medium.com/opendoor-labs/our-python-monorepo-d34028f2b6fa)
 - [Python Web Apps](https://realpython.com/python-web-applications/)
 - [pipenv](https://pipenv.pypa.io/en/latest/)
 - ???
