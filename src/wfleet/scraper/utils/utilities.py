@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
@@ -7,7 +8,7 @@
       - (datetime) https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
 
     Created:  Gusev Dmitrii, 26.04.2021
-    Modified: Gusev Dmitrii, 27.05.2022
+    Modified: Gusev Dmitrii, 19.06.2022
 """
 
 import logging

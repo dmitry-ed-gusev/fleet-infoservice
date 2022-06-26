@@ -1,10 +1,11 @@
+#!/usr/bin/env python3
 # coding=utf-8
 
 """
     Codes processor module for the Fleet Scraper.
 
     Created:  Gusev Dmitrii, 27.05.2022
-    Modified: Gusev Dmitrii, 29.05.2022
+    Modified: Gusev Dmitrii, 19.06.2022
 """
 
 import csv
