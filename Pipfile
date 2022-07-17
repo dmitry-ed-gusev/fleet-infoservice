@@ -8,7 +8,6 @@ name = "pypi"
 
 [dev-packages]
 ipykernel = "*"
-mock = "*"
 nose2 = "*"
 
 # -- pytest dependencies 
@@ -35,6 +34,11 @@ build = "*"
 
 # -- doc building tool
 sphinx = "*"
+<<<<<<< HEAD
+=======
+types-six = "*"
+mock = "*"
+>>>>>>> main
 
 [requires]
 python_version = "3.9"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 """
     World Fleet Scraper configuration for the application. In case cache dir [.wfleet] exists
