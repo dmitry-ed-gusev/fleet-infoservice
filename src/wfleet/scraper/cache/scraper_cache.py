@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 """
     Scraper Cache Module. Manages Scraper's local cache (storage for raw data files from sources)
