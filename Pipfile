@@ -5,7 +5,6 @@ name = "pypi"
 
 [dev-packages]
 ipykernel = "*"
-mock = "*"
 nose2 = "*"
 pytest = "*"
 pytest-cov = "*"
@@ -19,6 +18,7 @@ pre-commit = "*"
 build = "*"
 sphinx = "*"
 types-six = "*"
+mock = "*"
 
 [requires]
 python_version = "3.9"

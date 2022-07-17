@@ -1,4 +1,5 @@
-# coding=utf-8
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 """
     Scrapers Abstractions. Define base interface / behavior / properties for all Scrapers.

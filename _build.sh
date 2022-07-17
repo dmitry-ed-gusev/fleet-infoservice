@@ -7,11 +7,11 @@
 #   system shell) and from the pipenv environment as well (pipenv shell).
 #
 #   Created:  Dmitrii Gusev, 23.03.2021
-#   Modified: Dmitrii Gusev, 05.06.2022
+#   Modified: Dmitrii Gusev, 17.07.2022
 #
 ###############################################################################
 
-# -- safe bash scripting
+# -- safe bash scripting - fail-fast pattern (google for more info)
 set -euf -o pipefail
 
 # -- verbose output mode
@@ -51,8 +51,8 @@ pipenv run black src/ --verbose --line-length 110
 pipenv run black tests/ --verbose --line-length 110
 
 # -- run flake8 for checking code formatting
-pipenv run flake8 src/
-pipenv run flake8 tests/
+pipenv run flake8 --output-file .reports/flake8.report --count --show-source src/
+pipenv run flake8 --output-file .reports/flake8.report --count --show-source tests/
 
 # -- build two distributions: binary (whl) and source (tar.gz)
 pipenv run python -m build

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 """
     Scraper module for SQLite DBMS interaction (via PEEWEE ORM).
