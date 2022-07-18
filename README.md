@@ -120,8 +120,17 @@ For all the mentioned tools we use the latest available versions (see [Pipfile](
 
 ### Technical Useful Resources
 
+#### General Resources
+
 - [Various Apps Layouts](https://realpython.com/python-application-layouts/)
 - [Monorepo example](https://medium.com/opendoor-labs/our-python-monorepo-d34028f2b6fa)
 - [Python Web Apps](https://realpython.com/python-web-applications/)
 - [pipenv](https://pipenv.pypa.io/en/latest/)
+- ???
+
+#### Code Analyzers Resource
+
+- [Python Static Analysis Tools](https://luminousmen.com/post/python-static-analysis-tools)
+- [Static Code Analisys](https://towardsdatascience.com/static-code-analysis-for-python-bdce10b8d287)
+- [Python Static Analysis Tools #2](https://dev.to/withshubh/python-static-analysis-tools-275b)
 - ???
