@@ -1,0 +1,11 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 200,
+            "driver": "SQLite",
+            "name": "fleetinfo-db",
+            "database": "${workspaceFolder:fleet-infoservice}/.wfleet/.scraper_db/scraperdb.sqlite"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
