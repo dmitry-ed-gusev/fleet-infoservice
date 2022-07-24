@@ -63,7 +63,8 @@ class Config():
     # -- scraper DB settings (SQLite - ?)
     db_dir: str = cache_dir + "/.scraper_db"  # DB dir (SQLite)
     db_name: str = db_dir + "/scraperdb.sqlite"  # full DB name (SQLite)
-    db_schema_file: str = db_dir + "/schema_db_sqlite.sql"  # DB schema file
+    db_schema_reset_sql: str = db_dir + "/sqlite_db_reset.sql"  # DB schema reset file
+    db_schema_init_sql: str = db_dir + "/sqlite_db_schema.sql"  # DB schema init file
 
     # -- some default files names
     raw_data_file: str = "ships_data.xls"
