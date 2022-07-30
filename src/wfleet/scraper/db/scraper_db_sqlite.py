@@ -11,14 +11,16 @@
       - https://pynative.com/python-timestamp/ - timestamp examples
 
     Created:  Dmitrii Gusev, 19.06.2022
-    Modified: Dmitrii Gusev, 24.07.2022
+    Modified: Dmitrii Gusev, 30.07.2022
 
 """
 
 import sqlite3
 import logging
+import time
 from datetime import datetime
 from sqlite3 import PARSE_DECLTYPES, PARSE_COLNAMES
+from wfleet.scraper.db.scraperdb import AbstractScraperDB
 from wfleet.scraper.config.scraper_config import Config
 from wfleet.scraper.utils.utilities import read_file_as_text
 from wfleet.scraper.exceptions.scraper_exceptions import ScraperException
@@ -28,7 +30,7 @@ log = logging.getLogger(__name__)
 log.debug(f"Logging for module {__name__} is configured.")
 
 
-class ScraperSQLiteDB:
+class ScraperSQLiteDB(AbstractScraperDB):
     """Scraper SQLite DB Class."""
 
     def __init__(self, db_file: str, db_schema_init_file: str = "", init_db: bool = False,
@@ -41,7 +43,7 @@ class ScraperSQLiteDB:
         self.__db_schema_init_file = db_schema_init_file
         self.__db_schema_reset_file = db_schema_reset_file
 
-    def execute_update(self, sql: str) -> int:
+    def execute_update(self, sql: str, data: tuple) -> int:
         """Excute INSERT/UPDATE statements and return last inserted id/nums of rows affected."""
 
         log.debug(f'Executing SQL: {sql}.')
@@ -49,20 +51,20 @@ class ScraperSQLiteDB:
         if not sql or not (sql.upper().startswith('INSERT') or sql.upper().startswith('UPDATE')):
             raise ScraperException('SQL is empty or is not INSERT/UPDATE!')
 
+        result: int = -1  # result of the operation: lastrowid/# affected rows
         try:
-            # connect to DBMS
+            # connect to DBMS (using internal python type recognition modules)
             connection = sqlite3.connect(self.__db_file, detect_types=PARSE_DECLTYPES | PARSE_COLNAMES)
             cursor = connection.cursor()
             log.debug(f"Connected to SQLite: {self.__db_file}.")
 
             # execute the provided sql statement + commit to DB
-            cursor.execute(sql)
+            cursor.execute(sql, data)
             connection.commit()
             log.debug('Executed SQL statement. '
                       f'Last row ID: {cursor.lastrowid}. '
                       f'Row count: {cursor.rowcount}.')
 
-            result: int = -1
             if sql.upper().startswith('UPDATE'):
                 result = cursor.rowcount
             elif sql.upper().startswith('INSERT'):
@@ -123,24 +125,60 @@ class ScraperSQLiteDB:
             log.warning("No schema init script specified!")
 
     def add_scraper_telemetry(self, start: datetime, end: datetime, params: str) -> int:
-        """Adds one Scraper run to DB."""
+        """Adds one Scraper run telemetry to DB."""
 
         log.debug(f"Add Scraper telemetry -> start: {start}, end: {end}, params: {params}")
+
+        if not start or not end:  # fail-fast if start-end dates are not specified
+            raise ScraperException()
+
+        # calculate data
         start_ts = datetime.timestamp(start)
         end_ts = datetime.timestamp(end)
-        duration = int(end_ts - start_ts)
+        duration = end_ts - start_ts
 
-        sql = """INSERT INTO 'scraper_excutions'
-                    ('start_timestamp', 'end_timestamp', 'duration', 'parameters') 
+        # build sql command and data for it
+        sql = """INSERT INTO 'scraper_executions'
+                    ('start_timestamp', 'end_timestamp', 'duration', 'parameters')
                     VALUES (?, ?, ?, ?);"""
-
         data = (start, end, duration, params)
-        cursor.execute(sqlite_insert_with_param, data_tuple)
-        sqliteConnection.commit()
-        log.debug('Telemetry entry added successfully.')
+
+        # execute sql statement
+        identity: int = self.execute_update(sql, data)
+        log.debug(f'Telemetry entry added successfully. Entry ID = {identity}.')
+
+        return identity
 
     def get_scraper_telemetry(self) -> None:
-        pass
+        """Return Scraper runs telemetry from DB."""
+
+        log.debug("Return Scraper telemetry.")
+
+        sql = """SELECT * FROM 'scraper_executions'"""
+
+        try:
+            # connect to DBMS (using internal python type recognition modules)
+            connection = sqlite3.connect(self.__db_file, detect_types=PARSE_DECLTYPES | PARSE_COLNAMES)
+            cursor = connection.cursor()
+            log.debug(f"Connected to SQLite: {self.__db_file}.")
+
+            # execute the provided sql statement + commit to DB
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            log.debug(f'Executed SQL statement: {sql}.')
+
+            # iterate over received data and build returning result
+
+        except sqlite3.Error as error:  # error handler
+            log.error(f"Error while working with SQLite:\n{error}")
+
+        finally:  # in any case we have to close the connection to DB
+            if cursor:
+                cursor.close()
+                log.debug("SQLite cursor is closed.")
+            if connection:
+                connection.close()
+                log.debug("SQLite connection is closed.")
 
 
 if __name__ == "__main__":
@@ -149,6 +187,13 @@ if __name__ == "__main__":
 
     scraper_db = ScraperSQLiteDB(config.db_name, db_schema_init_file=config.db_schema_init_sql,
                                  db_schema_reset_file=config.db_schema_reset_sql)
-    scraper_db.reset_db()
-    scraper_db.init_db()
-    scraper_db.add_scraper_telemetry()
+    # scraper_db.reset_db()
+    # scraper_db.init_db()
+
+    start = datetime.now()
+    time.sleep(2)
+    end = datetime.now()
+    params = '--help'
+
+    tele_id = scraper_db.add_scraper_telemetry(start, end, params)
+    print('added telemetry:', tele_id)

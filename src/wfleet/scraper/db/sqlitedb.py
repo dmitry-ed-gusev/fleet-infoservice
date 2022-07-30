@@ -114,23 +114,6 @@ class GeoDB(object):
         self.log.debug("Geo points list [len = {}] has been added.".format(len(list_of_geo_points)))
 
 
-def db_create(dbname):
-    """
-    Create DB by executing DDL SQL script.
-    :param dbname:
-    :return:
-    """
-    log.debug("db_create: creating database structure.")
-    # connect to sqlite db
-    conn = sql.connect(dbname)
-    cur = conn.cursor()
-    log.debug("Connected to DB [{}].".format(dbname))
-    # execute db setup script
-    for query in DB_SCRIPT.split(";"):
-        cur.execute(query)
-    log.debug("DB structure created.")
-
-
 def db_add_areas(dbname, areas_list):
     """
     Add multiple areas at a time.
