@@ -181,6 +181,13 @@ class ScraperSQLiteDB(AbstractScraperDB):
                 log.debug("SQLite connection is closed.")
 
 
+    def add_base_ship(self):
+        pass
+
+    def get_base_ships(self):
+        pass
+
+
 if __name__ == "__main__":
     # print(MSG_MODULE_ISNT_RUNNABLE)
     config = Config()

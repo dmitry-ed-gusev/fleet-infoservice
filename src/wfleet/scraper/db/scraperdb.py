@@ -10,7 +10,7 @@
 """
 
 from datetime import datetime
-from abc import ABCMeta, abstractclassmethod
+from abc import ABCMeta, abstractclassmethod, abstractmethod
 from wfleet.scraper.config.scraper_messages import MSG_MODULE_ISNT_RUNNABLE
 
 
@@ -20,7 +20,7 @@ class AbstractScraperDB(metaclass=ABCMeta):
     This class should be implemented (inherited) by concrete DB-related classes.
     """
 
-    @abstractclassmethod
+    @abstractmethod
     def add_scraper_telemetry(self, start: datetime, end: datetime, params: str) -> int:
         pass
 
